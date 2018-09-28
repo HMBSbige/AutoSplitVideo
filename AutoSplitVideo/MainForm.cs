@@ -1,12 +1,12 @@
 ﻿using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 namespace AutoSplitVideo
 {
-
 	public partial class MainForm : MaterialForm
 	{
 		public MainForm()
@@ -15,6 +15,7 @@ namespace AutoSplitVideo
 
 			var materialSkinManager = MaterialSkinManager.Instance;
 			materialSkinManager.AddFormToManage(this);
+			materialSkinManager.ROBOTO_MEDIUM_10 = new Font(@"Microsoft YaHei UI", 11f, FontStyle.Bold);
 			materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
 			materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE);
 		}
@@ -52,8 +53,6 @@ namespace AutoSplitVideo
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
-			HintTextBox.SetCueText(InputVideoPath, @"将视频或输出路径拖拽至此");
-			HintTextBox.SetCueText(OutputVideoPath, @"将视频或输出路径拖拽至此");
 			InputVideoPath.Font = MaterialSkinManager.Instance.ROBOTO_MEDIUM_10;
 			OutputVideoPath.Font = MaterialSkinManager.Instance.ROBOTO_MEDIUM_10;
 		}
