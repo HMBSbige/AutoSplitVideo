@@ -70,11 +70,12 @@
 			this.materialTabControl1.Controls.Add(this.tabPage1);
 			this.materialTabControl1.Controls.Add(this.tabPage2);
 			this.materialTabControl1.Depth = 0;
-			this.materialTabControl1.Location = new System.Drawing.Point(0, 101);
+			this.materialTabControl1.Location = new System.Drawing.Point(10, 108);
+			this.materialTabControl1.Margin = new System.Windows.Forms.Padding(1);
 			this.materialTabControl1.MouseState = MaterialSkin.MouseState.HOVER;
 			this.materialTabControl1.Name = "materialTabControl1";
 			this.materialTabControl1.SelectedIndex = 0;
-			this.materialTabControl1.Size = new System.Drawing.Size(800, 351);
+			this.materialTabControl1.Size = new System.Drawing.Size(780, 332);
 			this.materialTabControl1.TabIndex = 1;
 			// 
 			// tabPage1
@@ -93,7 +94,7 @@
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(792, 325);
+			this.tabPage1.Size = new System.Drawing.Size(772, 306);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "自动分段";
 			this.tabPage1.DragDrop += new System.Windows.Forms.DragEventHandler(this.InputVideoPath_DragDrop);
@@ -201,7 +202,7 @@
 			this.OutputVideoPath.SelectedText = "";
 			this.OutputVideoPath.SelectionLength = 0;
 			this.OutputVideoPath.SelectionStart = 0;
-			this.OutputVideoPath.Size = new System.Drawing.Size(776, 23);
+			this.OutputVideoPath.Size = new System.Drawing.Size(756, 23);
 			this.OutputVideoPath.TabIndex = 8;
 			this.OutputVideoPath.TabStop = false;
 			this.OutputVideoPath.UseSystemPasswordChar = false;
@@ -220,7 +221,7 @@
 			this.InputVideoPath.SelectedText = "";
 			this.InputVideoPath.SelectionLength = 0;
 			this.InputVideoPath.SelectionStart = 0;
-			this.InputVideoPath.Size = new System.Drawing.Size(776, 23);
+			this.InputVideoPath.Size = new System.Drawing.Size(756, 23);
 			this.InputVideoPath.TabIndex = 7;
 			this.InputVideoPath.TabStop = false;
 			this.InputVideoPath.UseSystemPasswordChar = false;
@@ -232,7 +233,7 @@
 			this.materialRaisedButton1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.materialRaisedButton1.Depth = 0;
 			this.materialRaisedButton1.Icon = null;
-			this.materialRaisedButton1.Location = new System.Drawing.Point(733, 71);
+			this.materialRaisedButton1.Location = new System.Drawing.Point(713, 71);
 			this.materialRaisedButton1.MouseState = MaterialSkin.MouseState.HOVER;
 			this.materialRaisedButton1.Name = "materialRaisedButton1";
 			this.materialRaisedButton1.Primary = true;
@@ -249,7 +250,7 @@
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(792, 325);
+			this.tabPage2.Size = new System.Drawing.Size(792, 316);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Info";
 			// 
@@ -262,7 +263,7 @@
 			this.infoTextBox.Multiline = true;
 			this.infoTextBox.Name = "infoTextBox";
 			this.infoTextBox.ReadOnly = true;
-			this.infoTextBox.Size = new System.Drawing.Size(786, 319);
+			this.infoTextBox.Size = new System.Drawing.Size(786, 310);
 			this.infoTextBox.TabIndex = 0;
 			this.infoTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.infoTextBox_DragDrop);
 			this.infoTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FilePath_DragEnter);

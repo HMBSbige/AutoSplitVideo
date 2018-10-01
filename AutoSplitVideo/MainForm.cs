@@ -1,4 +1,5 @@
-﻿using MaterialSkin;
+﻿using AutoSplitVideo.Properties;
+using MaterialSkin;
 using MaterialSkin.Controls;
 using MediaToolkit;
 using MediaToolkit.Model;
@@ -16,7 +17,7 @@ namespace AutoSplitVideo
 		public MainForm()
 		{
 			InitializeComponent();
-
+			Icon = Resources.Asaki;
 			var materialSkinManager = MaterialSkinManager.Instance;
 			materialSkinManager.AddFormToManage(this);
 			materialSkinManager.ROBOTO_MEDIUM_10 = new Font(@"SimHei", 11f, FontStyle.Bold);
