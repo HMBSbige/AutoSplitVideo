@@ -1,6 +1,4 @@
 ﻿using AutoSplitVideo.Properties;
-using MaterialSkin;
-using MaterialSkin.Controls;
 using MediaToolkit;
 using MediaToolkit.Model;
 using System;
@@ -12,25 +10,20 @@ using System.Windows.Forms;
 
 namespace AutoSplitVideo
 {
-	public partial class MainForm : MaterialForm
+	public partial class MainForm : Form
 	{
 		public MainForm()
 		{
 			InitializeComponent();
 			Icon = Resources.Asaki;
-			var materialSkinManager = MaterialSkinManager.Instance;
-			materialSkinManager.AddFormToManage(this);
-			materialSkinManager.ROBOTO_MEDIUM_10 = new Font(@"SimHei", 11f, FontStyle.Bold);
-			materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
-			materialSkinManager.ColorScheme = new ColorScheme(Primary.Indigo500, Primary.Indigo700, Primary.Indigo100, Accent.Pink200, TextShade.WHITE);
 		}
 
 		private delegate void VoidMethod_Delegate();
 
-		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown1.Value));
-		private ulong Limit => Convert.ToUInt64(numericUpDown2.Value * 1024 * 1024 * 8);
+		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
+		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
-		private void materialRaisedButton1_Click(object sender, EventArgs e)
+		private void Button1_Click(object sender, EventArgs e)
 		{
 			try
 			{
@@ -47,7 +40,15 @@ namespace AutoSplitVideo
 					using (var engine = new Engine())
 					{
 						//flv转封装成MP4
-						if (mp4File.Filename != inputFile.Filename)
+						if (File.Exists(mp4File.Filename))
+						{
+							//do nothing
+						}
+						else if (Path.GetExtension(inputVideoPath) == @"mp4")
+						{
+							mp4File.Filename = inputVideoPath;
+						}
+						else
 						{
 							engine.CustomCommand($@"-i {inputFile.Filename} -c copy -copyts {mp4File.Filename}");
 						}
@@ -55,30 +56,38 @@ namespace AutoSplitVideo
 
 						//分段
 						ShowVideoInfo(mp4File.Filename);
-						engine.GetMetadata(mp4File);
-						var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
-						var ab = mp4File.Metadata.AudioData.BitRateKbs;
-						var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
-						var duration = mp4File.Metadata.Duration;
-						var now = TimeSpan.Zero;
-						for (var i = 0; now < duration; ++i)
+						if (GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
 						{
-							var t = Duration;
-							if (now + maxDuration >= duration)
+							engine.GetMetadata(mp4File);
+							var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
+							var ab = mp4File.Metadata.AudioData.BitRateKbs;
+							var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
+							var duration = mp4File.Metadata.Duration;
+							var now = TimeSpan.Zero;
+							for (var i = 0; now < duration; ++i)
 							{
-								t = duration - now;
+								var t = Duration;
+								if (now + maxDuration >= duration)
+								{
+									t = duration - now;
+								}
+
+								outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
+
+								engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i {mp4File.Filename} -codec copy -avoid_negative_ts 1 {outputFile.Filename}");
+
+								engine.GetMetadata(outputFile);
+								now += outputFile.Metadata.Duration;
+
+								SetprogressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
 							}
-
-							outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
-
-							engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i {mp4File.Filename} -codec copy -avoid_negative_ts 1 {outputFile.Filename}");
-
-							engine.GetMetadata(outputFile);
-							now += outputFile.Metadata.Duration;
-
-							SetprogressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
+						}
+						else
+						{
+							SetprogressBar(100);
 						}
 					}
+
 
 					MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				});
@@ -138,6 +147,7 @@ namespace AutoSplitVideo
 			}
 
 			var sb = new StringBuilder();
+			sb.AppendLine($@"文件：{inputFile.Filename}");
 			sb.AppendLine($@"时长：{inputFile.Metadata.Duration}");
 
 			sb.AppendLine($@"音频码率：{inputFile.Metadata.AudioData.BitRateKbs}");
@@ -165,7 +175,7 @@ namespace AutoSplitVideo
 
 		private void SetControlEnable(bool b)
 		{
-			materialRaisedButton1.Enabled = b;
+			button1.Enabled = b;
 			InputVideoPath.Enabled = b;
 			OutputVideoPath.Enabled = b;
 			numericUpDown1.Enabled = b;
@@ -178,6 +188,29 @@ namespace AutoSplitVideo
 			{
 				progressBar.Value = i;
 			}));
+		}
+
+		private static long GetFileSize(string sFullName)
+		{
+			long lSize = 0;
+			if (File.Exists(sFullName))
+				lSize = new FileInfo(sFullName).Length;
+			return lSize;
+		}
+
+		private void tabControl1_DragOver(object sender, DragEventArgs e)
+		{
+			e.Effect = DragDropEffects.All;
+
+			var clientPoint = tabControl1.PointToClient(new Point(e.X, e.Y));
+
+			for (var i = 0; i < tabControl1.TabCount; i++)
+			{
+				if (tabControl1.SelectedIndex != i && tabControl1.GetTabRect(i).Contains(clientPoint))
+				{
+					tabControl1.SelectedIndex = i;
+				}
+			}
 		}
 	}
 }

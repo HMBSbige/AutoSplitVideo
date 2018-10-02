@@ -85,10 +85,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MaterialSkin\MaterialSkin\MaterialSkin.csproj">
-      <Project>{8eb7611b-68cd-4b8b-987a-11717e2b250c}</Project>
-      <Name>MaterialSkin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MediaToolkit\MediaToolkit src\MediaToolkit\MediaToolkit.csproj">
       <Project>{124ab335-eeac-416f-b06b-80ad3cf56e38}</Project>
       <Name>MediaToolkit</Name>
