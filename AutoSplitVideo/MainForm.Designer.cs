@@ -41,6 +41,7 @@
 			this.InputVideoPath = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.infoTextBox = new System.Windows.Forms.TextBox();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -63,6 +64,7 @@
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.checkBox1);
 			this.tabPage1.Controls.Add(this.label3);
 			this.tabPage1.Controls.Add(this.label2);
 			this.tabPage1.Controls.Add(this.label1);
@@ -218,6 +220,19 @@
 			this.infoTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.infoTextBox_DragDrop);
 			this.infoTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FilePath_DragEnter);
 			// 
+			// checkBox1
+			// 
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.Checked = true;
+			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox1.Font = new System.Drawing.Font("宋体", 12F);
+			this.checkBox1.Location = new System.Drawing.Point(411, 71);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(147, 20);
+			this.checkBox1.TabIndex = 9;
+			this.checkBox1.Text = "删除转换后的mp4";
+			this.checkBox1.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -253,6 +268,7 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.CheckBox checkBox1;
 	}
 }
 

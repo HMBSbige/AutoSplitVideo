@@ -77,15 +77,17 @@ namespace AutoSplitVideo
 								engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i {mp4File.Filename} -codec copy -avoid_negative_ts 1 {outputFile.Filename}");
 
 								engine.GetMetadata(outputFile);
-								now += outputFile.Metadata.Duration;
+								now += t;
 
 								SetprogressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
 							}
+
+							if (checkBox1.Checked)
+							{
+								File.Delete(mp4File.Filename);
+							}
 						}
-						else
-						{
-							SetprogressBar(100);
-						}
+						SetprogressBar(100);
 					}
 
 
@@ -186,6 +188,10 @@ namespace AutoSplitVideo
 		{
 			progressBar.BeginInvoke(new VoidMethod_Delegate(() =>
 			{
+				if (i > progressBar.Maximum)
+				{
+					i = progressBar.Maximum;
+				}
 				progressBar.Value = i;
 			}));
 		}
