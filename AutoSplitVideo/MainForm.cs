@@ -25,12 +25,13 @@ namespace AutoSplitVideo
 
 		private void Button1_Click(object sender, EventArgs e)
 		{
-			try
+
+			SetControlEnable(false);
+			var inputVideoPath = InputVideoPath.Text;
+			var outputDirectoryPath = OutputVideoPath.Text;
+			var runtask = new Task(() =>
 			{
-				SetControlEnable(false);
-				var inputVideoPath = InputVideoPath.Text;
-				var outputDirectoryPath = OutputVideoPath.Text;
-				var runtask = new Task(() =>
+				try
 				{
 					ShowVideoInfo(inputVideoPath);
 					SetprogressBar(0);
@@ -40,6 +41,7 @@ namespace AutoSplitVideo
 					using (var engine = new Engine())
 					{
 						//flv转封装成MP4
+						var ismp4 = true;//原档是否为mp4
 						if (File.Exists(mp4File.Filename))
 						{
 							//do nothing
@@ -50,6 +52,7 @@ namespace AutoSplitVideo
 						}
 						else
 						{
+							ismp4 = false;
 							engine.CustomCommand($@"-i {inputFile.Filename} -c copy -copyts {mp4File.Filename}");
 						}
 						SetprogressBar(50);
@@ -82,30 +85,28 @@ namespace AutoSplitVideo
 								SetprogressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
 							}
 
-							if (checkBox1.Checked)
+							if (!ismp4 && checkBox1.Checked)
 							{
 								File.Delete(mp4File.Filename);
 							}
 						}
 						SetprogressBar(100);
 					}
-
-
 					MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				});
-				runtask.Start();
-				runtask.ContinueWith(task =>
+				}
+				catch (Exception ex)
 				{
-					BeginInvoke(new VoidMethod_Delegate(() =>
-					{
-						SetControlEnable(true);
-					}));
-				});
-			}
-			catch (Exception ex)
+					MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			});
+			runtask.Start();
+			runtask.ContinueWith(task =>
 			{
-				MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+				BeginInvoke(new VoidMethod_Delegate(() =>
+				{
+					SetControlEnable(true);
+				}));
+			});
 		}
 
 		private void InputVideoPath_DragDrop(object sender, DragEventArgs e)
@@ -113,12 +114,20 @@ namespace AutoSplitVideo
 			var path = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
 			if (Directory.Exists(path))
 			{
-				OutputVideoPath.Text = $@"{Path.GetFullPath(path)}\";
+				OutputVideoPath.Text = $@"{Path.GetFullPath(path)}";
+				if (!OutputVideoPath.Text.EndsWith(@"\"))
+				{
+					OutputVideoPath.Text += @"\";
+				}
 			}
 			else if (File.Exists(path))
 			{
 				InputVideoPath.Text = Path.GetFullPath(path);
 				OutputVideoPath.Text = $@"{Path.GetDirectoryName(path)}\";
+				if (!OutputVideoPath.Text.EndsWith(@"\"))
+				{
+					OutputVideoPath.Text += @"\";
+				}
 			}
 		}
 
@@ -182,6 +191,7 @@ namespace AutoSplitVideo
 			OutputVideoPath.Enabled = b;
 			numericUpDown1.Enabled = b;
 			numericUpDown2.Enabled = b;
+			infoTextBox.Enabled = b;
 		}
 
 		private void SetprogressBar(int i)
