@@ -53,7 +53,7 @@ namespace AutoSplitVideo
 						else
 						{
 							ismp4 = false;
-							engine.CustomCommand($@"-i {inputFile.Filename} -c copy -copyts {mp4File.Filename}");
+							engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
 						}
 						SetprogressBar(50);
 
@@ -77,7 +77,7 @@ namespace AutoSplitVideo
 
 								outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
 
-								engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i {mp4File.Filename} -codec copy -avoid_negative_ts 1 {outputFile.Filename}");
+								engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
 
 								engine.GetMetadata(outputFile);
 								now += t;
