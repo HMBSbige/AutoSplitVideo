@@ -2,6 +2,7 @@
 using MediaToolkit;
 using MediaToolkit.Model;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -226,6 +227,46 @@ namespace AutoSplitVideo
 				{
 					tabControl1.SelectedIndex = i;
 				}
+			}
+		}
+
+		public static void Stop(string processName)
+		{
+			foreach (var exe in Process.GetProcesses())
+			{
+				if (exe.ProcessName == processName)
+				{
+					exe.Kill();
+					exe.WaitForExit();
+					return;
+				}
+			}
+		}
+
+		private void Exit()
+		{
+			Stop(@"ffmpeg");
+			Dispose();
+			Environment.Exit(0);
+		}
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (e.CloseReason == CloseReason.UserClosing)
+			{
+				var dr = MessageBox.Show(@"是否退出？", @"是否退出？", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (dr == DialogResult.Yes)
+				{
+					Exit();
+				}
+				else
+				{
+					e.Cancel = true;
+				}
+			}
+			else
+			{
+				Exit();
 			}
 		}
 	}
