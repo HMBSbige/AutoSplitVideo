@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AutoSplitVideo.Utils;
 
 namespace AutoSplitVideo
 {
@@ -16,15 +17,33 @@ namespace AutoSplitVideo
 		{
 			InitializeComponent();
 			Icon = Resources.Asaki;
+			notifyIcon1.Icon = Icon;
 		}
+
+		private FormWindowState DefaultState = FormWindowState.Normal;
 
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
+
 		private Engine _engine = new Engine();
+
+		#region MainForm
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 
+		}
+
+		private void MainForm_Resize(object sender, EventArgs e)
+		{
+			if (WindowState == FormWindowState.Minimized)
+			{
+				TriggerMainFormDisplay();
+			}
+			else
+			{
+				DefaultState = WindowState;
+			}
 		}
 
 		private void Button1_Click(object sender, EventArgs e)
@@ -73,7 +92,7 @@ namespace AutoSplitVideo
 
 					//分段
 					ShowVideoInfo(mp4File.Filename);
-					if (Utils.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
+					if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
 					{
 						_engine.GetMetadata(mp4File);
 						var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
@@ -141,6 +160,8 @@ namespace AutoSplitVideo
 				infoTextBox.Text = sb.ToString();
 			}));
 		}
+
+		#endregion
 
 		#region 设置控件状态
 
@@ -249,6 +270,30 @@ namespace AutoSplitVideo
 			{
 				Exit();
 			}
+		}
+
+		#endregion
+
+		#region 托盘图标
+
+		private void TriggerMainFormDisplay()
+		{
+			Visible = !Visible;
+			if (Visible)
+			{
+				if (WindowState == FormWindowState.Minimized)
+				{
+					WindowState = DefaultState;
+				}
+
+				TopMost = true;
+				TopMost = false;
+			}
+		}
+
+		private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+		{
+			TriggerMainFormDisplay();
 		}
 
 		#endregion

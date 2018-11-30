@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace AutoSplitVideo
+namespace AutoSplitVideo.Utils
 {
-	public static class Utils
+	public static class Util
 	{
 		public static long GetFileSize(string sFullName)
 		{

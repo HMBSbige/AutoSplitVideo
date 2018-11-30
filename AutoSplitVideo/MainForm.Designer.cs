@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -42,6 +43,7 @@
 			this.InputVideoPath = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.infoTextBox = new System.Windows.Forms.TextBox();
+			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -233,6 +235,12 @@
 			this.infoTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.infoTextBox_DragDrop);
 			this.infoTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FilePath_DragEnter);
 			// 
+			// notifyIcon1
+			// 
+			this.notifyIcon1.Text = "Asakinb!";
+			this.notifyIcon1.Visible = true;
+			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -243,6 +251,7 @@
 			this.Text = "AutoSplitVideo";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
+			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
@@ -270,6 +279,7 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.NotifyIcon notifyIcon1;
 	}
 }
 
