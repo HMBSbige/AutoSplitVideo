@@ -65,9 +65,9 @@ namespace AutoSplitVideo.Utils
 			if (_isStarted)
 			{
 				_tokenSource.Cancel();
-				_responseStream.Dispose();
+				_responseStream?.Dispose();
 				_responseStream = null;
-				_fileStream.Dispose();
+				_fileStream?.Dispose();
 				_fileStream = null;
 				_isStarted = false;
 			}

@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BilibiliLiveRecorder.cs" />
+    <Compile Include="Controls\DoubleBufferDataGridView.cs" />
     <Compile Include="Utils\HintTextBox.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

@@ -43,12 +43,24 @@
 			this.InputVideoPath = new System.Windows.Forms.TextBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.infoTextBox = new System.Windows.Forms.TextBox();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.radioButton4 = new System.Windows.Forms.RadioButton();
+			this.radioButton3 = new System.Windows.Forms.RadioButton();
+			this.radioButton2 = new System.Windows.Forms.RadioButton();
+			this.radioButton1 = new System.Windows.Forms.RadioButton();
+			this.button2 = new System.Windows.Forms.Button();
+			this.RecordDirectory = new System.Windows.Forms.TextBox();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.doubleBufferDataGridView1 = new AutoSplitVideo.Controls.DoubleBufferDataGridView();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
+			this.tabPage3.SuspendLayout();
+			this.groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.doubleBufferDataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -56,6 +68,7 @@
 			this.tabControl1.AllowDrop = true;
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
@@ -235,11 +248,121 @@
 			this.infoTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.infoTextBox_DragDrop);
 			this.infoTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FilePath_DragEnter);
 			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.doubleBufferDataGridView1);
+			this.tabPage3.Controls.Add(this.groupBox1);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage3.Size = new System.Drawing.Size(792, 424);
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "录播机";
+			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.radioButton4);
+			this.groupBox1.Controls.Add(this.radioButton3);
+			this.groupBox1.Controls.Add(this.radioButton2);
+			this.groupBox1.Controls.Add(this.radioButton1);
+			this.groupBox1.Controls.Add(this.button2);
+			this.groupBox1.Controls.Add(this.RecordDirectory);
+			this.groupBox1.Location = new System.Drawing.Point(8, 6);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(776, 75);
+			this.groupBox1.TabIndex = 1;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "下次录制时生效";
+			// 
+			// radioButton4
+			// 
+			this.radioButton4.AutoSize = true;
+			this.radioButton4.Location = new System.Drawing.Point(183, 47);
+			this.radioButton4.Name = "radioButton4";
+			this.radioButton4.Size = new System.Drawing.Size(53, 16);
+			this.radioButton4.TabIndex = 5;
+			this.radioButton4.Text = "线路4";
+			this.radioButton4.UseVisualStyleBackColor = true;
+			// 
+			// radioButton3
+			// 
+			this.radioButton3.AutoSize = true;
+			this.radioButton3.Location = new System.Drawing.Point(124, 47);
+			this.radioButton3.Name = "radioButton3";
+			this.radioButton3.Size = new System.Drawing.Size(53, 16);
+			this.radioButton3.TabIndex = 4;
+			this.radioButton3.Text = "线路3";
+			this.radioButton3.UseVisualStyleBackColor = true;
+			// 
+			// radioButton2
+			// 
+			this.radioButton2.AutoSize = true;
+			this.radioButton2.Location = new System.Drawing.Point(65, 47);
+			this.radioButton2.Name = "radioButton2";
+			this.radioButton2.Size = new System.Drawing.Size(53, 16);
+			this.radioButton2.TabIndex = 3;
+			this.radioButton2.Text = "线路2";
+			this.radioButton2.UseVisualStyleBackColor = true;
+			// 
+			// radioButton1
+			// 
+			this.radioButton1.AutoSize = true;
+			this.radioButton1.Checked = true;
+			this.radioButton1.Location = new System.Drawing.Point(6, 47);
+			this.radioButton1.Name = "radioButton1";
+			this.radioButton1.Size = new System.Drawing.Size(53, 16);
+			this.radioButton1.TabIndex = 2;
+			this.radioButton1.TabStop = true;
+			this.radioButton1.Text = "线路1";
+			this.radioButton1.UseVisualStyleBackColor = true;
+			// 
+			// button2
+			// 
+			this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.button2.Location = new System.Drawing.Point(695, 20);
+			this.button2.Name = "button2";
+			this.button2.Size = new System.Drawing.Size(75, 23);
+			this.button2.TabIndex = 1;
+			this.button2.Text = "选择";
+			this.button2.UseVisualStyleBackColor = true;
+			this.button2.Click += new System.EventHandler(this.button2_Click);
+			// 
+			// RecordDirectory
+			// 
+			this.RecordDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.RecordDirectory.Location = new System.Drawing.Point(6, 20);
+			this.RecordDirectory.Name = "RecordDirectory";
+			this.RecordDirectory.Size = new System.Drawing.Size(683, 21);
+			this.RecordDirectory.TabIndex = 0;
+			// 
 			// notifyIcon1
 			// 
 			this.notifyIcon1.Text = "Asakinb!";
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+			// 
+			// doubleBufferDataGridView1
+			// 
+			this.doubleBufferDataGridView1.AllowUserToAddRows = false;
+			this.doubleBufferDataGridView1.AllowUserToDeleteRows = false;
+			this.doubleBufferDataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.doubleBufferDataGridView1.BackgroundColor = System.Drawing.SystemColors.Window;
+			this.doubleBufferDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.doubleBufferDataGridView1.Location = new System.Drawing.Point(8, 113);
+			this.doubleBufferDataGridView1.MultiSelect = false;
+			this.doubleBufferDataGridView1.Name = "doubleBufferDataGridView1";
+			this.doubleBufferDataGridView1.ReadOnly = true;
+			this.doubleBufferDataGridView1.RowTemplate.Height = 23;
+			this.doubleBufferDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.doubleBufferDataGridView1.Size = new System.Drawing.Size(776, 303);
+			this.doubleBufferDataGridView1.StandardTab = true;
+			this.doubleBufferDataGridView1.TabIndex = 2;
 			// 
 			// MainForm
 			// 
@@ -259,6 +382,10 @@
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage2.PerformLayout();
+			this.tabPage3.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.doubleBufferDataGridView1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -280,6 +407,15 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.CheckBox checkBox1;
 		private System.Windows.Forms.NotifyIcon notifyIcon1;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.TextBox RecordDirectory;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.RadioButton radioButton4;
+		private System.Windows.Forms.RadioButton radioButton3;
+		private System.Windows.Forms.RadioButton radioButton2;
+		private System.Windows.Forms.RadioButton radioButton1;
+		private Controls.DoubleBufferDataGridView doubleBufferDataGridView1;
 	}
 }
 

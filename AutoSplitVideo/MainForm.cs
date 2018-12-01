@@ -25,13 +25,14 @@ namespace AutoSplitVideo
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
-		private static Engine _engine = new Engine();
-
 		#region MainForm
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
-
+			HintTextBox.SetCueText(InputVideoPath, @"视频路径");
+			HintTextBox.SetCueText(OutputVideoPath, @"输出路径");
+			HintTextBox.SetCueText(RecordDirectory, @"录播输出路径");
+			RecordDirectory.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 		}
 
 		private void MainForm_Resize(object sender, EventArgs e)
@@ -64,27 +65,45 @@ namespace AutoSplitVideo
 		{
 			var inputFile = new MediaFile { Filename = path };
 
-			_engine.GetMetadata(inputFile);
+			using (var engine = new Engine())
+			{
+				engine.GetMetadata(inputFile);
+			}
 
 			var sb = new StringBuilder();
 			sb.AppendLine($@"文件：{inputFile.Filename}");
-			sb.AppendLine($@"时长：{inputFile.Metadata.Duration}");
-
-			sb.AppendLine($@"音频码率：{inputFile.Metadata.AudioData.BitRateKbs}");
-			sb.AppendLine($@"音频格式：{inputFile.Metadata.AudioData.Format}");
-			sb.AppendLine($@"声道：{inputFile.Metadata.AudioData.ChannelOutput}");
-			sb.AppendLine($@"采样率：{inputFile.Metadata.AudioData.SampleRate}");
-
-			sb.AppendLine($@"视频码率：{inputFile.Metadata.VideoData.BitRateKbs}");
-			sb.AppendLine($@"视频格式：{inputFile.Metadata.VideoData.Format}");
-			sb.AppendLine($@"颜色模型：{inputFile.Metadata.VideoData.ColorModel}");
-			sb.AppendLine($@"帧率：{inputFile.Metadata.VideoData.Fps}");
-			sb.AppendLine($@"分辨率：{inputFile.Metadata.VideoData.FrameSize}");
-
-			infoTextBox.Invoke(new Action(() =>
+			try
 			{
-				infoTextBox.Text = sb.ToString();
-			}));
+				sb.AppendLine($@"时长：{inputFile.Metadata.Duration}");
+
+				sb.AppendLine($@"音频码率：{inputFile.Metadata.AudioData.BitRateKbs}");
+				sb.AppendLine($@"音频格式：{inputFile.Metadata.AudioData.Format}");
+				sb.AppendLine($@"声道：{inputFile.Metadata.AudioData.ChannelOutput}");
+				sb.AppendLine($@"采样率：{inputFile.Metadata.AudioData.SampleRate}");
+
+				sb.AppendLine($@"视频码率：{inputFile.Metadata.VideoData.BitRateKbs}");
+				sb.AppendLine($@"视频格式：{inputFile.Metadata.VideoData.Format}");
+				sb.AppendLine($@"颜色模型：{inputFile.Metadata.VideoData.ColorModel}");
+				sb.AppendLine($@"帧率：{inputFile.Metadata.VideoData.Fps}");
+				sb.AppendLine($@"分辨率：{inputFile.Metadata.VideoData.FrameSize}");
+
+			}
+			catch
+			{
+				sb.AppendLine(@"读取视频文件失败，可能是错误的视频文件");
+			}
+
+			infoTextBox.Invoke(new Action(() => { infoTextBox.Text = sb.ToString(); }));
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			var dir = Util.SelectPath();
+			if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir))
+			{
+				return;
+			}
+			RecordDirectory.Text = dir;
 		}
 
 		#endregion
@@ -98,6 +117,7 @@ namespace AutoSplitVideo
 			OutputVideoPath.Enabled = b;
 			numericUpDown1.Enabled = b;
 			numericUpDown2.Enabled = b;
+			checkBox1.Enabled = b;
 		}
 
 		private void SetProgressBar(int i)
@@ -170,10 +190,7 @@ namespace AutoSplitVideo
 
 		private void Exit()
 		{
-			using (_engine = new Engine())
-			{
-				//force release ffmpeg child process
-			}
+			Util.StopFFmpeg();
 			Dispose();
 			Environment.Exit(0);
 		}
@@ -230,10 +247,12 @@ namespace AutoSplitVideo
 		{
 			return new Task(() =>
 			{
-				try
+				//try
+				//{
+				ShowVideoInfo(inputVideoPath);
+				SetProgressBar(0);
+				using (var engine = new Engine())
 				{
-					ShowVideoInfo(inputVideoPath);
-					SetProgressBar(0);
 					var inputFile = new MediaFile(inputVideoPath);
 					var outputFile = new MediaFile();
 					var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4");
@@ -251,7 +270,7 @@ namespace AutoSplitVideo
 					else
 					{
 						ismp4 = false;
-						_engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
+						engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
 					}
 
 					SetProgressBar(50);
@@ -260,7 +279,7 @@ namespace AutoSplitVideo
 					ShowVideoInfo(mp4File.Filename);
 					if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
 					{
-						_engine.GetMetadata(mp4File);
+						engine.GetMetadata(mp4File);
 						var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
 						var ab = mp4File.Metadata.AudioData.BitRateKbs;
 						var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
@@ -276,9 +295,9 @@ namespace AutoSplitVideo
 
 							outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
 
-							_engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
+							engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
 
-							_engine.GetMetadata(outputFile);
+							engine.GetMetadata(outputFile);
 							now += t;
 
 							SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
@@ -289,14 +308,15 @@ namespace AutoSplitVideo
 							File.Delete(mp4File.Filename);
 						}
 					}
+				}
 
-					SetProgressBar(100);
-					MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
+				SetProgressBar(100);
+				MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				//}
+				//catch (Exception ex)
+				//{
+				//	MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				//}
 			});
 		}
 
@@ -304,10 +324,14 @@ namespace AutoSplitVideo
 		{
 			return new Task(() =>
 			{
-				_engine.CustomCommand($@"-y -i ""{url}"" ""{path}""");
+				using (var engine = new Engine())
+				{
+					engine.CustomCommand($@"-y -i ""{url}"" ""{path}""");
+				}
 			});
 		}
 
 		#endregion
+
 	}
 }
