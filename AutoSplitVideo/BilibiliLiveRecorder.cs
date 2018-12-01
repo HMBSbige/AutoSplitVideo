@@ -12,15 +12,16 @@ namespace AutoSplitVideo
 		private string UserInfoUrl => $@"https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid={RealRoomId}";
 		private string LiveAddressUrl => $@"https://api.live.bilibili.com/api/playurl?cid={RealRoomId}&otype=json&quality=0&platform=web";
 
+		private readonly HttpClient _httpClient = new HttpClient();
+
 		private readonly long _roomId;
 		public long RealRoomId = 0;
 		public string Title;
 		public bool IsLive;
 
-		private static async Task<string> Get(string uri)
+		private async Task<string> Get(string uri)
 		{
-			var httpClient = new HttpClient();
-			var response = await httpClient.GetAsync(uri);
+			var response = await _httpClient.GetAsync(uri);
 			response.EnsureSuccessStatusCode();
 			var resultStr = await response.Content.ReadAsStringAsync();
 

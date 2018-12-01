@@ -1,4 +1,5 @@
 ﻿using AutoSplitVideo.Properties;
+using AutoSplitVideo.Utils;
 using MediaToolkit;
 using MediaToolkit.Model;
 using System;
@@ -7,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AutoSplitVideo.Utils;
 
 namespace AutoSplitVideo
 {
@@ -25,7 +25,7 @@ namespace AutoSplitVideo
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
-		private Engine _engine = new Engine();
+		private static Engine _engine = new Engine();
 
 		#region MainForm
 
@@ -57,80 +57,6 @@ namespace AutoSplitVideo
 				{
 					SetControlEnable(true);
 				}));
-			});
-		}
-
-		private Task SplitTask(string inputVideoPath, string outputDirectoryPath, bool deleteMp4)
-		{
-			return new Task(() =>
-			{
-				try
-				{
-					ShowVideoInfo(inputVideoPath);
-					SetProgressBar(0);
-					var inputFile = new MediaFile(inputVideoPath);
-					var outputFile = new MediaFile();
-					var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4");
-
-					//flv转封装成MP4
-					var ismp4 = true; //原档是否为mp4
-					if (File.Exists(mp4File.Filename))
-					{
-						//do nothing
-					}
-					else if (Path.GetExtension(inputVideoPath) == @"mp4")
-					{
-						mp4File.Filename = inputVideoPath;
-					}
-					else
-					{
-						ismp4 = false;
-						_engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
-					}
-
-					SetProgressBar(50);
-
-					//分段
-					ShowVideoInfo(mp4File.Filename);
-					if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
-					{
-						_engine.GetMetadata(mp4File);
-						var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
-						var ab = mp4File.Metadata.AudioData.BitRateKbs;
-						var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
-						var duration = mp4File.Metadata.Duration;
-						var now = TimeSpan.Zero;
-						for (var i = 0; now < duration; ++i)
-						{
-							var t = Duration;
-							if (now + maxDuration >= duration)
-							{
-								t = duration - now;
-							}
-
-							outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
-
-							_engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
-
-							_engine.GetMetadata(outputFile);
-							now += t;
-
-							SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
-						}
-
-						if (!ismp4 && deleteMp4)
-						{
-							File.Delete(mp4File.Filename);
-						}
-					}
-
-					SetProgressBar(100);
-					MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
 			});
 		}
 
@@ -298,5 +224,90 @@ namespace AutoSplitVideo
 
 		#endregion
 
+		#region Task
+
+		private Task SplitTask(string inputVideoPath, string outputDirectoryPath, bool deleteMp4)
+		{
+			return new Task(() =>
+			{
+				try
+				{
+					ShowVideoInfo(inputVideoPath);
+					SetProgressBar(0);
+					var inputFile = new MediaFile(inputVideoPath);
+					var outputFile = new MediaFile();
+					var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4");
+
+					//flv转封装成MP4
+					var ismp4 = true; //原档是否为mp4
+					if (File.Exists(mp4File.Filename))
+					{
+						//do nothing
+					}
+					else if (Path.GetExtension(inputVideoPath) == @"mp4")
+					{
+						mp4File.Filename = inputVideoPath;
+					}
+					else
+					{
+						ismp4 = false;
+						_engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
+					}
+
+					SetProgressBar(50);
+
+					//分段
+					ShowVideoInfo(mp4File.Filename);
+					if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
+					{
+						_engine.GetMetadata(mp4File);
+						var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
+						var ab = mp4File.Metadata.AudioData.BitRateKbs;
+						var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
+						var duration = mp4File.Metadata.Duration;
+						var now = TimeSpan.Zero;
+						for (var i = 0; now < duration; ++i)
+						{
+							var t = Duration;
+							if (now + maxDuration >= duration)
+							{
+								t = duration - now;
+							}
+
+							outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
+
+							_engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
+
+							_engine.GetMetadata(outputFile);
+							now += t;
+
+							SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
+						}
+
+						if (!ismp4 && deleteMp4)
+						{
+							File.Delete(mp4File.Filename);
+						}
+					}
+
+					SetProgressBar(100);
+					MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			});
+		}
+
+		private Task FFmpegRecordTask(string url, string path)
+		{
+			return new Task(() =>
+			{
+				_engine.CustomCommand($@"-y -i ""{url}"" ""{path}""");
+			});
+		}
+
+		#endregion
 	}
 }
