@@ -1,5 +1,7 @@
 ﻿using AutoSplitVideo.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,8 +13,18 @@ namespace AutoSplitVideo.Tests.Utils
 		[TestMethod]
 		public void HttpDownLoadTest()
 		{
-			const string url = @"http://releases.ubuntu.com/18.04.1/ubuntu-18.04.1-desktop-amd64.iso";
-			const string path = @"D:\Downloads\ubuntu-18.04.1-desktop-amd64.iso";
+			var recorder = new BilibiliLiveRecorder(3);
+
+			Assert.ThrowsExceptionAsync<ArgumentException>(async () => { await recorder.GetLiveUrl(); }).Wait();
+
+			recorder.Refresh().Wait();
+
+			var urls = Task.Run(async () => await recorder.GetLiveUrl()).Result.ToArray();
+			var urlNumber = urls.Length;
+			Assert.IsTrue(urlNumber > 1);
+
+			var url = urls[0];
+			const string path = @"D:\Downloads\test.flv";
 			var instance = new HttpDownLoad(url, path, true);
 			Task.Run(async () =>
 			{
