@@ -1,5 +1,5 @@
-﻿using MediaToolkit.Util;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -54,6 +54,13 @@ namespace AutoSplitVideo.Utils
 		private static Process Parent(this Process process)
 		{
 			return FindPidFromIndexedProcessName(FindIndexedProcessName(process.Id));
+		}
+
+		private static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
+		{
+			if (action == null) throw new ArgumentNullException(@"action");
+
+			foreach (var t in collection) action(t);
 		}
 
 		public static void KillFFmpeg()
