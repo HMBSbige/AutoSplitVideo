@@ -1,5 +1,5 @@
-﻿using System;
-using MediaToolkit.Util;
+﻿using MediaToolkit.Util;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -26,13 +26,43 @@ namespace AutoSplitVideo.Utils
 			return path.SelectedPath;
 		}
 
-		public static void StopFFmpeg()
+		private static string FindIndexedProcessName(int pid)
+		{
+			var processName = Process.GetProcessById(pid).ProcessName;
+			var processesByName = Process.GetProcessesByName(processName);
+			string processIndexName = null;
+
+			for (var index = 0; index < processesByName.Length; ++index)
+			{
+				processIndexName = index == 0 ? processName : $@"{processName}#{index}";
+				var processId = new PerformanceCounter(@"Process", @"ID Process", processIndexName);
+				if (Convert.ToInt32(processId.NextValue()) == pid)
+				{
+					return processIndexName;
+				}
+			}
+
+			return processIndexName;
+		}
+
+		private static Process FindPidFromIndexedProcessName(string indexedProcessName)
+		{
+			var parentId = new PerformanceCounter(@"Process", @"Creating Process ID", indexedProcessName);
+			return Process.GetProcessById((int)parentId.NextValue());
+		}
+
+		private static Process Parent(this Process process)
+		{
+			return FindPidFromIndexedProcessName(FindIndexedProcessName(process.Id));
+		}
+
+		public static void KillFFmpeg()
 		{
 			Process.GetProcessesByName(@"ffmpeg").ForEach(process =>
 			{
 				try
 				{
-					if (Path.GetDirectoryName(process.MainModule.FileName) == Environment.CurrentDirectory)
+					if (process.Parent()?.ProcessName == Process.GetCurrentProcess().ProcessName)
 					{
 						process.Kill();
 						process.WaitForExit();

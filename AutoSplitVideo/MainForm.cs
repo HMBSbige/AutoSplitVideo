@@ -190,7 +190,7 @@ namespace AutoSplitVideo
 
 		private void Exit()
 		{
-			Util.StopFFmpeg();
+			Util.KillFFmpeg();
 			Dispose();
 			Environment.Exit(0);
 		}
