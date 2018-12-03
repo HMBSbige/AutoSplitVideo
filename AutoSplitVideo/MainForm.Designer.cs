@@ -44,7 +44,18 @@
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.infoTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.button3 = new System.Windows.Forms.Button();
+			this.NewRoomId = new System.Windows.Forms.TextBox();
+			this.MainList = new AutoSplitVideo.Controls.DoubleBufferDataGridView();
+			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.button4 = new System.Windows.Forms.Button();
+			this.RecordWay2 = new System.Windows.Forms.CheckBox();
+			this.RecordWay1 = new System.Windows.Forms.CheckBox();
 			this.radioButton4 = new System.Windows.Forms.RadioButton();
 			this.radioButton3 = new System.Windows.Forms.RadioButton();
 			this.radioButton2 = new System.Windows.Forms.RadioButton();
@@ -52,15 +63,16 @@
 			this.button2 = new System.Windows.Forms.Button();
 			this.RecordDirectory = new System.Windows.Forms.TextBox();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.doubleBufferDataGridView1 = new AutoSplitVideo.Controls.DoubleBufferDataGridView();
+			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.groupBox2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.groupBox1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.doubleBufferDataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -250,7 +262,8 @@
 			// 
 			// tabPage3
 			// 
-			this.tabPage3.Controls.Add(this.doubleBufferDataGridView1);
+			this.tabPage3.Controls.Add(this.groupBox2);
+			this.tabPage3.Controls.Add(this.MainList);
 			this.tabPage3.Controls.Add(this.groupBox1);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
@@ -260,10 +273,100 @@
 			this.tabPage3.Text = "录播机";
 			this.tabPage3.UseVisualStyleBackColor = true;
 			// 
+			// groupBox2
+			// 
+			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox2.Controls.Add(this.button3);
+			this.groupBox2.Controls.Add(this.NewRoomId);
+			this.groupBox2.Location = new System.Drawing.Point(8, 106);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(776, 57);
+			this.groupBox2.TabIndex = 3;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "添加直播间";
+			// 
+			// button3
+			// 
+			this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.button3.Location = new System.Drawing.Point(695, 21);
+			this.button3.Name = "button3";
+			this.button3.Size = new System.Drawing.Size(75, 21);
+			this.button3.TabIndex = 8;
+			this.button3.Text = "添加";
+			this.button3.UseVisualStyleBackColor = true;
+			this.button3.Click += new System.EventHandler(this.button3_Click);
+			// 
+			// NewRoomId
+			// 
+			this.NewRoomId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.NewRoomId.Location = new System.Drawing.Point(7, 21);
+			this.NewRoomId.Name = "NewRoomId";
+			this.NewRoomId.Size = new System.Drawing.Size(682, 21);
+			this.NewRoomId.TabIndex = 0;
+			this.NewRoomId.Text = "3";
+			// 
+			// MainList
+			// 
+			this.MainList.AllowUserToAddRows = false;
+			this.MainList.AllowUserToDeleteRows = false;
+			this.MainList.AllowUserToResizeRows = false;
+			this.MainList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.MainList.BackgroundColor = System.Drawing.SystemColors.Window;
+			this.MainList.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+			this.MainList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.MainList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.MainList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2,
+            this.Column3,
+            this.Column4,
+            this.Column5});
+			this.MainList.Location = new System.Drawing.Point(8, 169);
+			this.MainList.MultiSelect = false;
+			this.MainList.Name = "MainList";
+			this.MainList.ReadOnly = true;
+			this.MainList.RowHeadersVisible = false;
+			this.MainList.RowTemplate.Height = 23;
+			this.MainList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.MainList.Size = new System.Drawing.Size(776, 247);
+			this.MainList.StandardTab = true;
+			this.MainList.TabIndex = 2;
+			// 
+			// Column1
+			// 
+			this.Column1.HeaderText = "Column1";
+			this.Column1.Name = "Column1";
+			this.Column1.ReadOnly = true;
+			// 
+			// Column2
+			// 
+			this.Column2.HeaderText = "Column2";
+			this.Column2.Name = "Column2";
+			this.Column2.ReadOnly = true;
+			// 
+			// Column3
+			// 
+			this.Column3.HeaderText = "Column3";
+			this.Column3.Name = "Column3";
+			this.Column3.ReadOnly = true;
+			// 
+			// Column4
+			// 
+			this.Column4.HeaderText = "Column4";
+			this.Column4.Name = "Column4";
+			this.Column4.ReadOnly = true;
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.button4);
+			this.groupBox1.Controls.Add(this.RecordWay2);
+			this.groupBox1.Controls.Add(this.RecordWay1);
 			this.groupBox1.Controls.Add(this.radioButton4);
 			this.groupBox1.Controls.Add(this.radioButton3);
 			this.groupBox1.Controls.Add(this.radioButton2);
@@ -272,10 +375,45 @@
 			this.groupBox1.Controls.Add(this.RecordDirectory);
 			this.groupBox1.Location = new System.Drawing.Point(8, 6);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(776, 75);
+			this.groupBox1.Size = new System.Drawing.Size(776, 94);
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "下次录制时生效";
+			// 
+			// button4
+			// 
+			this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.button4.Location = new System.Drawing.Point(670, 47);
+			this.button4.Name = "button4";
+			this.button4.Size = new System.Drawing.Size(100, 23);
+			this.button4.TabIndex = 8;
+			this.button4.Text = "刷新直播间状态";
+			this.button4.UseVisualStyleBackColor = true;
+			this.button4.Click += new System.EventHandler(this.button4_Click);
+			// 
+			// RecordWay2
+			// 
+			this.RecordWay2.AutoSize = true;
+			this.RecordWay2.Checked = true;
+			this.RecordWay2.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.RecordWay2.Location = new System.Drawing.Point(72, 69);
+			this.RecordWay2.Name = "RecordWay2";
+			this.RecordWay2.Size = new System.Drawing.Size(72, 16);
+			this.RecordWay2.TabIndex = 7;
+			this.RecordWay2.Text = "原生下载";
+			this.RecordWay2.UseVisualStyleBackColor = true;
+			// 
+			// RecordWay1
+			// 
+			this.RecordWay1.AutoSize = true;
+			this.RecordWay1.Checked = true;
+			this.RecordWay1.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.RecordWay1.Location = new System.Drawing.Point(6, 69);
+			this.RecordWay1.Name = "RecordWay1";
+			this.RecordWay1.Size = new System.Drawing.Size(60, 16);
+			this.RecordWay1.TabIndex = 6;
+			this.RecordWay1.Text = "FFmpeg";
+			this.RecordWay1.UseVisualStyleBackColor = true;
 			// 
 			// radioButton4
 			// 
@@ -324,7 +462,7 @@
 			this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.button2.Location = new System.Drawing.Point(695, 20);
 			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(75, 23);
+			this.button2.Size = new System.Drawing.Size(75, 21);
 			this.button2.TabIndex = 1;
 			this.button2.Text = "选择";
 			this.button2.UseVisualStyleBackColor = true;
@@ -345,24 +483,11 @@
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
 			// 
-			// doubleBufferDataGridView1
+			// Column5
 			// 
-			this.doubleBufferDataGridView1.AllowUserToAddRows = false;
-			this.doubleBufferDataGridView1.AllowUserToDeleteRows = false;
-			this.doubleBufferDataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.doubleBufferDataGridView1.BackgroundColor = System.Drawing.SystemColors.Window;
-			this.doubleBufferDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.doubleBufferDataGridView1.Location = new System.Drawing.Point(8, 113);
-			this.doubleBufferDataGridView1.MultiSelect = false;
-			this.doubleBufferDataGridView1.Name = "doubleBufferDataGridView1";
-			this.doubleBufferDataGridView1.ReadOnly = true;
-			this.doubleBufferDataGridView1.RowTemplate.Height = 23;
-			this.doubleBufferDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.doubleBufferDataGridView1.Size = new System.Drawing.Size(776, 303);
-			this.doubleBufferDataGridView1.StandardTab = true;
-			this.doubleBufferDataGridView1.TabIndex = 2;
+			this.Column5.HeaderText = "Column5";
+			this.Column5.Name = "Column5";
+			this.Column5.ReadOnly = true;
 			// 
 			// MainForm
 			// 
@@ -383,9 +508,11 @@
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
+			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.doubleBufferDataGridView1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -415,7 +542,18 @@
 		private System.Windows.Forms.RadioButton radioButton3;
 		private System.Windows.Forms.RadioButton radioButton2;
 		private System.Windows.Forms.RadioButton radioButton1;
-		private Controls.DoubleBufferDataGridView doubleBufferDataGridView1;
+		private Controls.DoubleBufferDataGridView MainList;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.CheckBox RecordWay2;
+		private System.Windows.Forms.CheckBox RecordWay1;
+		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.TextBox NewRoomId;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+		private System.Windows.Forms.Button button4;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
 	}
 }
 

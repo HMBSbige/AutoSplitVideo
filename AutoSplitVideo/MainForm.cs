@@ -1,11 +1,16 @@
-﻿using AutoSplitVideo.Properties;
+﻿using AutoSplitVideo.Collections;
+using AutoSplitVideo.Properties;
 using AutoSplitVideo.Utils;
 using MediaToolkit;
 using MediaToolkit.Model;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -25,6 +30,8 @@ namespace AutoSplitVideo
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
+		private const int Interval = 5 * 1000;
+
 		#region MainForm
 
 		private void MainForm_Load(object sender, EventArgs e)
@@ -33,6 +40,26 @@ namespace AutoSplitVideo
 			HintTextBox.SetCueText(OutputVideoPath, @"输出路径");
 			HintTextBox.SetCueText(RecordDirectory, @"录播输出路径");
 			RecordDirectory.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+
+			LoadMainList();
+		}
+
+		private void LoadMainList()
+		{
+			MainList.AutoGenerateColumns = false;
+			MainList.DataSource = Table;
+
+			MainList.Columns[0].HeaderText = @"房间号";
+			MainList.Columns[1].HeaderText = @"主播";
+			MainList.Columns[2].HeaderText = @"直播状态";
+			MainList.Columns[3].HeaderText = @"直播标题";
+			MainList.Columns[4].HeaderText = @"录制状态";
+
+			MainList.Columns[0].DataPropertyName = @"RealRoomID";
+			MainList.Columns[1].DataPropertyName = @"AnchorName";
+			MainList.Columns[2].DataPropertyName = @"IsLive";
+			MainList.Columns[3].DataPropertyName = @"Title";
+			MainList.Columns[4].DataPropertyName = @"IsRecording";
 		}
 
 		private void MainForm_Resize(object sender, EventArgs e)
@@ -52,13 +79,7 @@ namespace AutoSplitVideo
 			SetControlEnable(false);
 			var runTask = SplitTask(InputVideoPath.Text, OutputVideoPath.Text, checkBox1.Checked);
 			runTask.Start();
-			runTask.ContinueWith(task =>
-			{
-				BeginInvoke(new Action(() =>
-				{
-					SetControlEnable(true);
-				}));
-			});
+			runTask.ContinueWith(task => { BeginInvoke(new Action(() => { SetControlEnable(true); })); });
 		}
 
 		private void ShowVideoInfo(string path)
@@ -103,6 +124,7 @@ namespace AutoSplitVideo
 			{
 				return;
 			}
+
 			RecordDirectory.Text = dir;
 		}
 
@@ -128,6 +150,7 @@ namespace AutoSplitVideo
 				{
 					i = progressBar.Maximum;
 				}
+
 				progressBar.Value = i;
 			}));
 		}
@@ -247,8 +270,6 @@ namespace AutoSplitVideo
 		{
 			return new Task(() =>
 			{
-				//try
-				//{
 				ShowVideoInfo(inputVideoPath);
 				SetProgressBar(0);
 				using (var engine = new Engine())
@@ -312,26 +333,122 @@ namespace AutoSplitVideo
 
 				SetProgressBar(100);
 				MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				//}
-				//catch (Exception ex)
-				//{
-				//	MessageBox.Show(ex.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				//}
 			});
 		}
 
-		private Task FFmpegRecordTask(string url, string path)
+		private async Task CheckRoomStatus(Rooms room, CancellationTokenSource tokenSource)
 		{
-			return new Task(() =>
+			await Task.Run(async () =>
 			{
-				using (var engine = new Engine())
+				while (true)
 				{
-					engine.CustomCommand($@"-y -i ""{url}"" ""{path}""");
+					if (!room.IsRecording)
+					{
+						await room.Refresh().ContinueWith(task =>
+						{
+							if (!room.IsRecording && room.IsLive)
+							{
+								room.IsRecording = true;
+								var urls = Task.Run(async () => await room.GetLiveUrl()).Result.ToArray();
+								var path = $@"D:\Downloads\test_{room.RealRoomID}.flv";
+								//var instance = new HttpDownLoad(urls[0], path, true);
+								//instance.Start().ContinueWith(task2 =>
+								//{
+								//	room.IsRecording = false;
+								//}).Wait();
+								Util.FFmpegRecordTask(urls[0], path, tokenSource).ContinueWith(task2 =>
+								{
+									room.IsRecording = false;
+								}).Wait();
+							}
+						}, tokenSource.Token);
+					}
+
+					await Task.Delay(Interval);
 				}
+			}, tokenSource.Token).ContinueWith(tt =>
+			{
+				//TODO
+				Debug.WriteLine($@"STOP {room.RealRoomID}");
 			});
 		}
 
 		#endregion
 
+		#region Data
+
+		private readonly BindingCollection<Rooms> Table = new BindingCollection<Rooms>();
+		private readonly ConcurrentList<Rooms> _table = new ConcurrentList<Rooms>();
+		private readonly Dictionary<long, CancellationTokenSource> _recordTasks = new Dictionary<long, CancellationTokenSource>();
+
+		#endregion
+
+		#region 录播
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			if (long.TryParse(NewRoomId.Text, out var roomId))
+			{
+				AddRoom(roomId);
+			}
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			//RefreshRooms();
+			RemoveRoom(23058);
+		}
+
+		private void AddRoom(long roomId)
+		{
+			var room = new Rooms(roomId);
+			room.Refresh().ContinueWith(task =>
+			{
+				if (task.IsFaulted)
+				{
+					MessageBox.Show($@"添加房间 {roomId} 失败", @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+				MainList.Invoke(new Action(() =>
+				{
+					if (Table.All(x => x.RealRoomID != room.RealRoomID))
+					{
+						_table.Add(room);
+						Table.Add(room);
+						var cts = new CancellationTokenSource();
+						_recordTasks.Add(room.RealRoomID, cts);
+						CheckRoomStatus(room, cts);
+					}
+				}));
+			});
+		}
+
+		private async void RefreshRooms()
+		{
+			await Task.Run(() =>
+			{
+				Parallel.ForEach(_table, async room =>
+				{
+					await room.Refresh();
+				});
+			});
+		}
+
+		private void RemoveRoom(long roomId)
+		{
+			foreach (var x in Table)
+			{
+				if (x.RealRoomID == roomId)
+				{
+					_table.Remove(x);
+					Table.Remove(x);
+					_recordTasks[x.RealRoomID].Cancel();
+					_recordTasks.Remove(x.RealRoomID);
+					break;
+				}
+			}
+		}
+
+		#endregion
 	}
 }

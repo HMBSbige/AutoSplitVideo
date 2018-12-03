@@ -1,7 +1,10 @@
-﻿using System;
+﻿using MediaToolkit;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoSplitVideo.Utils
@@ -80,6 +83,42 @@ namespace AutoSplitVideo.Utils
 					// ignored
 				}
 			});
+		}
+
+		public static async Task FFmpegRecordTask(string url, string path, CancellationTokenSource cts)
+		{
+			await Task.Run(() =>
+			{
+				var engine = new Engine();
+
+				Task.Run(() =>
+				{
+					while (true)
+					{
+						try
+						{
+							cts.Token.ThrowIfCancellationRequested();
+						}
+						catch (OperationCanceledException)
+						{
+							engine.Dispose();
+							return;
+						}
+						Thread.Sleep(1000);
+					}
+				}, cts.Token);
+
+				try
+				{
+					engine.CustomCommand($@"-y -i ""{url}"" -c:v copy -c:a copy ""{path}""");
+					cts.Cancel();
+				}
+				catch
+				{
+					// ignored
+				}
+
+			}, cts.Token);
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace AutoSplitVideo
 			return resultStr;
 		}
 
-		public BilibiliLiveRecorder(int roomId)
+		public BilibiliLiveRecorder(long roomId)
 		{
 			_roomId = roomId;
 		}
