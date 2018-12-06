@@ -1,4 +1,5 @@
-﻿using AutoSplitVideo.Utils;
+﻿using AutoSplitVideo.Model;
+using AutoSplitVideo.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace AutoSplitVideo.Tests.Utils
 
 			recorder.Refresh().Wait();
 
-			var urls = Task.Run(async () => await recorder.GetLiveUrl()).Result.ToArray();
+			var urls = Task.Run(recorder.GetLiveUrl).Result.ToArray();
 			var urlNumber = urls.Length;
 			Assert.IsTrue(urlNumber > 1);
 

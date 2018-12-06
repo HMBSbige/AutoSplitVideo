@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -61,7 +62,7 @@ namespace AutoSplitVideo.Utils
 
 		private static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
 		{
-			if (action == null) throw new ArgumentNullException(@"action");
+			if (action == null) throw new ArgumentNullException(nameof(action));
 
 			foreach (var t in collection) action(t);
 		}
@@ -72,7 +73,7 @@ namespace AutoSplitVideo.Utils
 			{
 				try
 				{
-					if (process.Parent()?.ProcessName == Process.GetCurrentProcess().ProcessName)
+					if (process.Parent()?.Id == Process.GetCurrentProcess().Id)
 					{
 						process.Kill();
 						process.WaitForExit();
@@ -90,28 +91,21 @@ namespace AutoSplitVideo.Utils
 			await Task.Run(() =>
 			{
 				var engine = new Engine();
+				var ctsEndTask = new CancellationTokenSource();
 
-				Task.Run(() =>
+				cts.Token.Register(() =>
 				{
-					while (true)
+					if (!ctsEndTask.IsCancellationRequested)
 					{
-						try
-						{
-							cts.Token.ThrowIfCancellationRequested();
-						}
-						catch (OperationCanceledException)
-						{
-							engine.Dispose();
-							return;
-						}
-						Thread.Sleep(1000);
+						ctsEndTask.Cancel();
 					}
-				}, cts.Token);
+				});
+				ctsEndTask.Token.Register(() => { engine.Dispose(); });
 
 				try
 				{
 					engine.CustomCommand($@"-y -i ""{url}"" -c:v copy -c:a copy ""{path}""");
-					cts.Cancel();
+					ctsEndTask.Cancel();
 				}
 				catch
 				{
@@ -119,6 +113,25 @@ namespace AutoSplitVideo.Utils
 				}
 
 			}, cts.Token);
+		}
+
+		public static IEnumerable<long> ToListInt(this string str)
+		{
+			var s = str.Split(',');
+			var res = new List<long>();
+			foreach (var longS in s)
+			{
+				if (long.TryParse(longS, out var l))
+				{
+					res.Add(l);
+				}
+			}
+			return res;
+		}
+
+		public static string ToStr(this IEnumerable<long> list)
+		{
+			return string.Join(@",", list.Select(l => Convert.ToString(l)));
 		}
 	}
 }

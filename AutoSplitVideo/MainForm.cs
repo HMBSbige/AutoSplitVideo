@@ -1,6 +1,9 @@
 ﻿using AutoSplitVideo.Collections;
+using AutoSplitVideo.Controls;
+using AutoSplitVideo.Model;
 using AutoSplitVideo.Properties;
 using AutoSplitVideo.Utils;
+using AutoSplitVideo.ViewModel;
 using MediaToolkit;
 using MediaToolkit.Model;
 using System;
@@ -9,6 +12,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,14 +27,18 @@ namespace AutoSplitVideo
 			InitializeComponent();
 			Icon = Resources.Asaki;
 			notifyIcon1.Icon = Icon;
+			_config.Load();
 		}
+
+		private static string ExeName => Assembly.GetExecutingAssembly().GetName().Name;
+		private readonly AppConfig _config = new AppConfig($@".\{ExeName}.cfg");
 
 		private FormWindowState DefaultState = FormWindowState.Normal;
 
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
-		private const int Interval = 5 * 1000;
+		private const int Interval = 15 * 1000;
 
 		#region MainForm
 
@@ -38,10 +46,39 @@ namespace AutoSplitVideo
 		{
 			HintTextBox.SetCueText(InputVideoPath, @"视频路径");
 			HintTextBox.SetCueText(OutputVideoPath, @"输出路径");
-			HintTextBox.SetCueText(RecordDirectory, @"录播输出路径");
-			RecordDirectory.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+			LoadConfig();
+			if (!Directory.Exists(RecordDirectory.Text))
+			{
+				RecordDirectory.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+			}
 
 			LoadMainList();
+		}
+
+		private void LoadConfig()
+		{
+			tabControl1.SelectedIndex = _config.TableIndex;
+			RecordDirectory.Text = _config.OutputPath;
+			switch (_config.StreamUrlIndex)
+			{
+				case 0:
+					radioButton1.Checked = true;
+					break;
+				case 1:
+					radioButton2.Checked = true;
+					break;
+				case 2:
+					radioButton3.Checked = true;
+					break;
+				case 3:
+					radioButton4.Checked = true;
+					break;
+			}
+
+			foreach (var roomId in _config.Rooms)
+			{
+				AddRoom(roomId);
+			}
 		}
 
 		private void LoadMainList()
@@ -51,15 +88,15 @@ namespace AutoSplitVideo
 
 			MainList.Columns[0].HeaderText = @"房间号";
 			MainList.Columns[1].HeaderText = @"主播";
-			MainList.Columns[2].HeaderText = @"直播状态";
-			MainList.Columns[3].HeaderText = @"直播标题";
+			MainList.Columns[2].HeaderText = @"直播标题";
+			MainList.Columns[3].HeaderText = @"直播状态";
 			MainList.Columns[4].HeaderText = @"录制状态";
 
 			MainList.Columns[0].DataPropertyName = @"RealRoomID";
 			MainList.Columns[1].DataPropertyName = @"AnchorName";
-			MainList.Columns[2].DataPropertyName = @"IsLive";
-			MainList.Columns[3].DataPropertyName = @"Title";
-			MainList.Columns[4].DataPropertyName = @"IsRecording";
+			MainList.Columns[2].DataPropertyName = @"Title";
+			MainList.Columns[3].DataPropertyName = @"LiveStatus";
+			MainList.Columns[4].DataPropertyName = @"RecordingStatus";
 		}
 
 		private void MainForm_Resize(object sender, EventArgs e)
@@ -81,6 +118,21 @@ namespace AutoSplitVideo
 			runTask.Start();
 			runTask.ContinueWith(task => { BeginInvoke(new Action(() => { SetControlEnable(true); })); });
 		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			var dir = Util.SelectPath();
+			if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir))
+			{
+				return;
+			}
+
+			RecordDirectory.Text = dir;
+		}
+
+		#endregion
+
+		#region VideoInfo
 
 		private void ShowVideoInfo(string path)
 		{
@@ -117,17 +169,6 @@ namespace AutoSplitVideo
 			infoTextBox.Invoke(new Action(() => { infoTextBox.Text = sb.ToString(); }));
 		}
 
-		private void button2_Click(object sender, EventArgs e)
-		{
-			var dir = Util.SelectPath();
-			if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir))
-			{
-				return;
-			}
-
-			RecordDirectory.Text = dir;
-		}
-
 		#endregion
 
 		#region 设置控件状态
@@ -153,6 +194,42 @@ namespace AutoSplitVideo
 
 				progressBar.Value = i;
 			}));
+		}
+
+		private void MainList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			if (e.ColumnIndex == 3 || e.ColumnIndex == 4)
+			{
+				var cell = MainList.Rows[e.RowIndex].Cells[e.ColumnIndex];
+				if (cell.Value is string oldValue)
+				{
+					cell.Style.ForeColor = oldValue.EndsWith(@"...") ? Color.Green : Color.Red;
+				}
+			}
+		}
+
+		private void List_MouseDown(object sender, MouseEventArgs e)
+		{
+			var dgv = (DoubleBufferedDataGridView)sender;
+
+			var rowIndex = dgv.HitTest(e.X, e.Y).RowIndex;
+
+			if (rowIndex == -1)
+			{
+				dgv.ClearSelection();
+			}
+		}
+
+		private void MainList_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			var rows = MainList.SelectedRows;
+			if (rows.Count == 1)
+			{
+				if (rows[0].Cells[0].Value is long value)
+				{
+					Process.Start($@"https://live.bilibili.com/{value}");
+				}
+			}
 		}
 
 		#endregion
@@ -211,8 +288,19 @@ namespace AutoSplitVideo
 
 		#region 程序退出
 
+		private void SaveConfig()
+		{
+			_config.TableIndex = tabControl1.SelectedIndex;
+			_config.OutputPath = RecordDirectory.Text;
+			_config.StreamUrlIndex = GetStreamUrlIndex();
+			_config.Rooms = _table.Select(room => room.RealRoomID);
+			_config.Save();
+		}
+
 		private void Exit()
 		{
+			SaveConfig();
+			StopAllRecordTasks();
 			Util.KillFFmpeg();
 			Dispose();
 			Environment.Exit(0);
@@ -220,22 +308,8 @@ namespace AutoSplitVideo
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (e.CloseReason == CloseReason.UserClosing)
-			{
-				var dr = MessageBox.Show(@"是否退出？", @"是否退出？", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-				if (dr == DialogResult.Yes)
-				{
-					Exit();
-				}
-				else
-				{
-					e.Cancel = true;
-				}
-			}
-			else
-			{
-				Exit();
-			}
+			TriggerMainFormDisplay();
+			e.Cancel = true;
 		}
 
 		#endregion
@@ -259,12 +333,25 @@ namespace AutoSplitVideo
 
 		private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
 		{
+			if (e.Button == MouseButtons.Left)
+			{
+				TriggerMainFormDisplay();
+			}
+		}
+
+		private void ShowHideMenuItem_Click(object sender, EventArgs e)
+		{
 			TriggerMainFormDisplay();
+		}
+
+		private void ExitMenuItem_Click(object sender, EventArgs e)
+		{
+			Exit();
 		}
 
 		#endregion
 
-		#region Task
+		#region Async、Task
 
 		private Task SplitTask(string inputVideoPath, string outputDirectoryPath, bool deleteMp4)
 		{
@@ -336,46 +423,68 @@ namespace AutoSplitVideo
 			});
 		}
 
-		private async Task CheckRoomStatus(Rooms room, CancellationTokenSource tokenSource)
+		private async void CheckRoomStatus(Rooms room, CancellationTokenSource tokenSource)
 		{
 			await Task.Run(async () =>
 			{
-				while (true)
+				while (!tokenSource.Token.IsCancellationRequested)
 				{
-					if (!room.IsRecording)
+					await room.Refresh().ContinueWith(task =>
 					{
-						await room.Refresh().ContinueWith(task =>
+						if (!room.IsRecording && room.IsLive)
 						{
-							if (!room.IsRecording && room.IsLive)
+							room.IsRecording = true;
+							RecordTask(room, tokenSource).ContinueWith(task2 =>
 							{
-								room.IsRecording = true;
-								var urls = Task.Run(async () => await room.GetLiveUrl()).Result.ToArray();
-								var path = $@"D:\Downloads\test_{room.RealRoomID}.flv";
-								//var instance = new HttpDownLoad(urls[0], path, true);
-								//instance.Start().ContinueWith(task2 =>
-								//{
-								//	room.IsRecording = false;
-								//}).Wait();
-								Util.FFmpegRecordTask(urls[0], path, tokenSource).ContinueWith(task2 =>
-								{
-									room.IsRecording = false;
-								}).Wait();
-							}
-						}, tokenSource.Token);
-					}
-
-					await Task.Delay(Interval);
+								room.IsRecording = false;
+							}).Wait();
+						}
+						else
+						{
+							Debug.WriteLine($@"No live...Wait {Interval} ms");
+							Task.Delay(Interval).Wait();
+						}
+					});
 				}
-			}, tokenSource.Token).ContinueWith(tt =>
-			{
-				//TODO
-				Debug.WriteLine($@"STOP {room.RealRoomID}");
 			});
+		}
+
+		private async Task RecordTask(Rooms room, CancellationTokenSource cts)
+		{
+			var rootPath = RecordDirectory.Text;
+			var n = GetStreamUrlIndex();//0,1,2,3
+			var dir = Path.Combine(rootPath, $@"{room.RealRoomID}");
+			if (!Directory.Exists(dir))
+			{
+				var dirInfo = Directory.CreateDirectory(dir);
+				if (!dirInfo.Exists)
+				{
+					throw new Exception();
+				}
+			}
+
+			var iEnumerableUrls = await room.GetLiveUrl();
+			var urls = iEnumerableUrls.ToArray();
+			if (urls.Length == 0)
+			{
+				throw new Exception();
+			}
+
+			if (n >= urls.Length)
+			{
+				n = 0;
+			}
+
+			var url = urls[n];
+
+			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}.flv");
+
+			await Util.FFmpegRecordTask(url, path, cts);
 		}
 
 		#endregion
 
-		#region Data
+		#region DataForRecord
 
 		private readonly BindingCollection<Rooms> Table = new BindingCollection<Rooms>();
 		private readonly ConcurrentList<Rooms> _table = new ConcurrentList<Rooms>();
@@ -385,18 +494,50 @@ namespace AutoSplitVideo
 
 		#region 录播
 
+		private void NewRoomId_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				button3.PerformClick();
+				e.SuppressKeyPress = true;
+			}
+		}
+
 		private void button3_Click(object sender, EventArgs e)
 		{
 			if (long.TryParse(NewRoomId.Text, out var roomId))
 			{
 				AddRoom(roomId);
 			}
+			else
+			{
+				MessageBox.Show(@"房间号错误", @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
-		private void button4_Click(object sender, EventArgs e)
+		private int GetStreamUrlIndex()
 		{
-			//RefreshRooms();
-			RemoveRoom(23058);
+			if (radioButton1.Checked)
+			{
+				return 0;
+			}
+
+			if (radioButton2.Checked)
+			{
+				return 1;
+			}
+
+			if (radioButton3.Checked)
+			{
+				return 2;
+			}
+
+			if (radioButton4.Checked)
+			{
+				return 3;
+			}
+
+			return 0;
 		}
 
 		private void AddRoom(long roomId)
@@ -406,21 +547,34 @@ namespace AutoSplitVideo
 			{
 				if (task.IsFaulted)
 				{
-					MessageBox.Show($@"添加房间 {roomId} 失败", @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(room.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 				}
 				MainList.Invoke(new Action(() =>
 				{
-					if (Table.All(x => x.RealRoomID != room.RealRoomID))
+					if (_table.All(x => x.RealRoomID != room.RealRoomID))
 					{
 						_table.Add(room);
 						Table.Add(room);
-						var cts = new CancellationTokenSource();
-						_recordTasks.Add(room.RealRoomID, cts);
-						CheckRoomStatus(room, cts);
+
+						AddCheckRoomStatusTask(room);
+
+						NewRoomId.Clear();
+					}
+					else
+					{
+						MessageBox.Show($@"已添加房间 {room.RealRoomID}", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
 				}));
 			});
+		}
+
+		private void AddCheckRoomStatusTask(Rooms room)
+		{
+			Debug.WriteLine($@"Add room {room.RealRoomID} for recording");
+			var cts = new CancellationTokenSource();
+			_recordTasks.Add(room.RealRoomID, cts);
+			CheckRoomStatus(room, cts);
 		}
 
 		private async void RefreshRooms()
@@ -434,21 +588,110 @@ namespace AutoSplitVideo
 			});
 		}
 
+		#endregion
+
+		#region 直播间控制
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			StopAllRecordTasks();
+		}
+
+		private void button5_Click(object sender, EventArgs e)
+		{
+			StartAllRecordTasks();
+		}
+
+		private void button6_Click(object sender, EventArgs e)
+		{
+			var roomId = GetSelectedRoomId();
+			if (roomId > 0 && !_recordTasks.ContainsKey(roomId))
+			{
+				foreach (var room in _table)
+				{
+					if (room.RealRoomID == roomId)
+					{
+						AddCheckRoomStatusTask(room);
+					}
+				}
+			}
+		}
+
+		private void button7_Click(object sender, EventArgs e)
+		{
+			var roomId = GetSelectedRoomId();
+			if (roomId > 0 && _recordTasks.TryGetValue(roomId, out var cts))
+			{
+				cts.Cancel();
+				_recordTasks.Remove(roomId);
+			}
+		}
+
+		private void button8_Click(object sender, EventArgs e)
+		{
+			var roomId = GetSelectedRoomId();
+			if (roomId > 0)
+			{
+				RemoveRoom(roomId);
+			}
+		}
+
+		private void StopAllRecordTasks()
+		{
+			foreach (var task in _recordTasks)
+			{
+				if (!task.Value.IsCancellationRequested)
+				{
+					task.Value.Cancel();
+				}
+			}
+
+			_recordTasks.Clear();
+		}
+
+		private void StartAllRecordTasks()
+		{
+			foreach (var room in _table)
+			{
+				if (!_recordTasks.ContainsKey(room.RealRoomID))
+				{
+					AddCheckRoomStatusTask(room);
+				}
+			}
+		}
+
+		private long GetSelectedRoomId()
+		{
+			var rows = MainList.SelectedRows;
+			if (rows.Count == 1)
+			{
+				if (long.TryParse(rows[0].Cells[0].Value.ToString(), out var roomId))
+				{
+					return roomId;
+				}
+			}
+			return 0;
+		}
+
 		private void RemoveRoom(long roomId)
 		{
-			foreach (var x in Table)
+			foreach (var x in _table)
 			{
 				if (x.RealRoomID == roomId)
 				{
 					_table.Remove(x);
 					Table.Remove(x);
-					_recordTasks[x.RealRoomID].Cancel();
-					_recordTasks.Remove(x.RealRoomID);
+					if (_recordTasks.TryGetValue(x.RealRoomID, out var cts))
+					{
+						cts.Cancel();
+						_recordTasks.Remove(x.RealRoomID);
+					}
 					break;
 				}
 			}
 		}
 
 		#endregion
+
 	}
 }

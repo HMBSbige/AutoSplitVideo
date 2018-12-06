@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AutoSplitVideo.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace AutoSplitVideo.Tests
 
 			recorder.Refresh().Wait();
 
-			var name = Task.Run(async () => await recorder.GetAnchorName()).Result;
+			var name = Task.Run(recorder.GetAnchorName).Result;
 			Assert.AreEqual(name, @"神奇陆夫人");
 		}
 
@@ -47,7 +48,7 @@ namespace AutoSplitVideo.Tests
 
 			recorder.Refresh().Wait();
 
-			var urls = Task.Run(async () => await recorder.GetLiveUrl()).Result.ToArray();
+			var urls = Task.Run(recorder.GetLiveUrl).Result.ToArray();
 			var urlNumber = urls.Length;
 			Assert.IsTrue(urlNumber > 1);
 		}

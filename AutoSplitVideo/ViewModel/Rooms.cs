@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using AutoSplitVideo.Model;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace AutoSplitVideo.Collections
+namespace AutoSplitVideo.ViewModel
 {
 	public class Rooms : INotifyPropertyChanged
 	{
@@ -33,6 +34,8 @@ namespace AutoSplitVideo.Collections
 		public long RealRoomID => _recorder.RealRoomId;
 		public string Title => _recorder.Title;
 		public bool IsLive => _recorder.IsLive;
+		public string LiveStatus => _recorder.IsLive ? @"直播中..." : @"闲置";
+		public string Message => _recorder.Message;
 
 		public string AnchorName
 		{
@@ -56,9 +59,12 @@ namespace AutoSplitVideo.Collections
 				{
 					_isRecording = value;
 					NotifyPropertyChanged();
+					NotifyPropertyChanged(nameof(RecordingStatus));
 				}
 			}
 		}
+
+		public string RecordingStatus => IsRecording ? @"录制中..." : @"等待开播";
 
 		#endregion
 
@@ -68,6 +74,7 @@ namespace AutoSplitVideo.Collections
 			NotifyPropertyChanged(nameof(RealRoomID));
 			NotifyPropertyChanged(nameof(Title));
 			NotifyPropertyChanged(nameof(IsLive));
+			NotifyPropertyChanged(nameof(LiveStatus));
 			AnchorName = await _recorder.GetAnchorName();
 		}
 

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace AutoSplitVideo
+namespace AutoSplitVideo.Model
 {
 	public class BilibiliLiveRecorder
 	{
@@ -18,8 +18,10 @@ namespace AutoSplitVideo
 		public long RealRoomId = 0;
 		public string Title;
 		public bool IsLive;
+		public string Msg;
+		public string Message;
 
-		private async Task<string> Get(string uri)
+		private async Task<string> GetAsync(string uri)
 		{
 			var response = await _httpClient.GetAsync(uri);
 			response.EnsureSuccessStatusCode();
@@ -36,8 +38,11 @@ namespace AutoSplitVideo
 
 		public async Task Refresh()
 		{
-			var jsonStr = await Get(RoomInfoUrl);
+			Message = $@"房间 {RealRoomId} 信息获取失败";
+			var jsonStr = await GetAsync(RoomInfoUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);
+			Msg = o[@"msg"];
+			Message = o[@"message"];
 			RealRoomId = o[@"data"][@"room_id"];
 			Title = o[@"data"][@"title"];
 			IsLive = o[@"data"][@"live_status"] == 1;
@@ -49,7 +54,7 @@ namespace AutoSplitVideo
 			{
 				throw new ArgumentException(@"RealRoomId Wrong!");
 			}
-			var jsonStr = await Get(UserInfoUrl);
+			var jsonStr = await GetAsync(UserInfoUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);
 			return o[@"data"][@"info"][@"uname"];
 		}
@@ -60,7 +65,7 @@ namespace AutoSplitVideo
 			{
 				throw new ArgumentException(@"RealRoomId Wrong!");
 			}
-			var jsonStr = await Get(LiveAddressUrl);
+			var jsonStr = await GetAsync(LiveAddressUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);
 			var liveUrl = new List<string>();
 			foreach (var url in o[@"durl"])

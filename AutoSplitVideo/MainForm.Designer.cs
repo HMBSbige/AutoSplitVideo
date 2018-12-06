@@ -44,16 +44,22 @@
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.infoTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.button8 = new System.Windows.Forms.Button();
+			this.button7 = new System.Windows.Forms.Button();
+			this.button6 = new System.Windows.Forms.Button();
+			this.button5 = new System.Windows.Forms.Button();
+			this.button4 = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.button3 = new System.Windows.Forms.Button();
 			this.NewRoomId = new System.Windows.Forms.TextBox();
-			this.MainList = new AutoSplitVideo.Controls.DoubleBufferDataGridView();
+			this.MainList = new AutoSplitVideo.Controls.DoubleBufferedDataGridView();
 			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.button4 = new System.Windows.Forms.Button();
 			this.RecordWay2 = new System.Windows.Forms.CheckBox();
 			this.RecordWay1 = new System.Windows.Forms.CheckBox();
 			this.radioButton4 = new System.Windows.Forms.RadioButton();
@@ -63,16 +69,21 @@
 			this.button2 = new System.Windows.Forms.Button();
 			this.RecordDirectory = new System.Windows.Forms.TextBox();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.groupBox1.SuspendLayout();
+			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -262,6 +273,7 @@
 			// 
 			// tabPage3
 			// 
+			this.tabPage3.Controls.Add(this.groupBox3);
 			this.tabPage3.Controls.Add(this.groupBox2);
 			this.tabPage3.Controls.Add(this.MainList);
 			this.tabPage3.Controls.Add(this.groupBox1);
@@ -272,6 +284,74 @@
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "录播机";
 			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// groupBox3
+			// 
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.button8);
+			this.groupBox3.Controls.Add(this.button7);
+			this.groupBox3.Controls.Add(this.button6);
+			this.groupBox3.Controls.Add(this.button5);
+			this.groupBox3.Controls.Add(this.button4);
+			this.groupBox3.Location = new System.Drawing.Point(8, 169);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(776, 51);
+			this.groupBox3.TabIndex = 4;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "控制";
+			// 
+			// button8
+			// 
+			this.button8.Location = new System.Drawing.Point(168, 20);
+			this.button8.Name = "button8";
+			this.button8.Size = new System.Drawing.Size(75, 23);
+			this.button8.TabIndex = 12;
+			this.button8.Text = "移除房间";
+			this.button8.UseVisualStyleBackColor = true;
+			this.button8.Click += new System.EventHandler(this.button8_Click);
+			// 
+			// button7
+			// 
+			this.button7.Location = new System.Drawing.Point(87, 20);
+			this.button7.Name = "button7";
+			this.button7.Size = new System.Drawing.Size(75, 23);
+			this.button7.TabIndex = 11;
+			this.button7.Text = "停止录制";
+			this.button7.UseVisualStyleBackColor = true;
+			this.button7.Click += new System.EventHandler(this.button7_Click);
+			// 
+			// button6
+			// 
+			this.button6.Location = new System.Drawing.Point(6, 20);
+			this.button6.Name = "button6";
+			this.button6.Size = new System.Drawing.Size(75, 23);
+			this.button6.TabIndex = 10;
+			this.button6.Text = "开始录制";
+			this.button6.UseVisualStyleBackColor = true;
+			this.button6.Click += new System.EventHandler(this.button6_Click);
+			// 
+			// button5
+			// 
+			this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.button5.Location = new System.Drawing.Point(584, 20);
+			this.button5.Name = "button5";
+			this.button5.Size = new System.Drawing.Size(89, 23);
+			this.button5.TabIndex = 9;
+			this.button5.Text = "开始所有录制";
+			this.button5.UseVisualStyleBackColor = true;
+			this.button5.Click += new System.EventHandler(this.button5_Click);
+			// 
+			// button4
+			// 
+			this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.button4.Location = new System.Drawing.Point(681, 20);
+			this.button4.Name = "button4";
+			this.button4.Size = new System.Drawing.Size(89, 23);
+			this.button4.TabIndex = 8;
+			this.button4.Text = "停止所有录制";
+			this.button4.UseVisualStyleBackColor = true;
+			this.button4.Click += new System.EventHandler(this.button4_Click);
 			// 
 			// groupBox2
 			// 
@@ -289,9 +369,9 @@
 			// button3
 			// 
 			this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.button3.Location = new System.Drawing.Point(695, 21);
+			this.button3.Location = new System.Drawing.Point(681, 21);
 			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(75, 21);
+			this.button3.Size = new System.Drawing.Size(89, 21);
 			this.button3.TabIndex = 8;
 			this.button3.Text = "添加";
 			this.button3.UseVisualStyleBackColor = true;
@@ -303,9 +383,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.NewRoomId.Location = new System.Drawing.Point(7, 21);
 			this.NewRoomId.Name = "NewRoomId";
-			this.NewRoomId.Size = new System.Drawing.Size(682, 21);
+			this.NewRoomId.Size = new System.Drawing.Size(668, 21);
 			this.NewRoomId.TabIndex = 0;
-			this.NewRoomId.Text = "3";
+			this.NewRoomId.Text = "6154037";
+			this.NewRoomId.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NewRoomId_KeyDown);
 			// 
 			// MainList
 			// 
@@ -325,16 +406,19 @@
             this.Column3,
             this.Column4,
             this.Column5});
-			this.MainList.Location = new System.Drawing.Point(8, 169);
+			this.MainList.Location = new System.Drawing.Point(8, 226);
 			this.MainList.MultiSelect = false;
 			this.MainList.Name = "MainList";
 			this.MainList.ReadOnly = true;
 			this.MainList.RowHeadersVisible = false;
 			this.MainList.RowTemplate.Height = 23;
 			this.MainList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.MainList.Size = new System.Drawing.Size(776, 247);
+			this.MainList.Size = new System.Drawing.Size(776, 190);
 			this.MainList.StandardTab = true;
 			this.MainList.TabIndex = 2;
+			this.MainList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MainList_CellFormatting);
+			this.MainList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.MainList_CellMouseDoubleClick);
+			this.MainList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.List_MouseDown);
 			// 
 			// Column1
 			// 
@@ -360,11 +444,16 @@
 			this.Column4.Name = "Column4";
 			this.Column4.ReadOnly = true;
 			// 
+			// Column5
+			// 
+			this.Column5.HeaderText = "Column5";
+			this.Column5.Name = "Column5";
+			this.Column5.ReadOnly = true;
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.button4);
 			this.groupBox1.Controls.Add(this.RecordWay2);
 			this.groupBox1.Controls.Add(this.RecordWay1);
 			this.groupBox1.Controls.Add(this.radioButton4);
@@ -380,22 +469,10 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "下次录制时生效";
 			// 
-			// button4
-			// 
-			this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.button4.Location = new System.Drawing.Point(670, 47);
-			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(100, 23);
-			this.button4.TabIndex = 8;
-			this.button4.Text = "刷新直播间状态";
-			this.button4.UseVisualStyleBackColor = true;
-			this.button4.Click += new System.EventHandler(this.button4_Click);
-			// 
 			// RecordWay2
 			// 
 			this.RecordWay2.AutoSize = true;
-			this.RecordWay2.Checked = true;
-			this.RecordWay2.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.RecordWay2.Enabled = false;
 			this.RecordWay2.Location = new System.Drawing.Point(72, 69);
 			this.RecordWay2.Name = "RecordWay2";
 			this.RecordWay2.Size = new System.Drawing.Size(72, 16);
@@ -408,6 +485,7 @@
 			this.RecordWay1.AutoSize = true;
 			this.RecordWay1.Checked = true;
 			this.RecordWay1.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.RecordWay1.Enabled = false;
 			this.RecordWay1.Location = new System.Drawing.Point(6, 69);
 			this.RecordWay1.Name = "RecordWay1";
 			this.RecordWay1.Size = new System.Drawing.Size(60, 16);
@@ -422,7 +500,7 @@
 			this.radioButton4.Name = "radioButton4";
 			this.radioButton4.Size = new System.Drawing.Size(53, 16);
 			this.radioButton4.TabIndex = 5;
-			this.radioButton4.Text = "线路4";
+			this.radioButton4.Text = "备线3";
 			this.radioButton4.UseVisualStyleBackColor = true;
 			// 
 			// radioButton3
@@ -432,7 +510,7 @@
 			this.radioButton3.Name = "radioButton3";
 			this.radioButton3.Size = new System.Drawing.Size(53, 16);
 			this.radioButton3.TabIndex = 4;
-			this.radioButton3.Text = "线路3";
+			this.radioButton3.Text = "备线2";
 			this.radioButton3.UseVisualStyleBackColor = true;
 			// 
 			// radioButton2
@@ -442,7 +520,7 @@
 			this.radioButton2.Name = "radioButton2";
 			this.radioButton2.Size = new System.Drawing.Size(53, 16);
 			this.radioButton2.TabIndex = 3;
-			this.radioButton2.Text = "线路2";
+			this.radioButton2.Text = "备线1";
 			this.radioButton2.UseVisualStyleBackColor = true;
 			// 
 			// radioButton1
@@ -451,20 +529,20 @@
 			this.radioButton1.Checked = true;
 			this.radioButton1.Location = new System.Drawing.Point(6, 47);
 			this.radioButton1.Name = "radioButton1";
-			this.radioButton1.Size = new System.Drawing.Size(53, 16);
+			this.radioButton1.Size = new System.Drawing.Size(47, 16);
 			this.radioButton1.TabIndex = 2;
 			this.radioButton1.TabStop = true;
-			this.radioButton1.Text = "线路1";
+			this.radioButton1.Text = "主线";
 			this.radioButton1.UseVisualStyleBackColor = true;
 			// 
 			// button2
 			// 
 			this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.button2.Location = new System.Drawing.Point(695, 20);
+			this.button2.Location = new System.Drawing.Point(681, 20);
 			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(75, 21);
+			this.button2.Size = new System.Drawing.Size(89, 21);
 			this.button2.TabIndex = 1;
-			this.button2.Text = "选择";
+			this.button2.Text = "选择存储目录";
 			this.button2.UseVisualStyleBackColor = true;
 			this.button2.Click += new System.EventHandler(this.button2_Click);
 			// 
@@ -474,20 +552,44 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.RecordDirectory.Location = new System.Drawing.Point(6, 20);
 			this.RecordDirectory.Name = "RecordDirectory";
-			this.RecordDirectory.Size = new System.Drawing.Size(683, 21);
+			this.RecordDirectory.ReadOnly = true;
+			this.RecordDirectory.Size = new System.Drawing.Size(669, 21);
 			this.RecordDirectory.TabIndex = 0;
 			// 
 			// notifyIcon1
 			// 
+			this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
 			this.notifyIcon1.Text = "Asakinb!";
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
 			// 
-			// Column5
+			// contextMenuStrip1
 			// 
-			this.Column5.HeaderText = "Column5";
-			this.Column5.Name = "Column5";
-			this.Column5.ReadOnly = true;
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowHideMenuItem,
+            this.toolStripSeparator1,
+            this.ExitMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(130, 54);
+			// 
+			// ShowHideMenuItem
+			// 
+			this.ShowHideMenuItem.Name = "ShowHideMenuItem";
+			this.ShowHideMenuItem.Size = new System.Drawing.Size(129, 22);
+			this.ShowHideMenuItem.Text = "显示/隐藏";
+			this.ShowHideMenuItem.Click += new System.EventHandler(this.ShowHideMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(126, 6);
+			// 
+			// ExitMenuItem
+			// 
+			this.ExitMenuItem.Name = "ExitMenuItem";
+			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
+			this.ExitMenuItem.Text = "退出";
+			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -508,11 +610,13 @@
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
+			this.groupBox3.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this.contextMenuStrip1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -542,7 +646,7 @@
 		private System.Windows.Forms.RadioButton radioButton3;
 		private System.Windows.Forms.RadioButton radioButton2;
 		private System.Windows.Forms.RadioButton radioButton1;
-		private Controls.DoubleBufferDataGridView MainList;
+		private Controls.DoubleBufferedDataGridView MainList;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.CheckBox RecordWay2;
 		private System.Windows.Forms.CheckBox RecordWay1;
@@ -554,6 +658,15 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
 		private System.Windows.Forms.Button button4;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.Button button5;
+		private System.Windows.Forms.Button button6;
+		private System.Windows.Forms.Button button7;
+		private System.Windows.Forms.Button button8;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem ShowHideMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
 	}
 }
 

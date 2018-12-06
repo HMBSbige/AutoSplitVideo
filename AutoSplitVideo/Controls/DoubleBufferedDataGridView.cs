@@ -5,9 +5,9 @@ namespace AutoSplitVideo.Controls
 {
 	[ToolboxItem(true)]
 	[DesignerCategory(@"Code")]
-	public class DoubleBufferDataGridView : DataGridView
+	public class DoubleBufferedDataGridView : DataGridView
 	{
-		public DoubleBufferDataGridView()
+		public DoubleBufferedDataGridView()
 		{
 			AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 			CellBorderStyle = DataGridViewCellBorderStyle.Single;
