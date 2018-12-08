@@ -442,6 +442,7 @@ namespace AutoSplitVideo
 
 		private async void CheckRoomStatus(Rooms room, CancellationTokenSource tokenSource)
 		{
+			room.IsRecordTaskStarted = true;
 			await Task.Run(async () =>
 			{
 				while (!tokenSource.Token.IsCancellationRequested)
@@ -450,7 +451,6 @@ namespace AutoSplitVideo
 					{
 						if (!room.IsRecording && room.IsLive)
 						{
-							room.IsRecording = true;
 							RecordTask(room, tokenSource).ContinueWith(task2 =>
 							{
 								room.IsRecording = false;
@@ -494,8 +494,15 @@ namespace AutoSplitVideo
 
 			var url = urls[n];
 
+			var isConnected = await room.TestHttpOk(url);
+			if (!isConnected)
+			{
+				return;
+			}
+
 			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}.flv");
 
+			room.IsRecording = true;
 			await Util.FFmpegRecordTask(url, path, cts);
 		}
 
@@ -590,6 +597,7 @@ namespace AutoSplitVideo
 		{
 			Debug.WriteLine($@"Add room {room.RealRoomID} for recording");
 			var cts = new CancellationTokenSource();
+			cts.Token.Register(() => { room.IsRecordTaskStarted = false; });
 			_recordTasks.Add(room.RealRoomID, cts);
 			CheckRoomStatus(room, cts);
 		}

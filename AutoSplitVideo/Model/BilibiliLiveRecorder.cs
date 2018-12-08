@@ -31,6 +31,23 @@ namespace AutoSplitVideo.Model
 			return resultStr;
 		}
 
+		public async Task<bool> TestHttpOk(string url)
+		{
+			var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+			if (response.IsSuccessStatusCode)
+			{
+				Debug.WriteLine(response.StatusCode.ToString());
+				return true;
+			}
+			else
+			{
+				Debug.WriteLine($@"HTTP Error occurred, the status code is: {response.StatusCode}");
+				return false;
+			}
+
+		}
+
 		public BilibiliLiveRecorder(long roomId)
 		{
 			_roomId = roomId;

@@ -26,6 +26,7 @@ namespace AutoSplitVideo.ViewModel
 		private readonly BilibiliLiveRecorder _recorder;
 		private string _anchorName;
 		private bool _isRecording;
+		private bool _isRecordTaskStarted;
 
 		#endregion
 
@@ -64,7 +65,35 @@ namespace AutoSplitVideo.ViewModel
 			}
 		}
 
-		public string RecordingStatus => IsRecording ? @"录制中..." : @"等待开播";
+		public bool IsRecordTaskStarted
+		{
+			get => _isRecordTaskStarted;
+			set
+			{
+				if (value != _isRecordTaskStarted)
+				{
+					_isRecordTaskStarted = value;
+					NotifyPropertyChanged();
+					NotifyPropertyChanged(nameof(RecordingStatus));
+				}
+			}
+		}
+
+		public string RecordingStatus
+		{
+			get
+			{
+				if (!IsRecordTaskStarted)
+				{
+					return @"未启动录制";
+				}
+				if (!IsLive)
+				{
+					return @"等待开播";
+				}
+				return IsRecording ? @"录制中..." : @"正在启动录制";
+			}
+		}
 
 		#endregion
 
@@ -75,12 +104,18 @@ namespace AutoSplitVideo.ViewModel
 			NotifyPropertyChanged(nameof(Title));
 			NotifyPropertyChanged(nameof(IsLive));
 			NotifyPropertyChanged(nameof(LiveStatus));
+			NotifyPropertyChanged(nameof(RecordingStatus));
 			AnchorName = await _recorder.GetAnchorName();
 		}
 
 		public async Task<IEnumerable<string>> GetLiveUrl()
 		{
 			return await _recorder.GetLiveUrl();
+		}
+
+		public async Task<bool> TestHttpOk(string url)
+		{
+			return await _recorder.TestHttpOk(url);
 		}
 	}
 }

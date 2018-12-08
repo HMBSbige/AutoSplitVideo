@@ -136,7 +136,7 @@ namespace AutoSplitVideo.Utils
 
 		public static int RunAsAdmin(string arguments)
 		{
-			Process process = null;
+			Process process;
 			var processInfo = new ProcessStartInfo
 			{
 					Verb = "runas", FileName = Application.ExecutablePath, Arguments = arguments
