@@ -12,7 +12,7 @@ namespace AutoSplitVideo.Model
 		private string UserInfoUrl => $@"https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid={RealRoomId}";
 		private string LiveAddressUrl => $@"https://api.live.bilibili.com/api/playurl?cid={RealRoomId}&otype=json&quality=0&platform=web";
 
-		private readonly HttpClient _httpClient = new HttpClient();
+		private HttpClient _httpClient;
 
 		private readonly long _roomId;
 		public long RealRoomId = 0;
@@ -51,10 +51,12 @@ namespace AutoSplitVideo.Model
 		public BilibiliLiveRecorder(long roomId)
 		{
 			_roomId = roomId;
+			_httpClient = new HttpClient();
 		}
 
 		public async Task Refresh()
 		{
+			_httpClient = new HttpClient();
 			Message = $@"房间 {RealRoomId} 信息获取失败";
 			var jsonStr = await GetAsync(RoomInfoUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);

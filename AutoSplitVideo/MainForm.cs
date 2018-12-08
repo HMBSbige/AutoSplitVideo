@@ -451,6 +451,7 @@ namespace AutoSplitVideo
 					{
 						if (!room.IsRecording && room.IsLive)
 						{
+							Debug.WriteLine($@"{room.RealRoomID}:Live");
 							RecordTask(room, tokenSource).ContinueWith(task2 =>
 							{
 								room.IsRecording = false;
@@ -458,7 +459,7 @@ namespace AutoSplitVideo
 						}
 						else
 						{
-							Debug.WriteLine($@"No live...Wait {Interval} ms");
+							Debug.WriteLine($@"{room.RealRoomID}:No live...Wait {Interval} ms");
 							Task.Delay(Interval).Wait();
 						}
 					});
@@ -476,7 +477,7 @@ namespace AutoSplitVideo
 				var dirInfo = Directory.CreateDirectory(dir);
 				if (!dirInfo.Exists)
 				{
-					throw new Exception();
+					throw new Exception($@"{room.RealRoomID}:存储目录创建失败");
 				}
 			}
 
@@ -484,7 +485,7 @@ namespace AutoSplitVideo
 			var urls = iEnumerableUrls.ToArray();
 			if (urls.Length == 0)
 			{
-				throw new Exception();
+				throw new Exception($@"{room.RealRoomID}:直播流获取失败");
 			}
 
 			if (n >= urls.Length)
@@ -497,8 +498,12 @@ namespace AutoSplitVideo
 			var isConnected = await room.TestHttpOk(url);
 			if (!isConnected)
 			{
+				Debug.WriteLine($@"{room.RealRoomID}:直播流错误...Wait {Interval} ms");
+				await Task.Delay(Interval);
 				return;
 			}
+
+			Debug.WriteLine($@"{room.RealRoomID}:录制开始");
 
 			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}.flv");
 
