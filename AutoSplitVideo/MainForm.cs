@@ -1,4 +1,5 @@
 ﻿using AutoSplitVideo.Collections;
+using AutoSplitVideo.Controller;
 using AutoSplitVideo.Controls;
 using AutoSplitVideo.Model;
 using AutoSplitVideo.Properties;
@@ -25,9 +26,9 @@ namespace AutoSplitVideo
 		public MainForm()
 		{
 			InitializeComponent();
+			_config.Load();
 			Icon = Resources.Asaki;
 			notifyIcon1.Icon = Icon;
-			_config.Load();
 		}
 
 		private static string ExeName => Assembly.GetExecutingAssembly().GetName().Name;
@@ -38,7 +39,7 @@ namespace AutoSplitVideo
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
-		private const int Interval = 15 * 1000;
+		private const int Interval = 10 * 1000;
 
 		#region MainForm
 
@@ -52,7 +53,19 @@ namespace AutoSplitVideo
 				RecordDirectory.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 			}
 
+			AutoStartupCheckBox.Checked = AutoStartup.Check();
+			AutoStartupCheckBox.Click += AutoStartupCheckBox_CheckedChanged;
+
 			LoadMainList();
+		}
+
+		private void AutoStartupCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (!AutoStartup.Set(AutoStartupCheckBox.Checked))
+			{
+				MessageBox.Show(@"设置失败", @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				AutoStartupCheckBox.Checked = !AutoStartupCheckBox.Checked;
+			}
 		}
 
 		private void LoadConfig()
@@ -299,11 +312,15 @@ namespace AutoSplitVideo
 
 		private void Exit()
 		{
-			SaveConfig();
-			StopAllRecordTasks();
-			Util.KillFFmpeg();
-			Dispose();
-			Environment.Exit(0);
+			var dr = MessageBox.Show($@"确定退出 {ExeName}？", @"退出", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+			if (dr == DialogResult.Yes)
+			{
+				SaveConfig();
+				StopAllRecordTasks();
+				Util.KillFFmpeg();
+				Dispose();
+				Environment.Exit(0);
+			}
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

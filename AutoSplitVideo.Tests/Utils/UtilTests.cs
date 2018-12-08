@@ -1,4 +1,5 @@
-﻿using AutoSplitVideo.Utils;
+﻿using AutoSplitVideo.Controller;
+using AutoSplitVideo.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AutoSplitVideo.Tests.Utils

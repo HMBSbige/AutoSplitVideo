@@ -133,5 +133,28 @@ namespace AutoSplitVideo.Utils
 		{
 			return string.Join(@",", list.Select(l => Convert.ToString(l)));
 		}
+
+		public static int RunAsAdmin(string arguments)
+		{
+			Process process = null;
+			var processInfo = new ProcessStartInfo
+			{
+					Verb = "runas", FileName = Application.ExecutablePath, Arguments = arguments
+			};
+			try
+			{
+				process = Process.Start(processInfo);
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				return -1;
+			}
+
+			process?.WaitForExit();
+
+			var ret = process.ExitCode;
+			process.Close();
+			return ret;
+		}
 	}
 }

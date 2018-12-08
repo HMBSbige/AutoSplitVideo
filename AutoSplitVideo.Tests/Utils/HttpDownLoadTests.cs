@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoSplitVideo.Controller;
 
 namespace AutoSplitVideo.Tests.Utils
 {

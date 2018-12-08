@@ -73,6 +73,7 @@
 			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.AutoStartupCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -289,6 +290,7 @@
 			// 
 			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.AutoStartupCheckBox);
 			this.groupBox3.Controls.Add(this.button8);
 			this.groupBox3.Controls.Add(this.button7);
 			this.groupBox3.Controls.Add(this.button6);
@@ -397,6 +399,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.MainList.BackgroundColor = System.Drawing.SystemColors.Window;
+			this.MainList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.MainList.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 			this.MainList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.MainList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -591,6 +594,17 @@
 			this.ExitMenuItem.Text = "退出";
 			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
 			// 
+			// AutoStartupCheckBox
+			// 
+			this.AutoStartupCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.AutoStartupCheckBox.AutoSize = true;
+			this.AutoStartupCheckBox.Location = new System.Drawing.Point(506, 24);
+			this.AutoStartupCheckBox.Name = "AutoStartupCheckBox";
+			this.AutoStartupCheckBox.Size = new System.Drawing.Size(72, 16);
+			this.AutoStartupCheckBox.TabIndex = 13;
+			this.AutoStartupCheckBox.Text = "开机启动";
+			this.AutoStartupCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -611,6 +625,7 @@
 			this.tabPage2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
+			this.groupBox3.PerformLayout();
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
@@ -667,6 +682,7 @@
 		private System.Windows.Forms.ToolStripMenuItem ShowHideMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
+		private System.Windows.Forms.CheckBox AutoStartupCheckBox;
 	}
 }
 
