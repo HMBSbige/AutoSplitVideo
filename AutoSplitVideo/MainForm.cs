@@ -55,6 +55,12 @@ namespace AutoSplitVideo
 
 			AutoStartupCheckBox.Checked = AutoStartup.Check();
 			AutoStartupCheckBox.Click += AutoStartupCheckBox_CheckedChanged;
+			radioButton1.CheckedChanged += radioButton_CheckedChanged;
+			radioButton2.CheckedChanged += radioButton_CheckedChanged;
+			radioButton3.CheckedChanged += radioButton_CheckedChanged;
+			radioButton4.CheckedChanged += radioButton_CheckedChanged;
+			RecordDirectory.TextChanged += RecordDirectory_TextChanged;
+			tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
 
 			LoadMainList();
 		}
@@ -299,7 +305,7 @@ namespace AutoSplitVideo
 
 		#endregion
 
-		#region 程序退出
+		#region 保存配置
 
 		private void SaveConfig()
 		{
@@ -309,6 +315,25 @@ namespace AutoSplitVideo
 			_config.Rooms = _table.Select(room => room.RealRoomID);
 			_config.Save();
 		}
+
+		private void RecordDirectory_TextChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void radioButton_CheckedChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		#endregion
+
+		#region 程序退出
 
 		private void Exit()
 		{
@@ -536,7 +561,10 @@ namespace AutoSplitVideo
 		{
 			if (long.TryParse(NewRoomId.Text, out var roomId))
 			{
-				AddRoom(roomId);
+				if (AddRoom(roomId))
+				{
+					SaveConfig();
+				}
 			}
 			else
 			{
@@ -569,14 +597,16 @@ namespace AutoSplitVideo
 			return 0;
 		}
 
-		private void AddRoom(long roomId)
+		private bool AddRoom(long roomId)
 		{
+			var isSucceed = true;
 			var room = new Rooms(roomId);
 			room.Refresh().ContinueWith(task =>
 			{
 				if (task.IsFaulted)
 				{
 					MessageBox.Show(room.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					isSucceed = false;
 					return;
 				}
 				MainList.Invoke(new Action(() =>
@@ -593,9 +623,11 @@ namespace AutoSplitVideo
 					else
 					{
 						MessageBox.Show($@"已添加房间 {room.RealRoomID}", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						isSucceed = false;
 					}
 				}));
 			});
+			return isSucceed;
 		}
 
 		private void AddCheckRoomStatusTask(Rooms room)

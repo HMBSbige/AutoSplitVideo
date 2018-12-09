@@ -45,6 +45,7 @@
 			this.infoTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.AutoStartupCheckBox = new System.Windows.Forms.CheckBox();
 			this.button8 = new System.Windows.Forms.Button();
 			this.button7 = new System.Windows.Forms.Button();
 			this.button6 = new System.Windows.Forms.Button();
@@ -73,7 +74,6 @@
 			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.AutoStartupCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -302,6 +302,17 @@
 			this.groupBox3.TabIndex = 4;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "控制";
+			// 
+			// AutoStartupCheckBox
+			// 
+			this.AutoStartupCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.AutoStartupCheckBox.AutoSize = true;
+			this.AutoStartupCheckBox.Location = new System.Drawing.Point(506, 24);
+			this.AutoStartupCheckBox.Name = "AutoStartupCheckBox";
+			this.AutoStartupCheckBox.Size = new System.Drawing.Size(72, 16);
+			this.AutoStartupCheckBox.TabIndex = 13;
+			this.AutoStartupCheckBox.Text = "开机启动";
+			this.AutoStartupCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// button8
 			// 
@@ -593,17 +604,6 @@
 			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
 			this.ExitMenuItem.Text = "退出";
 			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
-			// 
-			// AutoStartupCheckBox
-			// 
-			this.AutoStartupCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.AutoStartupCheckBox.AutoSize = true;
-			this.AutoStartupCheckBox.Location = new System.Drawing.Point(506, 24);
-			this.AutoStartupCheckBox.Name = "AutoStartupCheckBox";
-			this.AutoStartupCheckBox.Size = new System.Drawing.Size(72, 16);
-			this.AutoStartupCheckBox.TabIndex = 13;
-			this.AutoStartupCheckBox.Text = "开机启动";
-			this.AutoStartupCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
