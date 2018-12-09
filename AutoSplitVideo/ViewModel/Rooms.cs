@@ -35,7 +35,19 @@ namespace AutoSplitVideo.ViewModel
 		public long RealRoomID => _recorder.RealRoomId;
 		public string Title => _recorder.Title;
 		public bool IsLive => _recorder.IsLive;
-		public string LiveStatus => _recorder.IsLive ? @"直播中..." : @"闲置";
+
+		public string LiveStatus
+		{
+			get
+			{
+				if (!IsRecordTaskStarted)
+				{
+					return @"未知";
+				}
+				return _recorder.IsLive ? @"直播中..." : @"闲置";
+			}
+		}
+
 		public string Message => _recorder.Message;
 
 		public string AnchorName
@@ -75,6 +87,7 @@ namespace AutoSplitVideo.ViewModel
 					_isRecordTaskStarted = value;
 					NotifyPropertyChanged();
 					NotifyPropertyChanged(nameof(RecordingStatus));
+					NotifyPropertyChanged(nameof(LiveStatus));
 				}
 			}
 		}

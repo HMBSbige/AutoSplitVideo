@@ -55,6 +55,7 @@ namespace AutoSplitVideo
 
 			AutoStartupCheckBox.Checked = AutoStartup.Check();
 			AutoStartupCheckBox.Click += AutoStartupCheckBox_CheckedChanged;
+			NotifyCheckBox.Click += NotifyCheckBox_Click;
 			radioButton1.CheckedChanged += radioButton_CheckedChanged;
 			radioButton2.CheckedChanged += radioButton_CheckedChanged;
 			radioButton3.CheckedChanged += radioButton_CheckedChanged;
@@ -63,6 +64,11 @@ namespace AutoSplitVideo
 			tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
 
 			LoadMainList();
+		}
+
+		private void NotifyCheckBox_Click(object sender, EventArgs e)
+		{
+			SaveConfig();
 		}
 
 		private void AutoStartupCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -78,6 +84,7 @@ namespace AutoSplitVideo
 		{
 			tabControl1.SelectedIndex = _config.TableIndex;
 			RecordDirectory.Text = _config.OutputPath;
+			NotifyCheckBox.Checked = _config.IsNotify != 0;
 			switch (_config.StreamUrlIndex)
 			{
 				case 0:
@@ -93,7 +100,6 @@ namespace AutoSplitVideo
 					radioButton4.Checked = true;
 					break;
 			}
-
 			foreach (var roomId in _config.Rooms)
 			{
 				AddRoom(roomId);
@@ -322,6 +328,7 @@ namespace AutoSplitVideo
 			_config.OutputPath = RecordDirectory.Text;
 			_config.StreamUrlIndex = GetStreamUrlIndex();
 			_config.Rooms = _table.Select(room => room.RealRoomID);
+			_config.IsNotify = NotifyCheckBox.Checked ? 1 : 0;
 			_config.Save();
 		}
 
@@ -470,7 +477,7 @@ namespace AutoSplitVideo
 				}
 
 				SetProgressBar(100);
-				MessageBox.Show(@"完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show($@"{Path.GetFileName(inputVideoPath)} 完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			});
 		}
 
@@ -486,6 +493,10 @@ namespace AutoSplitVideo
 						if (!room.IsRecording && room.IsLive)
 						{
 							Debug.WriteLine($@"{room.RealRoomID}:Live");
+							if (NotifyCheckBox.Checked)
+							{
+								notifyIcon1.ShowBalloonTip(0, ExeName, $@"{room.AnchorName} 开播了！", ToolTipIcon.Info);
+							}
 							RecordTask(room, tokenSource).ContinueWith(task2 =>
 							{
 								room.IsRecording = false;
@@ -652,17 +663,6 @@ namespace AutoSplitVideo
 			cts.Token.Register(() => { room.IsRecordTaskStarted = false; });
 			_recordTasks.Add(room.RealRoomID, cts);
 			CheckRoomStatus(room, cts);
-		}
-
-		private async void RefreshRooms()
-		{
-			await Task.Run(() =>
-			{
-				Parallel.ForEach(_table, async room =>
-				{
-					await room.Refresh();
-				});
-			});
 		}
 
 		#endregion

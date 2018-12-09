@@ -14,6 +14,7 @@ namespace AutoSplitVideo.Model
 		public string OutputPath;
 		public int StreamUrlIndex;
 		public IEnumerable<long> Rooms;
+		public int IsNotify;
 
 		#endregion
 
@@ -24,6 +25,7 @@ namespace AutoSplitVideo.Model
 			OutputPath = string.Empty;
 			StreamUrlIndex = 0;
 			Rooms = new List<long>();
+			IsNotify = 0;
 		}
 
 		private void Write(string section, string key, string value)
@@ -52,6 +54,7 @@ namespace AutoSplitVideo.Model
 			WriteGeneral(nameof(OutputPath), OutputPath);
 			WriteGeneral(nameof(StreamUrlIndex), StreamUrlIndex.ToString());
 			WriteGeneral(nameof(Rooms), Rooms.ToStr());
+			WriteGeneral(nameof(IsNotify), IsNotify.ToString());
 		}
 
 		public void Load()
@@ -75,6 +78,14 @@ namespace AutoSplitVideo.Model
 			}
 
 			Rooms = ReadGeneral(nameof(Rooms)).ToListInt();
+
+			if (int.TryParse(ReadGeneral(nameof(IsNotify), Convert.ToString(0)), out var isNotify))
+			{
+				if (isNotify != 0)
+				{
+					IsNotify = 1;
+				}
+			}
 		}
 
 	}
