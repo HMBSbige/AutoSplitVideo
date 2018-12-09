@@ -45,6 +45,7 @@
 			this.infoTextBox = new System.Windows.Forms.TextBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.NotifyCheckBox = new System.Windows.Forms.CheckBox();
 			this.AutoStartupCheckBox = new System.Windows.Forms.CheckBox();
 			this.button8 = new System.Windows.Forms.Button();
 			this.button7 = new System.Windows.Forms.Button();
@@ -77,7 +78,6 @@
 			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.NotifyCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -262,7 +262,7 @@
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage2.Size = new System.Drawing.Size(792, 424);
 			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Info";
+			this.tabPage2.Text = "MediaInfo";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
 			// infoTextBox
@@ -273,6 +273,7 @@
 			this.infoTextBox.Multiline = true;
 			this.infoTextBox.Name = "infoTextBox";
 			this.infoTextBox.ReadOnly = true;
+			this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			this.infoTextBox.Size = new System.Drawing.Size(786, 418);
 			this.infoTextBox.TabIndex = 0;
 			this.infoTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.infoTextBox_DragDrop);
@@ -309,6 +310,16 @@
 			this.groupBox3.TabIndex = 4;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "控制";
+			// 
+			// NotifyCheckBox
+			// 
+			this.NotifyCheckBox.AutoSize = true;
+			this.NotifyCheckBox.Location = new System.Drawing.Point(428, 24);
+			this.NotifyCheckBox.Name = "NotifyCheckBox";
+			this.NotifyCheckBox.Size = new System.Drawing.Size(72, 16);
+			this.NotifyCheckBox.TabIndex = 14;
+			this.NotifyCheckBox.Text = "直播通知";
+			this.NotifyCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// AutoStartupCheckBox
 			// 
@@ -638,16 +649,6 @@
 			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
 			this.ExitMenuItem.Text = "退出";
 			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
-			// 
-			// NotifyCheckBox
-			// 
-			this.NotifyCheckBox.AutoSize = true;
-			this.NotifyCheckBox.Location = new System.Drawing.Point(428, 24);
-			this.NotifyCheckBox.Name = "NotifyCheckBox";
-			this.NotifyCheckBox.Size = new System.Drawing.Size(72, 16);
-			this.NotifyCheckBox.TabIndex = 14;
-			this.NotifyCheckBox.Text = "直播通知";
-			this.NotifyCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 

@@ -52,6 +52,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\AutoStartup.cs" />
+    <Compile Include="MediaInfo\MediaInfo.cs" />
+    <Compile Include="MediaInfo\MediaInfoApi.cs" />
+    <Compile Include="MediaInfo\MediaInfoEnum.cs" />
+    <Compile Include="MediaInfo\MediaInfoList.cs" />
     <Compile Include="Model\AppConfig.cs" />
     <Compile Include="Model\BilibiliLiveRecorder.cs" />
     <Compile Include="Collections\BindingCollection.cs" />
@@ -103,6 +107,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="MediaInfo.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Resources\Asaki.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

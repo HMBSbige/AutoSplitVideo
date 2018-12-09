@@ -166,38 +166,30 @@ namespace AutoSplitVideo
 
 		#endregion
 
-		#region VideoInfo
+		#region MediaInfo
 
-		private void ShowVideoInfo(string path)
+		private void ShowVideoInfo(string path, bool isComplete = false)
 		{
-			var inputFile = new MediaFile { Filename = path };
-
-			using (var engine = new Engine())
-			{
-				engine.GetMetadata(inputFile);
-			}
-
 			var sb = new StringBuilder();
-			sb.AppendLine($@"文件：{inputFile.Filename}");
 			try
 			{
-				sb.AppendLine($@"时长：{inputFile.Metadata.Duration}");
-
-				sb.AppendLine($@"音频码率：{inputFile.Metadata.AudioData.BitRateKbs}");
-				sb.AppendLine($@"音频格式：{inputFile.Metadata.AudioData.Format}");
-				sb.AppendLine($@"声道：{inputFile.Metadata.AudioData.ChannelOutput}");
-				sb.AppendLine($@"采样率：{inputFile.Metadata.AudioData.SampleRate}");
-
-				sb.AppendLine($@"视频码率：{inputFile.Metadata.VideoData.BitRateKbs}");
-				sb.AppendLine($@"视频格式：{inputFile.Metadata.VideoData.Format}");
-				sb.AppendLine($@"颜色模型：{inputFile.Metadata.VideoData.ColorModel}");
-				sb.AppendLine($@"帧率：{inputFile.Metadata.VideoData.Fps}");
-				sb.AppendLine($@"分辨率：{inputFile.Metadata.VideoData.FrameSize}");
-
+				using (var mi = new MediaInfo.MediaInfo())
+				{
+					mi.Open(path);
+					if (isComplete)
+					{
+						mi.Option(@"Complete", @"1");
+					}
+					else
+					{
+						mi.Option(@"Complete");
+					}
+					sb.AppendLine(mi.Inform());
+				}
 			}
 			catch
 			{
-				sb.AppendLine(@"读取视频文件失败，可能是错误的视频文件");
+				sb.AppendLine(@"读取文件失败，可能是 MediaInfo.dll 加载错误");
 			}
 
 			infoTextBox.Invoke(new Action(() => { infoTextBox.Text = sb.ToString(); }));
@@ -495,7 +487,7 @@ namespace AutoSplitVideo
 							Debug.WriteLine($@"{room.RealRoomID}:Live");
 							if (NotifyCheckBox.Checked)
 							{
-								notifyIcon1.ShowBalloonTip(0, ExeName, $@"{room.AnchorName} 开播了！", ToolTipIcon.Info);
+								notifyIcon1.ShowBalloonTip(0, room.Title, $@"{room.AnchorName} 开播了！", ToolTipIcon.Info);
 							}
 							RecordTask(room, tokenSource).ContinueWith(task2 =>
 							{
