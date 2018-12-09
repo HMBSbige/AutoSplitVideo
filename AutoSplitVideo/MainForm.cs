@@ -149,6 +149,15 @@ namespace AutoSplitVideo
 			RecordDirectory.Text = dir;
 		}
 
+		private void button9_Click(object sender, EventArgs e)
+		{
+			var path = RecordDirectory.Text;
+			if (Directory.Exists(path))
+			{
+				Process.Start(path);
+			}
+		}
+
 		#endregion
 
 		#region VideoInfo
@@ -337,8 +346,8 @@ namespace AutoSplitVideo
 
 		private void Exit()
 		{
-			var dr = MessageBox.Show($@"确定退出 {ExeName}？", @"退出", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-			if (dr == DialogResult.Yes)
+			var dr = MessageBox.Show($@"确定退出 {ExeName}？", @"退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+			if (dr == DialogResult.OK)
 			{
 				SaveConfig();
 				StopAllRecordTasks();
@@ -496,6 +505,7 @@ namespace AutoSplitVideo
 		{
 			var rootPath = RecordDirectory.Text;
 			var n = GetStreamUrlIndex();//0,1,2,3
+			var httpWay = RecordWay2.Checked;
 			var dir = Path.Combine(rootPath, $@"{room.RealRoomID}");
 			if (!Directory.Exists(dir))
 			{
@@ -533,7 +543,14 @@ namespace AutoSplitVideo
 			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}.flv");
 
 			room.IsRecording = true;
-			await Util.FFmpegRecordTask(url, path, cts);
+			if (httpWay)
+			{
+				await Util.HttpDownLoadRecordTask(url, path, cts);
+			}
+			else
+			{
+				await Util.FFmpegRecordTask(url, path, cts);
+			}
 		}
 
 		#endregion
@@ -561,10 +578,7 @@ namespace AutoSplitVideo
 		{
 			if (long.TryParse(NewRoomId.Text, out var roomId))
 			{
-				if (AddRoom(roomId))
-				{
-					SaveConfig();
-				}
+				AddRoom(roomId, true);
 			}
 			else
 			{
@@ -597,16 +611,14 @@ namespace AutoSplitVideo
 			return 0;
 		}
 
-		private bool AddRoom(long roomId)
+		private void AddRoom(long roomId, bool isSave = false)
 		{
-			var isSucceed = true;
 			var room = new Rooms(roomId);
 			room.Refresh().ContinueWith(task =>
 			{
 				if (task.IsFaulted)
 				{
 					MessageBox.Show(room.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					isSucceed = false;
 					return;
 				}
 				MainList.Invoke(new Action(() =>
@@ -618,16 +630,19 @@ namespace AutoSplitVideo
 
 						AddCheckRoomStatusTask(room);
 
+						if (isSave)
+						{
+							SaveConfig();
+						}
+
 						NewRoomId.Clear();
 					}
 					else
 					{
 						MessageBox.Show($@"已添加房间 {room.RealRoomID}", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						isSucceed = false;
 					}
 				}));
 			});
-			return isSucceed;
 		}
 
 		private void AddCheckRoomStatusTask(Rooms room)
@@ -654,16 +669,19 @@ namespace AutoSplitVideo
 
 		#region 直播间控制
 
+		//停止所有录制
 		private void button4_Click(object sender, EventArgs e)
 		{
 			StopAllRecordTasks();
 		}
 
+		//开始所有录制
 		private void button5_Click(object sender, EventArgs e)
 		{
 			StartAllRecordTasks();
 		}
 
+		//开始某房间录制
 		private void button6_Click(object sender, EventArgs e)
 		{
 			var roomId = GetSelectedRoomId();
@@ -679,6 +697,7 @@ namespace AutoSplitVideo
 			}
 		}
 
+		//停止某房间录制
 		private void button7_Click(object sender, EventArgs e)
 		{
 			var roomId = GetSelectedRoomId();
@@ -689,12 +708,17 @@ namespace AutoSplitVideo
 			}
 		}
 
+		//移除某房间
 		private void button8_Click(object sender, EventArgs e)
 		{
 			var roomId = GetSelectedRoomId();
 			if (roomId > 0)
 			{
-				RemoveRoom(roomId);
+				var dr = MessageBox.Show($@"不再录制 {roomId} ?", @"询问", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+				if (dr == DialogResult.OK)
+				{
+					RemoveRoom(roomId);
+				}
 			}
 		}
 
@@ -748,12 +772,12 @@ namespace AutoSplitVideo
 						cts.Cancel();
 						_recordTasks.Remove(x.RealRoomID);
 					}
+					SaveConfig();
 					break;
 				}
 			}
 		}
 
 		#endregion
-
 	}
 }

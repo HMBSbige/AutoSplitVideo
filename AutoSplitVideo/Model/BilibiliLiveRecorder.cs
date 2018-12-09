@@ -56,7 +56,6 @@ namespace AutoSplitVideo.Model
 
 		public async Task Refresh()
 		{
-			_httpClient = new HttpClient();
 			Message = $@"房间 {RealRoomId} 信息获取失败";
 			var jsonStr = await GetAsync(RoomInfoUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);
@@ -84,6 +83,7 @@ namespace AutoSplitVideo.Model
 			{
 				throw new ArgumentException(@"RealRoomId Wrong!");
 			}
+			_httpClient = new HttpClient();
 			var jsonStr = await GetAsync(LiveAddressUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);
 			var liveUrl = new List<string>();

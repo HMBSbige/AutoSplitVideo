@@ -61,8 +61,6 @@
 			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.RecordWay2 = new System.Windows.Forms.CheckBox();
-			this.RecordWay1 = new System.Windows.Forms.CheckBox();
 			this.radioButton4 = new System.Windows.Forms.RadioButton();
 			this.radioButton3 = new System.Windows.Forms.RadioButton();
 			this.radioButton2 = new System.Windows.Forms.RadioButton();
@@ -74,6 +72,11 @@
 			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.RecordWay1 = new System.Windows.Forms.RadioButton();
+			this.RecordWay2 = new System.Windows.Forms.RadioButton();
+			this.button9 = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -85,6 +88,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.contextMenuStrip1.SuspendLayout();
+			this.panel1.SuspendLayout();
+			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -468,12 +473,9 @@
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.RecordWay2);
-			this.groupBox1.Controls.Add(this.RecordWay1);
-			this.groupBox1.Controls.Add(this.radioButton4);
-			this.groupBox1.Controls.Add(this.radioButton3);
-			this.groupBox1.Controls.Add(this.radioButton2);
-			this.groupBox1.Controls.Add(this.radioButton1);
+			this.groupBox1.Controls.Add(this.button9);
+			this.groupBox1.Controls.Add(this.panel2);
+			this.groupBox1.Controls.Add(this.panel1);
 			this.groupBox1.Controls.Add(this.button2);
 			this.groupBox1.Controls.Add(this.RecordDirectory);
 			this.groupBox1.Location = new System.Drawing.Point(8, 6);
@@ -483,34 +485,10 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "下次录制时生效";
 			// 
-			// RecordWay2
-			// 
-			this.RecordWay2.AutoSize = true;
-			this.RecordWay2.Enabled = false;
-			this.RecordWay2.Location = new System.Drawing.Point(72, 69);
-			this.RecordWay2.Name = "RecordWay2";
-			this.RecordWay2.Size = new System.Drawing.Size(72, 16);
-			this.RecordWay2.TabIndex = 7;
-			this.RecordWay2.Text = "原生下载";
-			this.RecordWay2.UseVisualStyleBackColor = true;
-			// 
-			// RecordWay1
-			// 
-			this.RecordWay1.AutoSize = true;
-			this.RecordWay1.Checked = true;
-			this.RecordWay1.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.RecordWay1.Enabled = false;
-			this.RecordWay1.Location = new System.Drawing.Point(6, 69);
-			this.RecordWay1.Name = "RecordWay1";
-			this.RecordWay1.Size = new System.Drawing.Size(60, 16);
-			this.RecordWay1.TabIndex = 6;
-			this.RecordWay1.Text = "FFmpeg";
-			this.RecordWay1.UseVisualStyleBackColor = true;
-			// 
 			// radioButton4
 			// 
 			this.radioButton4.AutoSize = true;
-			this.radioButton4.Location = new System.Drawing.Point(183, 47);
+			this.radioButton4.Location = new System.Drawing.Point(201, 3);
 			this.radioButton4.Name = "radioButton4";
 			this.radioButton4.Size = new System.Drawing.Size(53, 16);
 			this.radioButton4.TabIndex = 5;
@@ -520,7 +498,7 @@
 			// radioButton3
 			// 
 			this.radioButton3.AutoSize = true;
-			this.radioButton3.Location = new System.Drawing.Point(124, 47);
+			this.radioButton3.Location = new System.Drawing.Point(136, 3);
 			this.radioButton3.Name = "radioButton3";
 			this.radioButton3.Size = new System.Drawing.Size(53, 16);
 			this.radioButton3.TabIndex = 4;
@@ -530,7 +508,7 @@
 			// radioButton2
 			// 
 			this.radioButton2.AutoSize = true;
-			this.radioButton2.Location = new System.Drawing.Point(65, 47);
+			this.radioButton2.Location = new System.Drawing.Point(71, 3);
 			this.radioButton2.Name = "radioButton2";
 			this.radioButton2.Size = new System.Drawing.Size(53, 16);
 			this.radioButton2.TabIndex = 3;
@@ -541,7 +519,7 @@
 			// 
 			this.radioButton1.AutoSize = true;
 			this.radioButton1.Checked = true;
-			this.radioButton1.Location = new System.Drawing.Point(6, 47);
+			this.radioButton1.Location = new System.Drawing.Point(6, 3);
 			this.radioButton1.Name = "radioButton1";
 			this.radioButton1.Size = new System.Drawing.Size(47, 16);
 			this.radioButton1.TabIndex = 2;
@@ -605,6 +583,60 @@
 			this.ExitMenuItem.Text = "退出";
 			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.radioButton4);
+			this.panel1.Controls.Add(this.radioButton1);
+			this.panel1.Controls.Add(this.radioButton2);
+			this.panel1.Controls.Add(this.radioButton3);
+			this.panel1.Location = new System.Drawing.Point(0, 47);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(381, 22);
+			this.panel1.TabIndex = 8;
+			// 
+			// panel2
+			// 
+			this.panel2.Controls.Add(this.RecordWay2);
+			this.panel2.Controls.Add(this.RecordWay1);
+			this.panel2.Location = new System.Drawing.Point(0, 67);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(223, 27);
+			this.panel2.TabIndex = 9;
+			// 
+			// RecordWay1
+			// 
+			this.RecordWay1.AutoSize = true;
+			this.RecordWay1.Enabled = false;
+			this.RecordWay1.Location = new System.Drawing.Point(6, 5);
+			this.RecordWay1.Name = "RecordWay1";
+			this.RecordWay1.Size = new System.Drawing.Size(59, 16);
+			this.RecordWay1.TabIndex = 0;
+			this.RecordWay1.Text = "FFmpeg";
+			this.RecordWay1.UseVisualStyleBackColor = true;
+			// 
+			// RecordWay2
+			// 
+			this.RecordWay2.AutoSize = true;
+			this.RecordWay2.Checked = true;
+			this.RecordWay2.Location = new System.Drawing.Point(71, 5);
+			this.RecordWay2.Name = "RecordWay2";
+			this.RecordWay2.Size = new System.Drawing.Size(71, 16);
+			this.RecordWay2.TabIndex = 1;
+			this.RecordWay2.TabStop = true;
+			this.RecordWay2.Text = "原生下载";
+			this.RecordWay2.UseVisualStyleBackColor = true;
+			// 
+			// button9
+			// 
+			this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.button9.Location = new System.Drawing.Point(681, 47);
+			this.button9.Name = "button9";
+			this.button9.Size = new System.Drawing.Size(89, 21);
+			this.button9.TabIndex = 10;
+			this.button9.Text = "打开存储目录";
+			this.button9.UseVisualStyleBackColor = true;
+			this.button9.Click += new System.EventHandler(this.button9_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -632,6 +664,10 @@
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.contextMenuStrip1.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
+			this.panel2.ResumeLayout(false);
+			this.panel2.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -663,8 +699,6 @@
 		private System.Windows.Forms.RadioButton radioButton1;
 		private Controls.DoubleBufferedDataGridView MainList;
 		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.CheckBox RecordWay2;
-		private System.Windows.Forms.CheckBox RecordWay1;
 		private System.Windows.Forms.Button button3;
 		private System.Windows.Forms.TextBox NewRoomId;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
@@ -683,6 +717,11 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
 		private System.Windows.Forms.CheckBox AutoStartupCheckBox;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.RadioButton RecordWay2;
+		private System.Windows.Forms.RadioButton RecordWay1;
+		private System.Windows.Forms.Button button9;
 	}
 }
 

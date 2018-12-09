@@ -38,7 +38,7 @@ namespace AutoSplitVideo.Controller
 				_responseStream = await response.Content.ReadAsStreamAsync();
 				try
 				{
-					_fileStream = new FileStream(Pathname, FileMode.Create, FileAccess.Write, FileShare.None);
+					_fileStream = new FileStream(Pathname, FileMode.Create, FileAccess.Write, FileShare.Read);
 					await _responseStream.CopyToAsync(_fileStream, 81920, _tokenSource.Token).ContinueWith(task =>
 					{
 						if (task.IsCanceled)

@@ -1,4 +1,5 @@
-﻿using MediaToolkit;
+﻿using AutoSplitVideo.Controller;
+using MediaToolkit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -139,7 +140,9 @@ namespace AutoSplitVideo.Utils
 			Process process;
 			var processInfo = new ProcessStartInfo
 			{
-					Verb = "runas", FileName = Application.ExecutablePath, Arguments = arguments
+				Verb = "runas",
+				FileName = Application.ExecutablePath,
+				Arguments = arguments
 			};
 			try
 			{
@@ -155,6 +158,31 @@ namespace AutoSplitVideo.Utils
 			var ret = process.ExitCode;
 			process.Close();
 			return ret;
+		}
+
+		public static async Task HttpDownLoadRecordTask(string url, string path, CancellationTokenSource cts)
+		{
+			var instance = new HttpDownLoad(url, path, true);
+			var ctsEndTask = new CancellationTokenSource();
+
+			cts.Token.Register(() =>
+			{
+				if (!ctsEndTask.IsCancellationRequested)
+				{
+					ctsEndTask.Cancel();
+				}
+			});
+			ctsEndTask.Token.Register(() => { instance.Stop(); });
+
+			try
+			{
+				await instance.Start();
+				ctsEndTask.Cancel();
+			}
+			catch
+			{
+				// ignored
+			}
 		}
 	}
 }
