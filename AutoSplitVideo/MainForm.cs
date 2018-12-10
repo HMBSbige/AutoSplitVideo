@@ -485,7 +485,7 @@ namespace AutoSplitVideo
 					{
 						if (!room.IsRecording && room.IsLive)
 						{
-							Debug.WriteLine($@"{room.RealRoomID}:Live");
+							Logging.Info($@"{room.RealRoomID}:Live");
 							if (!lastStatus && NotifyCheckBox.Checked)
 							{
 								notifyIcon1.ShowBalloonTip(0, room.Title, $@"{room.AnchorName} 开播了！", ToolTipIcon.Info);
@@ -497,7 +497,7 @@ namespace AutoSplitVideo
 						}
 						else
 						{
-							Debug.WriteLine($@"{room.RealRoomID}:No live...Wait {Interval} ms");
+							Logging.Info($@"{room.RealRoomID}:No live...Wait {Interval} ms");
 							Task.Delay(Interval).Wait();
 						}
 
@@ -535,16 +535,17 @@ namespace AutoSplitVideo
 			}
 
 			var url = urls[n];
+			Logging.Info($@"{room.RealRoomID}:{url}");
 
 			var isConnected = await room.TestHttpOk(url);
 			if (!isConnected)
 			{
-				Debug.WriteLine($@"{room.RealRoomID}:直播流错误...Wait {Interval} ms");
+				Logging.Error($@"{room.RealRoomID}:直播流错误...Wait {Interval} ms");
 				await Task.Delay(Interval);
 				return;
 			}
 
-			Debug.WriteLine($@"{room.RealRoomID}:录制开始");
+			Logging.Info($@"{room.RealRoomID}:录制开始");
 
 			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}.flv");
 
@@ -653,7 +654,7 @@ namespace AutoSplitVideo
 
 		private void AddCheckRoomStatusTask(Rooms room)
 		{
-			Debug.WriteLine($@"Add room {room.RealRoomID} for recording");
+			Logging.Info($@"Add room {room.RealRoomID} for recording");
 			var cts = new CancellationTokenSource();
 			cts.Token.Register(() => { room.IsRecordTaskStarted = false; });
 			_recordTasks.Add(room.RealRoomID, cts);

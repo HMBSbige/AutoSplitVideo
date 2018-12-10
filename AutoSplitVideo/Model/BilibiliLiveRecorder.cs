@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoSplitVideo.Controller;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -37,12 +38,12 @@ namespace AutoSplitVideo.Model
 
 			if (response.IsSuccessStatusCode)
 			{
-				Debug.WriteLine(response.StatusCode.ToString());
+				Logging.Info($@"{RealRoomId}:{response.StatusCode.ToString()}");
 				return true;
 			}
 			else
 			{
-				Debug.WriteLine($@"HTTP Error occurred, the status code is: {response.StatusCode}");
+				Logging.Error($@"{RealRoomId}:HTTP Error occurred, the status code is: {response.StatusCode}");
 				return false;
 			}
 
