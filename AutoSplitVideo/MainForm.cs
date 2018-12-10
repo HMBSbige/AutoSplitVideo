@@ -476,6 +476,7 @@ namespace AutoSplitVideo
 		private async void CheckRoomStatus(Rooms room, CancellationTokenSource tokenSource)
 		{
 			room.IsRecordTaskStarted = true;
+			var lastStatus = false;
 			await Task.Run(async () =>
 			{
 				while (!tokenSource.Token.IsCancellationRequested)
@@ -485,7 +486,7 @@ namespace AutoSplitVideo
 						if (!room.IsRecording && room.IsLive)
 						{
 							Debug.WriteLine($@"{room.RealRoomID}:Live");
-							if (NotifyCheckBox.Checked)
+							if (!lastStatus && NotifyCheckBox.Checked)
 							{
 								notifyIcon1.ShowBalloonTip(0, room.Title, $@"{room.AnchorName} 开播了！", ToolTipIcon.Info);
 							}
@@ -499,6 +500,8 @@ namespace AutoSplitVideo
 							Debug.WriteLine($@"{room.RealRoomID}:No live...Wait {Interval} ms");
 							Task.Delay(Interval).Wait();
 						}
+
+						lastStatus = room.IsLive;
 					});
 				}
 			});

@@ -83,10 +83,10 @@ namespace AutoSplitVideo.Tests.MediaInfo
 				Debug.WriteLine(mi.Inform());
 
 				Debug.WriteLine(@"Get with Stream=General and Parameter='FileSize'");
-				Debug.WriteLine(mi.Get(0, 0, @"FileSize"));
+				Debug.WriteLine(mi.Get(StreamKind.General, 0, @"FileSize"));
 
-				Debug.WriteLine(@"Get with Stream=General and Parameter=46");
-				Debug.WriteLine(mi.Get(StreamKind.General, 0, 46));
+				Debug.WriteLine(@"Get with Stream=General and Parameter=0");
+				Debug.WriteLine(mi.Get(StreamKind.General, 0, 0));
 
 				Debug.WriteLine(@"Count_Get with StreamKind=Stream_Audio");
 				Debug.WriteLine(mi.Count_Get(StreamKind.Audio));

@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using AutoSplitVideo.MediaInfo;
 
 namespace AutoSplitVideo
 {
@@ -49,6 +50,7 @@ namespace AutoSplitVideo
 
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
+				MediaInfoDll.EnsureDllExists();
 				var mainForm = new MainForm();
 				mainForm.Show();
 				if (isSilent)
