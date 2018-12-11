@@ -497,7 +497,7 @@ namespace AutoSplitVideo
 						}
 						else
 						{
-							Logging.Info($@"{room.RealRoomID}:No live...Wait {Interval} ms");
+							Debug.WriteLine($@"{room.RealRoomID}:No live...Wait {Interval} ms");
 							Task.Delay(Interval).Wait();
 						}
 
