@@ -537,11 +537,18 @@ namespace AutoSplitVideo
 			var url = urls[n];
 			Logging.Info($@"{room.RealRoomID}:{url}");
 
-			var isConnected = await room.TestHttpOk(url);
-			if (!isConnected)
+			try
 			{
-				Logging.Error($@"{room.RealRoomID}:直播流错误...");
-				return;
+				var isConnected = await room.TestHttpOk(url);
+				if (!isConnected)
+				{
+					Logging.Error($@"{room.RealRoomID}:直播流错误...");
+					return;
+				}
+			}
+			catch (TaskCanceledException)
+			{
+				Logging.Error($@"{room.RealRoomID}:直播流检测超时...");
 			}
 
 			Logging.Info($@"{room.RealRoomID}:录制开始");
