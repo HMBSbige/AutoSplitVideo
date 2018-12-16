@@ -540,8 +540,7 @@ namespace AutoSplitVideo
 			var isConnected = await room.TestHttpOk(url);
 			if (!isConnected)
 			{
-				Logging.Error($@"{room.RealRoomID}:直播流错误...Wait {Interval} ms");
-				await Task.Delay(Interval);
+				Logging.Error($@"{room.RealRoomID}:直播流错误...");
 				return;
 			}
 
