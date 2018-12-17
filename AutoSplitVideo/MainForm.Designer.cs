@@ -533,7 +533,6 @@
 			// RecordWay1
 			// 
 			this.RecordWay1.AutoSize = true;
-			this.RecordWay1.Enabled = false;
 			this.RecordWay1.Location = new System.Drawing.Point(6, 5);
 			this.RecordWay1.Name = "RecordWay1";
 			this.RecordWay1.Size = new System.Drawing.Size(59, 16);

@@ -10,7 +10,7 @@ namespace AutoSplitVideo.Controller
 	public static class AutoStartup
 	{
 		private static readonly string Key = $@"{ExeName}_" + Application.StartupPath.GetHashCode();
-		private static readonly string RegistryRunPath = !Environment.Is64BitProcess ? @"Software\Microsoft\Windows\CurrentVersion\Run" : @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run";
+		private static readonly string RegistryRunPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
 		private static string ExecutablePath => Assembly.GetExecutingAssembly().Location;
 		private static string ExeName => Assembly.GetExecutingAssembly().GetName().Name;
@@ -21,7 +21,7 @@ namespace AutoSplitVideo.Controller
 			try
 			{
 				var path = $@"""{ExecutablePath}"" --silent";
-				runKey = Registry.LocalMachine.OpenSubKey(RegistryRunPath, true);
+				runKey = Util.OpenRegKey(RegistryRunPath, true);
 				if (enabled)
 				{
 					runKey.SetValue(Key, path);
@@ -61,7 +61,7 @@ namespace AutoSplitVideo.Controller
 			try
 			{
 				var path = $@"""{ExecutablePath}"" --silent";
-				runKey = Registry.LocalMachine.OpenSubKey(RegistryRunPath, true);
+				runKey = Util.OpenRegKey(RegistryRunPath, true);
 				if (enabled)
 				{
 					runKey.SetValue(Key, path);
@@ -99,7 +99,7 @@ namespace AutoSplitVideo.Controller
 			RegistryKey runKey = null;
 			try
 			{
-				runKey = Registry.LocalMachine.OpenSubKey(RegistryRunPath, false);
+				runKey = Util.OpenRegKey(RegistryRunPath, false);
 				var runList = runKey.GetValueNames();
 				runKey.Close();
 				return runList.Any(item => item.Equals(Key));

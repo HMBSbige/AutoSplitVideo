@@ -1,5 +1,6 @@
 ﻿using AutoSplitVideo.Controller;
 using MediaToolkit;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -133,6 +134,13 @@ namespace AutoSplitVideo.Utils
 		public static string ToStr(this IEnumerable<long> list)
 		{
 			return string.Join(@",", list.Select(l => Convert.ToString(l)));
+		}
+
+		public static RegistryKey OpenRegKey(string name, bool writable, RegistryHive hive = RegistryHive.CurrentUser)
+		{
+			var userKey = RegistryKey.OpenBaseKey(hive, Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32)
+					.OpenSubKey(name, writable);
+			return userKey;
 		}
 
 		public static int RunAsAdmin(string arguments)
