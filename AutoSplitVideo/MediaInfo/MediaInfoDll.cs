@@ -8,7 +8,7 @@ namespace AutoSplitVideo.MediaInfo
 {
 	public static class MediaInfoDll
 	{
-		private const string DllPath = @"./MediaInfo.dll";
+		private static readonly string DllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"MediaInfo.dll");
 
 		public static void EnsureDllExists()
 		{

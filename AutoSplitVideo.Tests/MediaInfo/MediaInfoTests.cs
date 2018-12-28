@@ -11,6 +11,7 @@ namespace AutoSplitVideo.Tests.MediaInfo
 		[TestMethod]
 		public void DLLExistTest()
 		{
+			MediaInfoDll.EnsureDllExists();
 			if (!File.Exists(@"MediaInfo.dll"))
 			{
 				Assert.Fail(@"MediaInfo.dll Not Found");

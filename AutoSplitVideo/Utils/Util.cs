@@ -138,8 +138,7 @@ namespace AutoSplitVideo.Utils
 
 		public static RegistryKey OpenRegKey(string name, bool writable, RegistryHive hive = RegistryHive.CurrentUser)
 		{
-			var userKey = RegistryKey.OpenBaseKey(hive, Environment.Is64BitProcess ? RegistryView.Registry64 : RegistryView.Registry32)
-					.OpenSubKey(name, writable);
+			var userKey = RegistryKey.OpenBaseKey(hive, Environment.Is64BitProcess ? RegistryView.Registry64 : RegistryView.Registry32).OpenSubKey(name, writable);
 			return userKey;
 		}
 

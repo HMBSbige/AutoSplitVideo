@@ -358,8 +358,11 @@ namespace AutoSplitVideo
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			TriggerMainFormDisplay();
-			e.Cancel = true;
+			if (e.CloseReason == CloseReason.UserClosing)
+			{
+				TriggerMainFormDisplay();
+				e.Cancel = true;
+			}
 		}
 
 		#endregion
