@@ -39,6 +39,8 @@ namespace AutoSplitVideo
 		private TimeSpan Duration => TimeSpan.FromMinutes(Convert.ToDouble(numericUpDown2.Value));
 		private long Limit => Convert.ToInt64(numericUpDown1.Value * 1024 * 1024 * 8);
 
+		private const long RecordFileMinSize = 13 * 1024;//13KB
+
 		private const int Interval = 10 * 1000;
 
 		#region MainForm
@@ -552,6 +554,7 @@ namespace AutoSplitVideo
 			catch (TaskCanceledException)
 			{
 				Logging.Error($@"{room.RealRoomID}:直播流检测超时...");
+				return;
 			}
 
 			Logging.Info($@"{room.RealRoomID}:录制开始");
@@ -566,6 +569,18 @@ namespace AutoSplitVideo
 			else
 			{
 				await Util.FFmpegRecordTask(url, path, cts);
+			}
+
+			Logging.Info($@"{room.RealRoomID}:录制结束=>{path}");
+
+			if (File.Exists(path))
+			{
+				var size = Util.GetFileSize(path);
+				if (size < RecordFileMinSize)
+				{
+					File.Delete(path);
+					Logging.Info($@"{room.RealRoomID}:因文件过小删除：{path}");
+				}
 			}
 		}
 

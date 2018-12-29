@@ -191,7 +191,7 @@
 			this.numericUpDown2.Size = new System.Drawing.Size(48, 21);
 			this.numericUpDown2.TabIndex = 4;
 			this.numericUpDown2.Value = new decimal(new int[] {
-            260,
+            180,
             0,
             0,
             0});
