@@ -32,7 +32,7 @@ namespace AutoSplitVideo
 		}
 
 		private static string ExeName => Assembly.GetExecutingAssembly().GetName().Name;
-		private readonly AppConfig _config = new AppConfig($@".\{ExeName}.cfg");
+		private readonly AppConfig _config = new AppConfig(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $@"{ExeName}.cfg"));
 
 		private FormWindowState DefaultState = FormWindowState.Normal;
 
