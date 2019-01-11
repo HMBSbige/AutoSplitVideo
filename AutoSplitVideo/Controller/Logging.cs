@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 
 namespace AutoSplitVideo.Controller
 {
 	public static class Logging
 	{
-		private const string LogFile = @"./AutoSplitVideo.log";
+		private static readonly string LogFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"AutoSplitVideo.log");
 
 		public static void Error(object o)
 		{
