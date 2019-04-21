@@ -1,6 +1,7 @@
 ﻿using AutoSplitVideo.Controller;
 using AutoSplitVideo.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace AutoSplitVideo.Tests.Utils
 {
@@ -19,6 +20,17 @@ namespace AutoSplitVideo.Tests.Utils
 			var size = Util.GetFileSize(path);
 
 			Assert.AreEqual(size, 28064);
+		}
+
+		[TestMethod]
+		public void DiskUsageTest()
+		{
+			const string path = @"D:\Downloads\ZH-CN.lang";
+			var (availableFreeSpace, totalSize) = Util.GetDiskUsage(path);
+
+			Console.WriteLine(Util.CountSize(availableFreeSpace));
+
+			Console.WriteLine($@"{Util.CountSize(totalSize - availableFreeSpace)}/{Util.CountSize(totalSize)}");
 		}
 	}
 }

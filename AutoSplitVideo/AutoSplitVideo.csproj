@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Controller\AutoStartup.cs" />
     <Compile Include="Controller\Logging.cs" />
+    <Compile Include="Controls\CustomProgressBar.cs" />
     <Compile Include="MediaInfo\MediaInfo.cs" />
     <Compile Include="MediaInfo\MediaInfoApi.cs" />
     <Compile Include="MediaInfo\MediaInfoDll.cs" />

@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace AutoSplitVideo.Utils
 {
 	public static class Util
 	{
+		//bytes
 		public static long GetFileSize(string sFullName)
 		{
 			long lSize = 0;
@@ -20,6 +22,35 @@ namespace AutoSplitVideo.Utils
 			}
 
 			return lSize;
+		}
+
+		public static string CountSize(long size)
+		{
+			var mStrSize = string.Empty;
+			const double step = 1024.00;
+			var factSize = size;
+			if (factSize < step)
+			{
+				mStrSize = $@"{factSize:F2} Byte";
+			}
+			else if (factSize >= step && factSize < 1048576)
+			{
+				mStrSize = $@"{factSize / step:F2} KB";
+			}
+			else if (factSize >= 1048576 && factSize < 1073741824)
+			{
+				mStrSize = $@"{factSize / step / step:F2} MB";
+			}
+			else if (factSize >= 1073741824 && factSize < 1099511627776)
+			{
+				mStrSize = $@"{factSize / step / step / step:F2} GB";
+			}
+			else if (factSize >= 1099511627776)
+			{
+				mStrSize = $@"{factSize / step / step / step / step:F2} TB";
+			}
+
+			return mStrSize;
 		}
 
 		public static string SelectPath() //弹出一个选择目录的对话框
@@ -173,6 +204,29 @@ namespace AutoSplitVideo.Utils
 				}
 			}
 			return res;
+		}
+
+		public static (long, long) GetDiskUsage(string path)
+		{
+			try
+			{
+				var allDrives = DriveInfo.GetDrives();
+				foreach (var d in allDrives)
+				{
+					if (d.Name == Path.GetPathRoot(path))
+					{
+						if (d.IsReady)
+						{
+							return (d.AvailableFreeSpace, d.TotalSize);
+						}
+					}
+				}
+				return (0, 0);
+			}
+			catch
+			{
+				return (0, 0);
+			}
 		}
 	}
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AutoSplitVideo.Utils
 {
-	public class MyTask
+	public static class MyTask
 	{
 		public static async Task FFmpegRecordTask(string url, string path, CancellationTokenSource cts)
 		{

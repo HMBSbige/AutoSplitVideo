@@ -31,7 +31,10 @@
 			this.components = new System.ComponentModel.Container();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label4 = new System.Windows.Forms.Label();
 			this.选项 = new System.Windows.Forms.GroupBox();
+			this.checkBox4 = new System.Windows.Forms.CheckBox();
+			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -58,6 +61,7 @@
 			this.button3 = new System.Windows.Forms.Button();
 			this.NewRoomId = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.DiskUsage = new AutoSplitVideo.Controls.CustomProgressBar();
 			this.button9 = new System.Windows.Forms.Button();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.RecordWay2 = new System.Windows.Forms.RadioButton();
@@ -69,20 +73,18 @@
 			this.radioButton3 = new System.Windows.Forms.RadioButton();
 			this.button2 = new System.Windows.Forms.Button();
 			this.RecordDirectory = new System.Windows.Forms.TextBox();
-			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.checkBox3 = new System.Windows.Forms.CheckBox();
-			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.MainList = new AutoSplitVideo.Controls.DoubleBufferedDataGridView();
 			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.label4 = new System.Windows.Forms.Label();
+			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.选项.SuspendLayout();
@@ -95,8 +97,8 @@
 			this.groupBox1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel1.SuspendLayout();
-			this.contextMenuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
+			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -129,6 +131,15 @@
 			this.tabPage1.Text = "自动分段";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(6, 65);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(137, 12);
+			this.label4.TabIndex = 11;
+			this.label4.Text = "队列中的视频文件：0 个";
+			// 
 			// 选项
 			// 
 			this.选项.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -149,6 +160,30 @@
 			this.选项.TabIndex = 10;
 			this.选项.TabStop = false;
 			this.选项.Text = "选项";
+			// 
+			// checkBox4
+			// 
+			this.checkBox4.AutoSize = true;
+			this.checkBox4.Checked = true;
+			this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox4.Location = new System.Drawing.Point(7, 109);
+			this.checkBox4.Name = "checkBox4";
+			this.checkBox4.Size = new System.Drawing.Size(120, 16);
+			this.checkBox4.TabIndex = 12;
+			this.checkBox4.Text = "删除文件到回收站";
+			this.checkBox4.UseVisualStyleBackColor = true;
+			// 
+			// checkBox3
+			// 
+			this.checkBox3.AutoSize = true;
+			this.checkBox3.Checked = true;
+			this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox3.Location = new System.Drawing.Point(7, 65);
+			this.checkBox3.Name = "checkBox3";
+			this.checkBox3.Size = new System.Drawing.Size(198, 16);
+			this.checkBox3.TabIndex = 11;
+			this.checkBox3.Text = "若已存在同名 mp4 文件，则跳过";
+			this.checkBox3.UseVisualStyleBackColor = true;
 			// 
 			// checkBox2
 			// 
@@ -349,6 +384,7 @@
 			// 
 			// NotifyCheckBox
 			// 
+			this.NotifyCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.NotifyCheckBox.AutoSize = true;
 			this.NotifyCheckBox.Location = new System.Drawing.Point(428, 24);
 			this.NotifyCheckBox.Name = "NotifyCheckBox";
@@ -459,6 +495,7 @@
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.DiskUsage);
 			this.groupBox1.Controls.Add(this.button9);
 			this.groupBox1.Controls.Add(this.panel2);
 			this.groupBox1.Controls.Add(this.panel1);
@@ -470,6 +507,18 @@
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "下次录制时生效";
+			// 
+			// DiskUsage
+			// 
+			this.DiskUsage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.DiskUsage.CustomText = "";
+			this.DiskUsage.DisplayStyle = AutoSplitVideo.Controls.ProgressBarDisplayText.CustomText;
+			this.DiskUsage.FontColor = System.Drawing.Color.Black;
+			this.DiskUsage.Location = new System.Drawing.Point(272, 46);
+			this.DiskUsage.Name = "DiskUsage";
+			this.DiskUsage.Size = new System.Drawing.Size(403, 23);
+			this.DiskUsage.TabIndex = 11;
 			// 
 			// button9
 			// 
@@ -521,7 +570,7 @@
 			this.panel1.Controls.Add(this.radioButton3);
 			this.panel1.Location = new System.Drawing.Point(0, 47);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(381, 22);
+			this.panel1.Size = new System.Drawing.Size(266, 22);
 			this.panel1.TabIndex = 8;
 			// 
 			// radioButton4
@@ -587,65 +636,6 @@
 			this.RecordDirectory.Size = new System.Drawing.Size(669, 21);
 			this.RecordDirectory.TabIndex = 0;
 			// 
-			// notifyIcon1
-			// 
-			this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
-			this.notifyIcon1.Text = "Asakinb!";
-			this.notifyIcon1.Visible = true;
-			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
-			// 
-			// contextMenuStrip1
-			// 
-			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowHideMenuItem,
-            this.toolStripSeparator1,
-            this.ExitMenuItem});
-			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(130, 54);
-			// 
-			// ShowHideMenuItem
-			// 
-			this.ShowHideMenuItem.Name = "ShowHideMenuItem";
-			this.ShowHideMenuItem.Size = new System.Drawing.Size(129, 22);
-			this.ShowHideMenuItem.Text = "显示/隐藏";
-			this.ShowHideMenuItem.Click += new System.EventHandler(this.ShowHideMenuItem_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(126, 6);
-			// 
-			// ExitMenuItem
-			// 
-			this.ExitMenuItem.Name = "ExitMenuItem";
-			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
-			this.ExitMenuItem.Text = "退出";
-			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
-			// 
-			// checkBox3
-			// 
-			this.checkBox3.AutoSize = true;
-			this.checkBox3.Checked = true;
-			this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox3.Location = new System.Drawing.Point(7, 65);
-			this.checkBox3.Name = "checkBox3";
-			this.checkBox3.Size = new System.Drawing.Size(198, 16);
-			this.checkBox3.TabIndex = 11;
-			this.checkBox3.Text = "若已存在同名 mp4 文件，则跳过";
-			this.checkBox3.UseVisualStyleBackColor = true;
-			// 
-			// checkBox4
-			// 
-			this.checkBox4.AutoSize = true;
-			this.checkBox4.Checked = true;
-			this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox4.Location = new System.Drawing.Point(7, 109);
-			this.checkBox4.Name = "checkBox4";
-			this.checkBox4.Size = new System.Drawing.Size(120, 16);
-			this.checkBox4.TabIndex = 12;
-			this.checkBox4.Text = "删除文件到回收站";
-			this.checkBox4.UseVisualStyleBackColor = true;
-			// 
 			// MainList
 			// 
 			this.MainList.AllowUserToAddRows = false;
@@ -709,14 +699,45 @@
 			this.Column5.Name = "Column5";
 			this.Column5.ReadOnly = true;
 			// 
-			// label4
+			// notifyIcon1
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(6, 60);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(137, 12);
-			this.label4.TabIndex = 11;
-			this.label4.Text = "队列中的视频文件：0 个";
+			this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
+			this.notifyIcon1.Text = "Asakinb!";
+			this.notifyIcon1.Visible = true;
+			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+			// 
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowHideMenuItem,
+            this.toolStripSeparator1,
+            this.ExitMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(130, 54);
+			// 
+			// ShowHideMenuItem
+			// 
+			this.ShowHideMenuItem.Name = "ShowHideMenuItem";
+			this.ShowHideMenuItem.Size = new System.Drawing.Size(129, 22);
+			this.ShowHideMenuItem.Text = "显示/隐藏";
+			this.ShowHideMenuItem.Click += new System.EventHandler(this.ShowHideMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(126, 6);
+			// 
+			// ExitMenuItem
+			// 
+			this.ExitMenuItem.Name = "ExitMenuItem";
+			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
+			this.ExitMenuItem.Text = "退出";
+			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
+			// 
+			// timer1
+			// 
+			this.timer1.Interval = 1000;
+			this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
 			// 
 			// MainForm
 			// 
@@ -749,8 +770,8 @@
 			this.panel2.PerformLayout();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
-			this.contextMenuStrip1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
+			this.contextMenuStrip1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -811,6 +832,8 @@
 		private System.Windows.Forms.CheckBox checkBox3;
 		private System.Windows.Forms.CheckBox checkBox4;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Timer timer1;
+		private Controls.CustomProgressBar DiskUsage;
 	}
 }
 

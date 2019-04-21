@@ -55,7 +55,7 @@ namespace AutoSplitVideo
 			{
 				RecordDirectory.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 			}
-
+			timer1.Start();
 			AutoStartupCheckBox.Checked = AutoStartup.Check();
 			AutoStartupCheckBox.Click += AutoStartupCheckBox_CheckedChanged;
 			NotifyCheckBox.Click += NotifyCheckBox_Click;
@@ -999,5 +999,21 @@ namespace AutoSplitVideo
 
 		#endregion
 
+		private void Timer1_Tick(object sender, EventArgs e)
+		{
+			var (availableFreeSpace, totalSize) = Util.GetDiskUsage(RecordDirectory.Text);
+			if (totalSize != 0)
+			{
+				DiskUsage.CustomText = $@"已使用 {Util.CountSize(totalSize - availableFreeSpace)}/{Util.CountSize(totalSize)} 剩余 {Util.CountSize(availableFreeSpace)}";
+				var percentage = (totalSize - availableFreeSpace) / (double)totalSize;
+				DiskUsage.Value = Convert.ToInt32(percentage * DiskUsage.Maximum);
+				DiskUsage.ForeColor = percentage >= 0.9 ? Color.Red : SystemColors.Highlight;
+			}
+			else
+			{
+				DiskUsage.CustomText = string.Empty;
+				DiskUsage.Value = 0;
+			}
+		}
 	}
 }
