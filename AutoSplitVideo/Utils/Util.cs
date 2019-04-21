@@ -1,13 +1,10 @@
-﻿using AutoSplitVideo.Controller;
-using MediaToolkit;
+﻿using AutoSplitVideo.MediaInfo;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoSplitVideo.Utils
@@ -88,35 +85,6 @@ namespace AutoSplitVideo.Utils
 			});
 		}
 
-		public static async Task FFmpegRecordTask(string url, string path, CancellationTokenSource cts)
-		{
-			await Task.Run(() =>
-			{
-				var engine = new Engine();
-				var ctsEndTask = new CancellationTokenSource();
-
-				cts.Token.Register(() =>
-				{
-					if (!ctsEndTask.IsCancellationRequested)
-					{
-						ctsEndTask.Cancel();
-					}
-				});
-				ctsEndTask.Token.Register(() => { engine.Dispose(); });
-
-				try
-				{
-					engine.CustomCommand($@"-y -i ""{url}"" -c:v copy -c:a copy ""{path}""");
-					ctsEndTask.Cancel();
-				}
-				catch
-				{
-					// ignored
-				}
-
-			}, cts.Token);
-		}
-
 		public static IEnumerable<long> ToListInt(this string str)
 		{
 			var s = str.Split(',');
@@ -167,29 +135,44 @@ namespace AutoSplitVideo.Utils
 			return ret;
 		}
 
-		public static async Task HttpDownLoadRecordTask(string url, string path, CancellationTokenSource cts)
+		public static bool IsFlv(string path)
 		{
-			var instance = new HttpDownLoad(url, path, true);
-			var ctsEndTask = new CancellationTokenSource();
-
-			cts.Token.Register(() =>
+			using (var mi = new MediaInfo.MediaInfo())
 			{
-				if (!ctsEndTask.IsCancellationRequested)
+				mi.Open(path);
+				var format = mi.Get(StreamKind.General, 0, @"Format");
+				return string.Equals(format, @"Flash Video", StringComparison.Ordinal);
+			}
+		}
+
+		public static bool IsMp4(string path)
+		{
+			using (var mi = new MediaInfo.MediaInfo())
+			{
+				mi.Open(path);
+				var format = mi.Get(StreamKind.General, 0, @"Format");
+				return string.Equals(format, @"MPEG-4", StringComparison.Ordinal);
+			}
+		}
+
+		public static List<string> GetAllFlvList(string dir)
+		{
+			var list = Directory.GetFiles(dir, @"*.flv", SearchOption.TopDirectoryOnly);
+			var res = new List<string>();
+			using (var mi = new MediaInfo.MediaInfo())
+			{
+				foreach (var p in list)
 				{
-					ctsEndTask.Cancel();
+					var path = Path.GetFullPath(p);
+					mi.Open(path);
+					var format = mi.Get(StreamKind.General, 0, @"Format");
+					if (string.Equals(format, @"Flash Video", StringComparison.Ordinal))
+					{
+						res.Add(path);
+					}
 				}
-			});
-			ctsEndTask.Token.Register(() => { instance.Stop(); });
-
-			try
-			{
-				await instance.Start();
-				ctsEndTask.Cancel();
 			}
-			catch
-			{
-				// ignored
-			}
+			return res;
 		}
 	}
 }

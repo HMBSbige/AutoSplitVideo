@@ -99,5 +99,12 @@ namespace AutoSplitVideo.Tests.MediaInfo
 				Debug.WriteLine(mi.Get(StreamKind.Audio, 0, @"StreamCount"));
 			}
 		}
+
+		[TestMethod]
+		public void FLvTest()
+		{
+			const string fileName = @"D:\Downloads\test.flv";
+			Assert.IsTrue(AutoSplitVideo.Utils.Util.IsFlv(fileName));
+		}
 	}
 }

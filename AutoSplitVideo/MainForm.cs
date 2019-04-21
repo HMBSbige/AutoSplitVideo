@@ -7,6 +7,7 @@ using AutoSplitVideo.Utils;
 using AutoSplitVideo.ViewModel;
 using MediaToolkit;
 using MediaToolkit.Model;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -141,9 +142,33 @@ namespace AutoSplitVideo
 		private void Button1_Click(object sender, EventArgs e)
 		{
 			SetControlEnable(false);
-			var runTask = SplitTask(InputVideoPath.Text, OutputVideoPath.Text, checkBox1.Checked);
-			runTask.Start();
-			runTask.ContinueWith(task => { BeginInvoke(new Action(() => { SetControlEnable(true); })); });
+			Task runTask;
+			var config = new VideoConvertConfig
+			{
+				DeleteFlv = checkBox1.Checked,
+				IsSendToRecycleBin = checkBox4.Checked,
+				IsSkipSameMp4 = checkBox3.Checked,
+				OnlyConvert = checkBox2.Checked
+			};
+			if (File.Exists(InputVideoPath.Text))
+			{
+				runTask = SplitTaskFile(InputVideoPath.Text, OutputVideoPath.Text, config);
+			}
+			else if (Directory.Exists(InputVideoPath.Text))
+			{
+				runTask = SplitTaskDirectory(InputVideoPath.Text, OutputVideoPath.Text, config);
+			}
+			else
+			{
+				MessageBox.Show(@"视频路径出错", @"错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				SetControlEnable(true);
+				return;
+			}
+			if (runTask != null)
+			{
+				runTask.Start();
+				runTask.ContinueWith(task => { BeginInvoke(new Action(() => { SetControlEnable(true); })); });
+			}
 		}
 
 		private void button2_Click(object sender, EventArgs e)
@@ -208,7 +233,52 @@ namespace AutoSplitVideo
 			OutputVideoPath.Enabled = b;
 			numericUpDown1.Enabled = b;
 			numericUpDown2.Enabled = b;
+			checkBox4.Enabled = b;
 			checkBox1.Enabled = b;
+			checkBox2.Enabled = b;
+			checkBox3.Enabled = b;
+		}
+
+		private void CheckBox2Changed()
+		{
+			if (checkBox2.Checked)
+			{
+				numericUpDown1.Enabled = false;
+				numericUpDown2.Enabled = false;
+			}
+			else if (checkBox2.Enabled)
+			{
+				numericUpDown1.Enabled = true;
+				numericUpDown2.Enabled = true;
+			}
+		}
+
+		private void CheckBox2_EnabledChanged(object sender, EventArgs e)
+		{
+			CheckBox2Changed();
+		}
+
+		private void CheckBox2_CheckedChanged(object sender, EventArgs e)
+		{
+			CheckBox2Changed();
+		}
+
+		private void CheckBox1Changed()
+		{
+			if (checkBox1.Enabled)
+			{
+				checkBox4.Enabled = checkBox1.Checked;
+			}
+		}
+
+		private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+		{
+			CheckBox1Changed();
+		}
+
+		private void CheckBox1_EnabledChanged(object sender, EventArgs e)
+		{
+			CheckBox1Changed();
 		}
 
 		private void SetProgressBar(int i)
@@ -222,6 +292,11 @@ namespace AutoSplitVideo
 
 				progressBar.Value = i;
 			}));
+		}
+
+		private void SetLabel4(int num)
+		{
+			label4.Invoke(new Action(() => { label4.Text = $@"队列中的视频文件：{num} 个"; }));
 		}
 
 		private void MainList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -290,16 +365,41 @@ namespace AutoSplitVideo
 			var path = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
 			if (Directory.Exists(path))
 			{
-				OutputVideoPath.Text = $@"{Path.GetFullPath(path)}";
+				path = Path.GetFullPath(path);
+				if (!path.EndsWith(@"\"))
+				{
+					path += @"\";
+				}
+				OutputVideoPath.Text = path;
+				InputVideoPath.Text = path;
+			}
+			else if (File.Exists(path))
+			{
+				InputVideoPath.Text = Path.GetFullPath(path);
+				OutputVideoPath.Text = $@"{Path.GetDirectoryName(path)}";
 				if (!OutputVideoPath.Text.EndsWith(@"\"))
 				{
 					OutputVideoPath.Text += @"\";
 				}
 			}
+		}
+
+		private void OutputVideoPath_DragDrop(object sender, DragEventArgs e)
+		{
+			var path = ((Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+			if (Directory.Exists(path))
+			{
+				path = Path.GetFullPath(path);
+				if (!path.EndsWith(@"\"))
+				{
+					path += @"\";
+				}
+				OutputVideoPath.Text = path;
+			}
 			else if (File.Exists(path))
 			{
 				InputVideoPath.Text = Path.GetFullPath(path);
-				OutputVideoPath.Text = $@"{Path.GetDirectoryName(path)}\";
+				OutputVideoPath.Text = $@"{Path.GetDirectoryName(path)}";
 				if (!OutputVideoPath.Text.EndsWith(@"\"))
 				{
 					OutputVideoPath.Text += @"\";
@@ -408,12 +508,13 @@ namespace AutoSplitVideo
 
 		#region Async、Task
 
-		private Task SplitTask(string inputVideoPath, string outputDirectoryPath, bool deleteMp4)
+		private Task SplitTaskFile(string inputVideoPath, string outputDirectoryPath, VideoConvertConfig config)
 		{
 			return new Task(() =>
 			{
 				ShowVideoInfo(inputVideoPath);
 				SetProgressBar(0);
+				SetLabel4(1);
 				using (var engine = new Engine())
 				{
 					var inputFile = new MediaFile(inputVideoPath);
@@ -421,60 +522,158 @@ namespace AutoSplitVideo
 					var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4");
 
 					//flv转封装成MP4
-					var ismp4 = true; //原档是否为mp4
-					if (File.Exists(mp4File.Filename))
+					if (config.IsSkipSameMp4 && File.Exists(mp4File.Filename))
 					{
 						//do nothing
 					}
-					else if (Path.GetExtension(inputVideoPath) == @"mp4")
+					else if (Util.IsMp4(inputFile.Filename))
 					{
 						mp4File.Filename = inputVideoPath;
 					}
 					else
 					{
-						ismp4 = false;
 						engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
 					}
 
 					SetProgressBar(50);
 
-					//分段
-					ShowVideoInfo(mp4File.Filename);
-					if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
+					if (!config.OnlyConvert)
 					{
-						engine.GetMetadata(mp4File);
-						var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
-						var ab = mp4File.Metadata.AudioData.BitRateKbs;
-						var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
-						var duration = mp4File.Metadata.Duration;
-						var now = TimeSpan.Zero;
-						for (var i = 0; now < duration; ++i)
+						//分段
+						ShowVideoInfo(mp4File.Filename);
+						if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
 						{
-							var t = Duration;
-							if (now + maxDuration >= duration)
+							engine.GetMetadata(mp4File);
+							var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
+							var ab = mp4File.Metadata.AudioData.BitRateKbs;
+							var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
+							var duration = mp4File.Metadata.Duration;
+							var now = TimeSpan.Zero;
+							for (var i = 0; now < duration; ++i)
 							{
-								t = duration - now;
+								var t = Duration;
+								if (now + maxDuration >= duration)
+								{
+									t = duration - now;
+								}
+
+								outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
+
+								engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
+
+								engine.GetMetadata(outputFile);
+								now += t;
+
+								SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
 							}
-
-							outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
-
-							engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
-
-							engine.GetMetadata(outputFile);
-							now += t;
-
-							SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
 						}
+					}
 
-						if (!ismp4 && deleteMp4)
+					if (config.DeleteFlv && Util.IsFlv(inputFile.Filename))
+					{
+						if (config.IsSendToRecycleBin)
 						{
-							File.Delete(mp4File.Filename);
+							FileSystem.DeleteFile(inputFile.Filename, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+						}
+						else
+						{
+							File.Delete(inputFile.Filename);
 						}
 					}
 				}
 
 				SetProgressBar(100);
 				MessageBox.Show($@"{Path.GetFileName(inputVideoPath)} 完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			});
+		}
+
+		private Task SplitTaskDirectory(string inputVideoPath, string outputDirectoryPath, VideoConvertConfig config)
+		{
+			return new Task(() =>
+			{
+				var progress = 0;
+				SetProgressBar(progress);
+				var flvs = Util.GetAllFlvList(inputVideoPath);
+				SetLabel4(flvs.Count);
+				if (flvs.Count > 0)
+				{
+					var halfProgress = 50 / flvs.Count;
+					using (var engine = new Engine())
+					{
+						foreach (var flv in flvs)
+						{
+							var inputFile = new MediaFile(flv);
+							var outputFile = new MediaFile();
+							var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(flv)}.mp4");
+
+							//flv转封装成MP4
+							if (config.IsSkipSameMp4 && File.Exists(mp4File.Filename))
+							{
+								//do nothing
+							}
+							else
+							{
+								engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
+							}
+
+							progress += halfProgress;
+							SetProgressBar(progress);
+
+							if (!config.OnlyConvert)
+							{
+								//分段
+								if (Util.GetFileSize(mp4File.Filename) > Limit * 1024 / 8)
+								{
+									engine.GetMetadata(mp4File);
+									var vb = mp4File.Metadata.VideoData.BitRateKbs ?? 0;
+									var ab = mp4File.Metadata.AudioData.BitRateKbs;
+									var maxDuration = TimeSpan.FromSeconds(Convert.ToDouble(Limit) / (vb + ab));
+									var duration = mp4File.Metadata.Duration;
+									var now = TimeSpan.Zero;
+									for (var i = 0; now < duration; ++i)
+									{
+										var t = Duration;
+										if (now + maxDuration >= duration)
+										{
+											t = duration - now;
+										}
+
+										outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
+
+										engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
+
+										engine.GetMetadata(outputFile);
+										now += t;
+
+										progress += Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * halfProgress);
+										SetProgressBar(progress);
+									}
+								}
+							}
+							else
+							{
+								progress += halfProgress;
+								SetProgressBar(progress);
+							}
+
+							if (config.DeleteFlv && Util.IsFlv(inputFile.Filename))
+							{
+								if (config.IsSendToRecycleBin)
+								{
+									FileSystem.DeleteFile(inputFile.Filename, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+								}
+								else
+								{
+									File.Delete(inputFile.Filename);
+								}
+							}
+						}
+					}
+				}
+
+				SetProgressBar(100);
+				MessageBox.Show($@"{inputVideoPath} 完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
 			});
 		}
 
@@ -564,11 +763,11 @@ namespace AutoSplitVideo
 			room.IsRecording = true;
 			if (httpWay)
 			{
-				await Util.HttpDownLoadRecordTask(url, path, cts);
+				await MyTask.HttpDownLoadRecordTask(url, path, cts);
 			}
 			else
 			{
-				await Util.FFmpegRecordTask(url, path, cts);
+				await MyTask.FFmpegRecordTask(url, path, cts);
 			}
 
 			Logging.Info($@"{room.RealRoomID}:录制结束=>{path}");
@@ -799,5 +998,6 @@ namespace AutoSplitVideo
 		}
 
 		#endregion
+
 	}
 }

@@ -39,6 +39,7 @@
     <ApplicationIcon>Resources\Asaki.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -63,12 +64,14 @@
     <Compile Include="Model\BilibiliLiveRecorder.cs" />
     <Compile Include="Collections\BindingCollection.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
+    <Compile Include="Model\VideoConvertConfig.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utils\Config.cs" />
+    <Compile Include="Utils\MyTask.cs" />
     <Compile Include="Utils\SimpleJson.cs" />
     <Compile Include="ViewModel\Rooms.cs" />
     <Compile Include="Controls\DoubleBufferedDataGridView.cs" />

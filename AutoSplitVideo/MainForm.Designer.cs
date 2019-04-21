@@ -31,13 +31,15 @@
 			this.components = new System.ComponentModel.Container();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.选项 = new System.Windows.Forms.GroupBox();
+			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+			this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
-			this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
 			this.button1 = new System.Windows.Forms.Button();
 			this.OutputVideoPath = new System.Windows.Forms.TextBox();
 			this.InputVideoPath = new System.Windows.Forms.TextBox();
@@ -55,12 +57,6 @@
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.button3 = new System.Windows.Forms.Button();
 			this.NewRoomId = new System.Windows.Forms.TextBox();
-			this.MainList = new AutoSplitVideo.Controls.DoubleBufferedDataGridView();
-			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.button9 = new System.Windows.Forms.Button();
 			this.panel2 = new System.Windows.Forms.Panel();
@@ -78,19 +74,29 @@
 			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.checkBox3 = new System.Windows.Forms.CheckBox();
+			this.checkBox4 = new System.Windows.Forms.CheckBox();
+			this.MainList = new AutoSplitVideo.Controls.DoubleBufferedDataGridView();
+			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.label4 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+			this.选项.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.contextMenuStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -109,13 +115,9 @@
 			// 
 			// tabPage1
 			// 
-			this.tabPage1.Controls.Add(this.checkBox1);
-			this.tabPage1.Controls.Add(this.label3);
-			this.tabPage1.Controls.Add(this.label2);
-			this.tabPage1.Controls.Add(this.label1);
+			this.tabPage1.Controls.Add(this.label4);
+			this.tabPage1.Controls.Add(this.选项);
 			this.tabPage1.Controls.Add(this.progressBar);
-			this.tabPage1.Controls.Add(this.numericUpDown2);
-			this.tabPage1.Controls.Add(this.numericUpDown1);
 			this.tabPage1.Controls.Add(this.button1);
 			this.tabPage1.Controls.Add(this.OutputVideoPath);
 			this.tabPage1.Controls.Add(this.InputVideoPath);
@@ -127,74 +129,62 @@
 			this.tabPage1.Text = "自动分段";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
-			// checkBox1
+			// 选项
 			// 
-			this.checkBox1.AutoSize = true;
-			this.checkBox1.Checked = true;
-			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox1.Font = new System.Drawing.Font("宋体", 12F);
-			this.checkBox1.Location = new System.Drawing.Point(411, 71);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(147, 20);
-			this.checkBox1.TabIndex = 9;
-			this.checkBox1.Text = "删除转换后的mp4";
-			this.checkBox1.UseVisualStyleBackColor = true;
+			this.选项.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.选项.Controls.Add(this.checkBox4);
+			this.选项.Controls.Add(this.checkBox3);
+			this.选项.Controls.Add(this.checkBox2);
+			this.选项.Controls.Add(this.label3);
+			this.选项.Controls.Add(this.checkBox1);
+			this.选项.Controls.Add(this.numericUpDown1);
+			this.选项.Controls.Add(this.numericUpDown2);
+			this.选项.Controls.Add(this.label2);
+			this.选项.Controls.Add(this.label1);
+			this.选项.Location = new System.Drawing.Point(8, 118);
+			this.选项.Name = "选项";
+			this.选项.Size = new System.Drawing.Size(778, 298);
+			this.选项.TabIndex = 10;
+			this.选项.TabStop = false;
+			this.选项.Text = "选项";
+			// 
+			// checkBox2
+			// 
+			this.checkBox2.AutoSize = true;
+			this.checkBox2.Location = new System.Drawing.Point(7, 21);
+			this.checkBox2.Name = "checkBox2";
+			this.checkBox2.Size = new System.Drawing.Size(72, 16);
+			this.checkBox2.TabIndex = 10;
+			this.checkBox2.Text = "仅转封装";
+			this.checkBox2.UseVisualStyleBackColor = true;
+			this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBox2_CheckedChanged);
+			this.checkBox2.EnabledChanged += new System.EventHandler(this.CheckBox2_EnabledChanged);
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Font = new System.Drawing.Font("宋体", 12F);
-			this.label3.Location = new System.Drawing.Point(365, 71);
+			this.label3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label3.Location = new System.Drawing.Point(363, 40);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(40, 16);
 			this.label3.TabIndex = 8;
 			this.label3.Text = "分钟";
 			// 
-			// label2
+			// checkBox1
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("宋体", 12F);
-			this.label2.Location = new System.Drawing.Point(201, 71);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(104, 16);
-			this.label2.TabIndex = 7;
-			this.label2.Text = "GB，每段截取";
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("宋体", 12F);
-			this.label1.Location = new System.Drawing.Point(6, 71);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(104, 16);
-			this.label1.TabIndex = 6;
-			this.label1.Text = "如果视频大于";
-			// 
-			// progressBar
-			// 
-			this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar.Location = new System.Drawing.Point(8, 108);
-			this.progressBar.Name = "progressBar";
-			this.progressBar.Size = new System.Drawing.Size(778, 23);
-			this.progressBar.TabIndex = 5;
-			// 
-			// numericUpDown2
-			// 
-			this.numericUpDown2.Location = new System.Drawing.Point(311, 70);
-			this.numericUpDown2.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-			this.numericUpDown2.Name = "numericUpDown2";
-			this.numericUpDown2.Size = new System.Drawing.Size(48, 21);
-			this.numericUpDown2.TabIndex = 4;
-			this.numericUpDown2.Value = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.Checked = true;
+			this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox1.Location = new System.Drawing.Point(6, 87);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(108, 16);
+			this.checkBox1.TabIndex = 9;
+			this.checkBox1.Text = "转换后删除 flv";
+			this.checkBox1.UseVisualStyleBackColor = true;
+			this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+			this.checkBox1.EnabledChanged += new System.EventHandler(this.CheckBox1_EnabledChanged);
 			// 
 			// numericUpDown1
 			// 
@@ -204,7 +194,7 @@
             0,
             0,
             196608});
-			this.numericUpDown1.Location = new System.Drawing.Point(116, 70);
+			this.numericUpDown1.Location = new System.Drawing.Point(114, 38);
 			this.numericUpDown1.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -219,14 +209,60 @@
             0,
             0});
 			// 
+			// numericUpDown2
+			// 
+			this.numericUpDown2.Location = new System.Drawing.Point(309, 38);
+			this.numericUpDown2.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+			this.numericUpDown2.Name = "numericUpDown2";
+			this.numericUpDown2.Size = new System.Drawing.Size(48, 21);
+			this.numericUpDown2.TabIndex = 4;
+			this.numericUpDown2.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label2.Location = new System.Drawing.Point(199, 40);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(104, 16);
+			this.label2.TabIndex = 7;
+			this.label2.Text = "GB，每段截取";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label1.Location = new System.Drawing.Point(4, 40);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(104, 16);
+			this.label1.TabIndex = 6;
+			this.label1.Text = "如果视频大于";
+			// 
+			// progressBar
+			// 
+			this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.progressBar.Location = new System.Drawing.Point(8, 89);
+			this.progressBar.Name = "progressBar";
+			this.progressBar.Size = new System.Drawing.Size(778, 23);
+			this.progressBar.TabIndex = 5;
+			// 
 			// button1
 			// 
 			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.button1.Location = new System.Drawing.Point(711, 70);
+			this.button1.Location = new System.Drawing.Point(711, 60);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(75, 23);
 			this.button1.TabIndex = 2;
-			this.button1.Text = "截取";
+			this.button1.Text = "开始";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.Button1_Click);
 			// 
@@ -239,7 +275,7 @@
 			this.OutputVideoPath.Name = "OutputVideoPath";
 			this.OutputVideoPath.Size = new System.Drawing.Size(778, 21);
 			this.OutputVideoPath.TabIndex = 1;
-			this.OutputVideoPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.InputVideoPath_DragDrop);
+			this.OutputVideoPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.OutputVideoPath_DragDrop);
 			this.OutputVideoPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.FilePath_DragEnter);
 			// 
 			// InputVideoPath
@@ -283,8 +319,8 @@
 			// 
 			this.tabPage3.Controls.Add(this.groupBox3);
 			this.tabPage3.Controls.Add(this.groupBox2);
-			this.tabPage3.Controls.Add(this.MainList);
 			this.tabPage3.Controls.Add(this.groupBox1);
+			this.tabPage3.Controls.Add(this.MainList);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
 			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -418,69 +454,6 @@
 			this.NewRoomId.TabIndex = 0;
 			this.NewRoomId.Text = "6154037";
 			this.NewRoomId.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NewRoomId_KeyDown);
-			// 
-			// MainList
-			// 
-			this.MainList.AllowUserToAddRows = false;
-			this.MainList.AllowUserToDeleteRows = false;
-			this.MainList.AllowUserToResizeRows = false;
-			this.MainList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.MainList.BackgroundColor = System.Drawing.SystemColors.Window;
-			this.MainList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.MainList.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-			this.MainList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			this.MainList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.MainList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column1,
-            this.Column2,
-            this.Column3,
-            this.Column4,
-            this.Column5});
-			this.MainList.Location = new System.Drawing.Point(8, 226);
-			this.MainList.MultiSelect = false;
-			this.MainList.Name = "MainList";
-			this.MainList.ReadOnly = true;
-			this.MainList.RowHeadersVisible = false;
-			this.MainList.RowTemplate.Height = 23;
-			this.MainList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.MainList.Size = new System.Drawing.Size(776, 190);
-			this.MainList.StandardTab = true;
-			this.MainList.TabIndex = 2;
-			this.MainList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MainList_CellFormatting);
-			this.MainList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.MainList_CellMouseDoubleClick);
-			this.MainList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.List_MouseDown);
-			// 
-			// Column1
-			// 
-			this.Column1.HeaderText = "Column1";
-			this.Column1.Name = "Column1";
-			this.Column1.ReadOnly = true;
-			// 
-			// Column2
-			// 
-			this.Column2.HeaderText = "Column2";
-			this.Column2.Name = "Column2";
-			this.Column2.ReadOnly = true;
-			// 
-			// Column3
-			// 
-			this.Column3.HeaderText = "Column3";
-			this.Column3.Name = "Column3";
-			this.Column3.ReadOnly = true;
-			// 
-			// Column4
-			// 
-			this.Column4.HeaderText = "Column4";
-			this.Column4.Name = "Column4";
-			this.Column4.ReadOnly = true;
-			// 
-			// Column5
-			// 
-			this.Column5.HeaderText = "Column5";
-			this.Column5.Name = "Column5";
-			this.Column5.ReadOnly = true;
 			// 
 			// groupBox1
 			// 
@@ -649,6 +622,102 @@
 			this.ExitMenuItem.Text = "退出";
 			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
 			// 
+			// checkBox3
+			// 
+			this.checkBox3.AutoSize = true;
+			this.checkBox3.Checked = true;
+			this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox3.Location = new System.Drawing.Point(7, 65);
+			this.checkBox3.Name = "checkBox3";
+			this.checkBox3.Size = new System.Drawing.Size(198, 16);
+			this.checkBox3.TabIndex = 11;
+			this.checkBox3.Text = "若已存在同名 mp4 文件，则跳过";
+			this.checkBox3.UseVisualStyleBackColor = true;
+			// 
+			// checkBox4
+			// 
+			this.checkBox4.AutoSize = true;
+			this.checkBox4.Checked = true;
+			this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox4.Location = new System.Drawing.Point(7, 109);
+			this.checkBox4.Name = "checkBox4";
+			this.checkBox4.Size = new System.Drawing.Size(120, 16);
+			this.checkBox4.TabIndex = 12;
+			this.checkBox4.Text = "删除文件到回收站";
+			this.checkBox4.UseVisualStyleBackColor = true;
+			// 
+			// MainList
+			// 
+			this.MainList.AllowUserToAddRows = false;
+			this.MainList.AllowUserToDeleteRows = false;
+			this.MainList.AllowUserToResizeRows = false;
+			this.MainList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.MainList.BackgroundColor = System.Drawing.SystemColors.Window;
+			this.MainList.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.MainList.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+			this.MainList.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.MainList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.MainList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2,
+            this.Column3,
+            this.Column4,
+            this.Column5});
+			this.MainList.Location = new System.Drawing.Point(8, 226);
+			this.MainList.MultiSelect = false;
+			this.MainList.Name = "MainList";
+			this.MainList.ReadOnly = true;
+			this.MainList.RowHeadersVisible = false;
+			this.MainList.RowTemplate.Height = 23;
+			this.MainList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.MainList.Size = new System.Drawing.Size(776, 190);
+			this.MainList.StandardTab = true;
+			this.MainList.TabIndex = 2;
+			this.MainList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MainList_CellFormatting);
+			this.MainList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.MainList_CellMouseDoubleClick);
+			this.MainList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.List_MouseDown);
+			// 
+			// Column1
+			// 
+			this.Column1.HeaderText = "Column1";
+			this.Column1.Name = "Column1";
+			this.Column1.ReadOnly = true;
+			// 
+			// Column2
+			// 
+			this.Column2.HeaderText = "Column2";
+			this.Column2.Name = "Column2";
+			this.Column2.ReadOnly = true;
+			// 
+			// Column3
+			// 
+			this.Column3.HeaderText = "Column3";
+			this.Column3.Name = "Column3";
+			this.Column3.ReadOnly = true;
+			// 
+			// Column4
+			// 
+			this.Column4.HeaderText = "Column4";
+			this.Column4.Name = "Column4";
+			this.Column4.ReadOnly = true;
+			// 
+			// Column5
+			// 
+			this.Column5.HeaderText = "Column5";
+			this.Column5.Name = "Column5";
+			this.Column5.ReadOnly = true;
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(6, 60);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(137, 12);
+			this.label4.TabIndex = 11;
+			this.label4.Text = "队列中的视频文件：0 个";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -663,8 +732,10 @@
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+			this.选项.ResumeLayout(false);
+			this.选项.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
@@ -672,7 +743,6 @@
 			this.groupBox3.PerformLayout();
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.panel2.ResumeLayout(false);
@@ -680,6 +750,7 @@
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
 			this.contextMenuStrip1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -735,6 +806,11 @@
 		private System.Windows.Forms.RadioButton RecordWay1;
 		private System.Windows.Forms.Button button9;
 		private System.Windows.Forms.CheckBox NotifyCheckBox;
+		private System.Windows.Forms.GroupBox 选项;
+		private System.Windows.Forms.CheckBox checkBox2;
+		private System.Windows.Forms.CheckBox checkBox3;
+		private System.Windows.Forms.CheckBox checkBox4;
+		private System.Windows.Forms.Label label4;
 	}
 }
 
