@@ -62,6 +62,7 @@
 			this.button3 = new System.Windows.Forms.Button();
 			this.NewRoomId = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.checkBox6 = new System.Windows.Forms.CheckBox();
 			this.DiskUsage = new AutoSplitVideo.Controls.CustomProgressBar();
 			this.button9 = new System.Windows.Forms.Button();
 			this.panel2 = new System.Windows.Forms.Panel();
@@ -512,6 +513,7 @@
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.checkBox6);
 			this.groupBox1.Controls.Add(this.DiskUsage);
 			this.groupBox1.Controls.Add(this.button9);
 			this.groupBox1.Controls.Add(this.panel2);
@@ -524,6 +526,17 @@
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "下次录制时生效";
+			// 
+			// checkBox6
+			// 
+			this.checkBox6.AutoSize = true;
+			this.checkBox6.Enabled = false;
+			this.checkBox6.Location = new System.Drawing.Point(155, 72);
+			this.checkBox6.Name = "checkBox6";
+			this.checkBox6.Size = new System.Drawing.Size(168, 16);
+			this.checkBox6.TabIndex = 2;
+			this.checkBox6.Text = "录制完后自动转封装成 mp4";
+			this.checkBox6.UseVisualStyleBackColor = true;
 			// 
 			// DiskUsage
 			// 
@@ -554,7 +567,7 @@
 			this.panel2.Controls.Add(this.RecordWay1);
 			this.panel2.Location = new System.Drawing.Point(0, 67);
 			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(223, 27);
+			this.panel2.Size = new System.Drawing.Size(149, 27);
 			this.panel2.TabIndex = 9;
 			// 
 			// RecordWay2
@@ -852,6 +865,7 @@
 		private System.Windows.Forms.Timer timer1;
 		private Controls.CustomProgressBar DiskUsage;
 		private System.Windows.Forms.CheckBox checkBox5;
+		private System.Windows.Forms.CheckBox checkBox6;
 	}
 }
 
