@@ -604,8 +604,11 @@ namespace AutoSplitVideo
 			return new Task(() =>
 			{
 				ShowVideoInfo(inputVideoPath);
-				SetProgressBar(0);
-				SetLabel4(1);
+				if (isNotify)
+				{
+					SetProgressBar(0);
+					SetLabel4(1);
+				}
 				using (var engine = new Engine())
 				{
 					var inputFile = new MediaFile(inputVideoPath);
@@ -630,7 +633,10 @@ namespace AutoSplitVideo
 						engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
 					}
 
-					SetProgressBar(50);
+					if (isNotify)
+					{
+						SetProgressBar(50);
+					}
 
 					if (!config.OnlyConvert)
 					{
@@ -659,7 +665,10 @@ namespace AutoSplitVideo
 								engine.GetMetadata(outputFile);
 								now += t;
 
-								SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
+								if (isNotify)
+								{
+									SetProgressBar(50 + Convert.ToInt32(Convert.ToDouble(now.Ticks) / duration.Ticks * 50));
+								}
 							}
 						}
 					}
@@ -677,9 +686,9 @@ namespace AutoSplitVideo
 					}
 				}
 
-				SetProgressBar(100);
 				if (isNotify)
 				{
+					SetProgressBar(100);
 					MessageBox.Show($@"{Path.GetFileName(inputVideoPath)} 完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				else
