@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace AutoSplitVideo.Utils
@@ -188,7 +187,7 @@ namespace AutoSplitVideo.Utils
 
 		public static List<string> GetAllFlvList(string dir)
 		{
-			var list = Directory.GetFiles(dir, @"*.flv", SearchOption.TopDirectoryOnly);
+			var list = Directory.GetFiles(dir, @"*.flv", SearchOption.AllDirectories);
 			var res = new List<string>();
 			using (var mi = new MediaInfo.MediaInfo())
 			{

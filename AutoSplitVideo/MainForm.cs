@@ -148,7 +148,8 @@ namespace AutoSplitVideo
 				DeleteFlv = checkBox1.Checked,
 				IsSendToRecycleBin = checkBox4.Checked,
 				IsSkipSameMp4 = checkBox3.Checked,
-				OnlyConvert = checkBox2.Checked
+				OnlyConvert = checkBox2.Checked,
+				OutputSameAsInput = checkBox5.Checked
 			};
 			if (File.Exists(InputVideoPath.Text))
 			{
@@ -237,6 +238,7 @@ namespace AutoSplitVideo
 			checkBox1.Enabled = b;
 			checkBox2.Enabled = b;
 			checkBox3.Enabled = b;
+			checkBox5.Enabled = b;
 		}
 
 		private void CheckBox2Changed()
@@ -279,6 +281,25 @@ namespace AutoSplitVideo
 		private void CheckBox1_EnabledChanged(object sender, EventArgs e)
 		{
 			CheckBox1Changed();
+		}
+
+		private void CheckBox5Changed()
+		{
+			if (checkBox5.Enabled)
+			{
+				OutputVideoPath.Enabled = !checkBox5.Checked;
+				OutputVideoPath.Text = string.Empty;
+			}
+		}
+
+		private void CheckBox5_EnabledChanged(object sender, EventArgs e)
+		{
+			CheckBox5Changed();
+		}
+
+		private void CheckBox5_CheckedChanged(object sender, EventArgs e)
+		{
+			CheckBox5Changed();
 		}
 
 		private void SetProgressBar(int i)
@@ -370,17 +391,18 @@ namespace AutoSplitVideo
 				{
 					path += @"\";
 				}
-				OutputVideoPath.Text = path;
+				OutputVideoPath.Text = OutputVideoPath.Enabled ? path : string.Empty;
 				InputVideoPath.Text = path;
 			}
 			else if (File.Exists(path))
 			{
 				InputVideoPath.Text = Path.GetFullPath(path);
-				OutputVideoPath.Text = $@"{Path.GetDirectoryName(path)}";
-				if (!OutputVideoPath.Text.EndsWith(@"\"))
+				var outputPath = $@"{Path.GetDirectoryName(path)}";
+				if (!outputPath.EndsWith(@"\"))
 				{
-					OutputVideoPath.Text += @"\";
+					outputPath += @"\";
 				}
+				OutputVideoPath.Text = OutputVideoPath.Enabled ? outputPath : string.Empty;
 			}
 		}
 
@@ -519,7 +541,11 @@ namespace AutoSplitVideo
 				{
 					var inputFile = new MediaFile(inputVideoPath);
 					var outputFile = new MediaFile();
-					var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4");
+					if (config.OutputSameAsInput || string.IsNullOrWhiteSpace(outputDirectoryPath) || !Directory.Exists(outputDirectoryPath))
+					{
+						outputDirectoryPath = inputVideoPath;
+					}
+					var mp4File = new MediaFile(Path.Combine(outputDirectoryPath, $@"{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4"));
 
 					//flv转封装成MP4
 					if (config.IsSkipSameMp4 && File.Exists(mp4File.Filename))
@@ -604,7 +630,11 @@ namespace AutoSplitVideo
 						{
 							var inputFile = new MediaFile(flv);
 							var outputFile = new MediaFile();
-							var mp4File = new MediaFile($@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(flv)}.mp4");
+							if (config.OutputSameAsInput || string.IsNullOrWhiteSpace(outputDirectoryPath) || !Directory.Exists(outputDirectoryPath))
+							{
+								outputDirectoryPath = Path.GetDirectoryName(flv);
+							}
+							var mp4File = new MediaFile(Path.Combine(outputDirectoryPath ?? throw new ArgumentNullException(nameof(outputDirectoryPath)), $@"{Path.GetFileNameWithoutExtension(flv)}.mp4"));
 
 							//flv转封装成MP4
 							if (config.IsSkipSameMp4 && File.Exists(mp4File.Filename))

@@ -33,6 +33,7 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.label4 = new System.Windows.Forms.Label();
 			this.选项 = new System.Windows.Forms.GroupBox();
+			this.checkBox5 = new System.Windows.Forms.CheckBox();
 			this.checkBox4 = new System.Windows.Forms.CheckBox();
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -145,6 +146,7 @@
 			this.选项.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.选项.Controls.Add(this.checkBox5);
 			this.选项.Controls.Add(this.checkBox4);
 			this.选项.Controls.Add(this.checkBox3);
 			this.选项.Controls.Add(this.checkBox2);
@@ -161,12 +163,26 @@
 			this.选项.TabStop = false;
 			this.选项.Text = "选项";
 			// 
+			// checkBox5
+			// 
+			this.checkBox5.AutoSize = true;
+			this.checkBox5.Checked = true;
+			this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBox5.Location = new System.Drawing.Point(6, 131);
+			this.checkBox5.Name = "checkBox5";
+			this.checkBox5.Size = new System.Drawing.Size(132, 16);
+			this.checkBox5.TabIndex = 13;
+			this.checkBox5.Text = "输出路径同输入路径";
+			this.checkBox5.UseVisualStyleBackColor = true;
+			this.checkBox5.CheckedChanged += new System.EventHandler(this.CheckBox5_CheckedChanged);
+			this.checkBox5.EnabledChanged += new System.EventHandler(this.CheckBox5_EnabledChanged);
+			// 
 			// checkBox4
 			// 
 			this.checkBox4.AutoSize = true;
 			this.checkBox4.Checked = true;
 			this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox4.Location = new System.Drawing.Point(7, 109);
+			this.checkBox4.Location = new System.Drawing.Point(6, 109);
 			this.checkBox4.Name = "checkBox4";
 			this.checkBox4.Size = new System.Drawing.Size(120, 16);
 			this.checkBox4.TabIndex = 12;
@@ -178,7 +194,7 @@
 			this.checkBox3.AutoSize = true;
 			this.checkBox3.Checked = true;
 			this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBox3.Location = new System.Drawing.Point(7, 65);
+			this.checkBox3.Location = new System.Drawing.Point(6, 65);
 			this.checkBox3.Name = "checkBox3";
 			this.checkBox3.Size = new System.Drawing.Size(198, 16);
 			this.checkBox3.TabIndex = 11;
@@ -188,7 +204,7 @@
 			// checkBox2
 			// 
 			this.checkBox2.AutoSize = true;
-			this.checkBox2.Location = new System.Drawing.Point(7, 21);
+			this.checkBox2.Location = new System.Drawing.Point(6, 21);
 			this.checkBox2.Name = "checkBox2";
 			this.checkBox2.Size = new System.Drawing.Size(72, 16);
 			this.checkBox2.TabIndex = 10;
@@ -275,7 +291,7 @@
 			// 
 			this.label1.AutoSize = true;
 			this.label1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label1.Location = new System.Drawing.Point(4, 40);
+			this.label1.Location = new System.Drawing.Point(6, 40);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(104, 16);
 			this.label1.TabIndex = 6;
@@ -306,6 +322,7 @@
 			this.OutputVideoPath.AllowDrop = true;
 			this.OutputVideoPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.OutputVideoPath.Enabled = false;
 			this.OutputVideoPath.Location = new System.Drawing.Point(8, 33);
 			this.OutputVideoPath.Name = "OutputVideoPath";
 			this.OutputVideoPath.Size = new System.Drawing.Size(778, 21);
@@ -834,6 +851,7 @@
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Timer timer1;
 		private Controls.CustomProgressBar DiskUsage;
+		private System.Windows.Forms.CheckBox checkBox5;
 	}
 }
 
