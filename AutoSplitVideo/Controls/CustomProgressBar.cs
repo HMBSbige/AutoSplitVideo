@@ -27,7 +27,7 @@ namespace AutoSplitVideo.Controls
 
 		public CustomProgressBar()
 		{
-			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+			SetStyle(ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 			FontColor = Color.Black;
 		}
 
@@ -49,7 +49,7 @@ namespace AutoSplitVideo.Controls
 
 			if (m.Msg == WM_PAINT)
 			{
-				var m_Percent = Convert.ToInt32((Convert.ToDouble(Value) / Convert.ToDouble(Maximum)) * 100);
+				var m_Percent = Convert.ToInt32(Convert.ToDouble(Value) / Convert.ToDouble(Maximum) * 100);
 				const TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.WordEllipsis;
 
 				using (var g = Graphics.FromHwnd(Handle))

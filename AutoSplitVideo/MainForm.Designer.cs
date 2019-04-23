@@ -62,7 +62,7 @@
 			this.button3 = new System.Windows.Forms.Button();
 			this.NewRoomId = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.checkBox6 = new System.Windows.Forms.CheckBox();
+			this.AutoConvert = new System.Windows.Forms.CheckBox();
 			this.DiskUsage = new AutoSplitVideo.Controls.CustomProgressBar();
 			this.button9 = new System.Windows.Forms.Button();
 			this.panel2 = new System.Windows.Forms.Panel();
@@ -513,7 +513,7 @@
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.checkBox6);
+			this.groupBox1.Controls.Add(this.AutoConvert);
 			this.groupBox1.Controls.Add(this.DiskUsage);
 			this.groupBox1.Controls.Add(this.button9);
 			this.groupBox1.Controls.Add(this.panel2);
@@ -527,16 +527,17 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "下次录制时生效";
 			// 
-			// checkBox6
+			// AutoConvert
 			// 
-			this.checkBox6.AutoSize = true;
-			this.checkBox6.Enabled = false;
-			this.checkBox6.Location = new System.Drawing.Point(155, 72);
-			this.checkBox6.Name = "checkBox6";
-			this.checkBox6.Size = new System.Drawing.Size(168, 16);
-			this.checkBox6.TabIndex = 2;
-			this.checkBox6.Text = "录制完后自动转封装成 mp4";
-			this.checkBox6.UseVisualStyleBackColor = true;
+			this.AutoConvert.AutoSize = true;
+			this.AutoConvert.Checked = true;
+			this.AutoConvert.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.AutoConvert.Location = new System.Drawing.Point(155, 72);
+			this.AutoConvert.Name = "AutoConvert";
+			this.AutoConvert.Size = new System.Drawing.Size(306, 16);
+			this.AutoConvert.TabIndex = 2;
+			this.AutoConvert.Text = "录制完后自动转封装成 mp4（选项同 “自动分段”）";
+			this.AutoConvert.UseVisualStyleBackColor = true;
 			// 
 			// DiskUsage
 			// 
@@ -865,7 +866,7 @@
 		private System.Windows.Forms.Timer timer1;
 		private Controls.CustomProgressBar DiskUsage;
 		private System.Windows.Forms.CheckBox checkBox5;
-		private System.Windows.Forms.CheckBox checkBox6;
+		private System.Windows.Forms.CheckBox AutoConvert;
 	}
 }
 

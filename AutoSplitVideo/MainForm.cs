@@ -109,6 +109,18 @@ namespace AutoSplitVideo
 			}
 		}
 
+		private VideoConvertConfig GetVideoConvertConfig()
+		{
+			return new VideoConvertConfig
+			{
+				DeleteFlv = checkBox1.Checked,
+				IsSendToRecycleBin = checkBox4.Checked,
+				IsSkipSameMp4 = checkBox3.Checked,
+				OnlyConvert = checkBox2.Checked,
+				OutputSameAsInput = checkBox5.Checked
+			};
+		}
+
 		private void LoadMainList()
 		{
 			MainList.AutoGenerateColumns = false;
@@ -143,17 +155,10 @@ namespace AutoSplitVideo
 		{
 			SetControlEnable(false);
 			Task runTask;
-			var config = new VideoConvertConfig
-			{
-				DeleteFlv = checkBox1.Checked,
-				IsSendToRecycleBin = checkBox4.Checked,
-				IsSkipSameMp4 = checkBox3.Checked,
-				OnlyConvert = checkBox2.Checked,
-				OutputSameAsInput = checkBox5.Checked
-			};
+			var config = GetVideoConvertConfig();
 			if (File.Exists(InputVideoPath.Text))
 			{
-				runTask = SplitTaskFile(InputVideoPath.Text, OutputVideoPath.Text, config);
+				runTask = SplitTaskFile(InputVideoPath.Text, OutputVideoPath.Text, config, true);
 			}
 			else if (Directory.Exists(InputVideoPath.Text))
 			{
@@ -530,7 +535,7 @@ namespace AutoSplitVideo
 
 		#region Async、Task
 
-		private Task SplitTaskFile(string inputVideoPath, string outputDirectoryPath, VideoConvertConfig config)
+		private Task SplitTaskFile(string inputVideoPath, string outputDirectoryPath, VideoConvertConfig config, bool isNotify)
 		{
 			return new Task(() =>
 			{
@@ -609,7 +614,14 @@ namespace AutoSplitVideo
 				}
 
 				SetProgressBar(100);
-				MessageBox.Show($@"{Path.GetFileName(inputVideoPath)} 完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				if (isNotify)
+				{
+					MessageBox.Show($@"{Path.GetFileName(inputVideoPath)} 完成！", @"提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					Logging.Info($@"{Path.GetFullPath(inputVideoPath)} 转封装完成！");
+				}
 			});
 		}
 
@@ -746,6 +758,8 @@ namespace AutoSplitVideo
 			var rootPath = RecordDirectory.Text;
 			var n = GetStreamUrlIndex();//0,1,2,3
 			var httpWay = RecordWay2.Checked;
+			var isConvert2Mp4 = AutoConvert.Checked;
+
 			var dir = Path.Combine(rootPath, $@"{room.RealRoomID}");
 			if (!Directory.Exists(dir))
 			{
@@ -809,6 +823,12 @@ namespace AutoSplitVideo
 				{
 					File.Delete(path);
 					Logging.Info($@"{room.RealRoomID}:因文件过小删除：{path}");
+				}
+				else if (isConvert2Mp4)
+				{
+					Logging.Info($@"{room.RealRoomID}:开始转封装：{path}");
+					// 异步执行
+					SplitTaskFile(path, OutputVideoPath.Text, GetVideoConvertConfig(), false).Start();
 				}
 			}
 		}
