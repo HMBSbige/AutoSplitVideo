@@ -543,9 +543,9 @@ namespace AutoSplitVideo
 					var outputFile = new MediaFile();
 					if (config.OutputSameAsInput || string.IsNullOrWhiteSpace(outputDirectoryPath) || !Directory.Exists(outputDirectoryPath))
 					{
-						outputDirectoryPath = inputVideoPath;
+						outputDirectoryPath = Path.GetDirectoryName(inputVideoPath);
 					}
-					var mp4File = new MediaFile(Path.Combine(outputDirectoryPath, $@"{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4"));
+					var mp4File = new MediaFile(Path.Combine(outputDirectoryPath ?? throw new ArgumentNullException(nameof(outputDirectoryPath)), $@"{Path.GetFileNameWithoutExtension(inputVideoPath)}.mp4"));
 
 					//flv转封装成MP4
 					if (config.IsSkipSameMp4 && File.Exists(mp4File.Filename))
