@@ -57,6 +57,7 @@ namespace AutoSplitVideo
 			}
 			timer1.Start();
 			AutoStartupCheckBox.Checked = AutoStartup.Check();
+
 			AutoStartupCheckBox.Click += AutoStartupCheckBox_CheckedChanged;
 			NotifyCheckBox.Click += NotifyCheckBox_Click;
 			radioButton1.CheckedChanged += radioButton_CheckedChanged;
@@ -65,13 +66,20 @@ namespace AutoSplitVideo
 			radioButton4.CheckedChanged += radioButton_CheckedChanged;
 			RecordDirectory.TextChanged += RecordDirectory_TextChanged;
 			tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
+			AutoConvert.CheckedChanged += AutoConvert_CheckedChanged;
+			checkBox1.CheckedChanged += CheckBox1_CheckedChanged;
+			checkBox2.CheckedChanged += CheckBox2_CheckedChanged;
+			checkBox3.CheckedChanged += CheckBox3_CheckedChanged;
+			checkBox4.CheckedChanged += CheckBox4_CheckedChanged;
+			checkBox5.CheckedChanged += CheckBox5_CheckedChanged;
+			numericUpDown1.ValueChanged += NumericUpDown1_ValueChanged;
+			numericUpDown2.ValueChanged += NumericUpDown2_ValueChanged;
+
+			CheckBox1Changed();
+			CheckBox2Changed();
+			CheckBox5Changed();
 
 			LoadMainList();
-		}
-
-		private void NotifyCheckBox_Click(object sender, EventArgs e)
-		{
-			SaveConfig();
 		}
 
 		private void AutoStartupCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -88,6 +96,17 @@ namespace AutoSplitVideo
 			tabControl1.SelectedIndex = _config.TableIndex;
 			RecordDirectory.Text = _config.OutputPath;
 			NotifyCheckBox.Checked = _config.IsNotify != 0;
+			AutoConvert.Checked = _config.IsAutoConvertFlv != 0;
+
+			checkBox1.Checked = _config.DeleteFlv != 0;
+			checkBox2.Checked = _config.OnlyConvert != 0;
+			checkBox3.Checked = _config.IsSkipSameMp4 != 0;
+			checkBox4.Checked = _config.IsSendToRecycleBin != 0;
+			checkBox5.Checked = _config.OutputSameAsInput != 0;
+
+			numericUpDown1.Value = _config.N1;
+			numericUpDown2.Value = _config.N2;
+
 			switch (_config.StreamUrlIndex)
 			{
 				case 0:
@@ -103,6 +122,7 @@ namespace AutoSplitVideo
 					radioButton4.Checked = true;
 					break;
 			}
+
 			foreach (var roomId in _config.Rooms)
 			{
 				AddRoom(roomId);
@@ -114,9 +134,9 @@ namespace AutoSplitVideo
 			return new VideoConvertConfig
 			{
 				DeleteFlv = checkBox1.Checked,
-				IsSendToRecycleBin = checkBox4.Checked,
-				IsSkipSameMp4 = checkBox3.Checked,
 				OnlyConvert = checkBox2.Checked,
+				IsSkipSameMp4 = checkBox3.Checked,
+				IsSendToRecycleBin = checkBox4.Checked,
 				OutputSameAsInput = checkBox5.Checked
 			};
 		}
@@ -268,6 +288,7 @@ namespace AutoSplitVideo
 		private void CheckBox2_CheckedChanged(object sender, EventArgs e)
 		{
 			CheckBox2Changed();
+			SaveConfig();
 		}
 
 		private void CheckBox1Changed()
@@ -281,6 +302,7 @@ namespace AutoSplitVideo
 		private void CheckBox1_CheckedChanged(object sender, EventArgs e)
 		{
 			CheckBox1Changed();
+			SaveConfig();
 		}
 
 		private void CheckBox1_EnabledChanged(object sender, EventArgs e)
@@ -305,6 +327,7 @@ namespace AutoSplitVideo
 		private void CheckBox5_CheckedChanged(object sender, EventArgs e)
 		{
 			CheckBox5Changed();
+			SaveConfig();
 		}
 
 		private void SetProgressBar(int i)
@@ -450,6 +473,17 @@ namespace AutoSplitVideo
 			_config.StreamUrlIndex = GetStreamUrlIndex();
 			_config.Rooms = _table.Select(room => room.RealRoomID);
 			_config.IsNotify = NotifyCheckBox.Checked ? 1 : 0;
+			_config.IsAutoConvertFlv = AutoConvert.Checked ? 1 : 0;
+
+			_config.DeleteFlv = checkBox1.Checked ? 1 : 0;
+			_config.OnlyConvert = checkBox2.Checked ? 1 : 0;
+			_config.IsSkipSameMp4 = checkBox3.Checked ? 1 : 0;
+			_config.IsSendToRecycleBin = checkBox4.Checked ? 1 : 0;
+			_config.OutputSameAsInput = checkBox5.Checked ? 1 : 0;
+
+			_config.N1 = numericUpDown1.Value;
+			_config.N2 = numericUpDown2.Value;
+
 			_config.Save();
 		}
 
@@ -464,6 +498,36 @@ namespace AutoSplitVideo
 		}
 
 		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void NotifyCheckBox_Click(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void AutoConvert_CheckedChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void NumericUpDown2_ValueChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void CheckBox3_CheckedChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void CheckBox4_CheckedChanged(object sender, EventArgs e)
 		{
 			SaveConfig();
 		}

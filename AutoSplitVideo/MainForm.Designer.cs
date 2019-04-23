@@ -63,7 +63,6 @@
 			this.NewRoomId = new System.Windows.Forms.TextBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.AutoConvert = new System.Windows.Forms.CheckBox();
-			this.DiskUsage = new AutoSplitVideo.Controls.CustomProgressBar();
 			this.button9 = new System.Windows.Forms.Button();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.RecordWay2 = new System.Windows.Forms.RadioButton();
@@ -75,18 +74,19 @@
 			this.radioButton3 = new System.Windows.Forms.RadioButton();
 			this.button2 = new System.Windows.Forms.Button();
 			this.RecordDirectory = new System.Windows.Forms.TextBox();
-			this.MainList = new AutoSplitVideo.Controls.DoubleBufferedDataGridView();
-			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.ShowHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.DiskUsage = new AutoSplitVideo.Controls.CustomProgressBar();
+			this.MainList = new AutoSplitVideo.Controls.DoubleBufferedDataGridView();
+			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.选项.SuspendLayout();
@@ -99,8 +99,8 @@
 			this.groupBox1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.contextMenuStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MainList)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -175,7 +175,6 @@
 			this.checkBox5.TabIndex = 13;
 			this.checkBox5.Text = "输出路径同输入路径";
 			this.checkBox5.UseVisualStyleBackColor = true;
-			this.checkBox5.CheckedChanged += new System.EventHandler(this.CheckBox5_CheckedChanged);
 			this.checkBox5.EnabledChanged += new System.EventHandler(this.CheckBox5_EnabledChanged);
 			// 
 			// checkBox4
@@ -211,7 +210,6 @@
 			this.checkBox2.TabIndex = 10;
 			this.checkBox2.Text = "仅转封装";
 			this.checkBox2.UseVisualStyleBackColor = true;
-			this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBox2_CheckedChanged);
 			this.checkBox2.EnabledChanged += new System.EventHandler(this.CheckBox2_EnabledChanged);
 			// 
 			// label3
@@ -235,7 +233,6 @@
 			this.checkBox1.TabIndex = 9;
 			this.checkBox1.Text = "转换后删除 flv";
 			this.checkBox1.UseVisualStyleBackColor = true;
-			this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
 			this.checkBox1.EnabledChanged += new System.EventHandler(this.CheckBox1_EnabledChanged);
 			// 
 			// numericUpDown1
@@ -539,18 +536,6 @@
 			this.AutoConvert.Text = "录制完后自动转封装成 mp4（选项同 “自动分段”）";
 			this.AutoConvert.UseVisualStyleBackColor = true;
 			// 
-			// DiskUsage
-			// 
-			this.DiskUsage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiskUsage.CustomText = "";
-			this.DiskUsage.DisplayStyle = AutoSplitVideo.Controls.ProgressBarDisplayText.CustomText;
-			this.DiskUsage.FontColor = System.Drawing.Color.Black;
-			this.DiskUsage.Location = new System.Drawing.Point(272, 46);
-			this.DiskUsage.Name = "DiskUsage";
-			this.DiskUsage.Size = new System.Drawing.Size(403, 23);
-			this.DiskUsage.TabIndex = 11;
-			// 
 			// button9
 			// 
 			this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -667,6 +652,58 @@
 			this.RecordDirectory.Size = new System.Drawing.Size(669, 21);
 			this.RecordDirectory.TabIndex = 0;
 			// 
+			// notifyIcon1
+			// 
+			this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
+			this.notifyIcon1.Text = "Asakinb!";
+			this.notifyIcon1.Visible = true;
+			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+			// 
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowHideMenuItem,
+            this.toolStripSeparator1,
+            this.ExitMenuItem});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(130, 54);
+			// 
+			// ShowHideMenuItem
+			// 
+			this.ShowHideMenuItem.Name = "ShowHideMenuItem";
+			this.ShowHideMenuItem.Size = new System.Drawing.Size(129, 22);
+			this.ShowHideMenuItem.Text = "显示/隐藏";
+			this.ShowHideMenuItem.Click += new System.EventHandler(this.ShowHideMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(126, 6);
+			// 
+			// ExitMenuItem
+			// 
+			this.ExitMenuItem.Name = "ExitMenuItem";
+			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
+			this.ExitMenuItem.Text = "退出";
+			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
+			// 
+			// timer1
+			// 
+			this.timer1.Interval = 1000;
+			this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
+			// 
+			// DiskUsage
+			// 
+			this.DiskUsage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.DiskUsage.CustomText = "";
+			this.DiskUsage.DisplayStyle = AutoSplitVideo.Controls.ProgressBarDisplayText.CustomText;
+			this.DiskUsage.FontColor = System.Drawing.Color.Black;
+			this.DiskUsage.Location = new System.Drawing.Point(272, 46);
+			this.DiskUsage.Name = "DiskUsage";
+			this.DiskUsage.Size = new System.Drawing.Size(403, 23);
+			this.DiskUsage.TabIndex = 11;
+			// 
 			// MainList
 			// 
 			this.MainList.AllowUserToAddRows = false;
@@ -730,46 +767,6 @@
 			this.Column5.Name = "Column5";
 			this.Column5.ReadOnly = true;
 			// 
-			// notifyIcon1
-			// 
-			this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
-			this.notifyIcon1.Text = "Asakinb!";
-			this.notifyIcon1.Visible = true;
-			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
-			// 
-			// contextMenuStrip1
-			// 
-			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowHideMenuItem,
-            this.toolStripSeparator1,
-            this.ExitMenuItem});
-			this.contextMenuStrip1.Name = "contextMenuStrip1";
-			this.contextMenuStrip1.Size = new System.Drawing.Size(130, 54);
-			// 
-			// ShowHideMenuItem
-			// 
-			this.ShowHideMenuItem.Name = "ShowHideMenuItem";
-			this.ShowHideMenuItem.Size = new System.Drawing.Size(129, 22);
-			this.ShowHideMenuItem.Text = "显示/隐藏";
-			this.ShowHideMenuItem.Click += new System.EventHandler(this.ShowHideMenuItem_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(126, 6);
-			// 
-			// ExitMenuItem
-			// 
-			this.ExitMenuItem.Name = "ExitMenuItem";
-			this.ExitMenuItem.Size = new System.Drawing.Size(129, 22);
-			this.ExitMenuItem.Text = "退出";
-			this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
-			// 
-			// timer1
-			// 
-			this.timer1.Interval = 1000;
-			this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -801,8 +798,8 @@
 			this.panel2.PerformLayout();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
 			this.contextMenuStrip1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.MainList)).EndInit();
 			this.ResumeLayout(false);
 
 		}
