@@ -44,6 +44,9 @@ namespace AutoSplitVideo
 
 		private const int Interval = 10 * 1000;
 
+		private const string ConvertCommand = @"-i ""{0}"" -c copy ""{1}""";
+		private const string SplitCommand = @"-ss {0} -t {1} -accurate_seek -i ""{2}"" -codec copy -avoid_negative_ts 1 ""{3}""";
+
 		#region MainForm
 
 		private void MainForm_Load(object sender, EventArgs e)
@@ -630,7 +633,7 @@ namespace AutoSplitVideo
 					}
 					else
 					{
-						engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
+						engine.CustomCommand(string.Format(ConvertCommand, inputFile.Filename, mp4File.Filename));
 					}
 
 					if (isNotify)
@@ -660,7 +663,7 @@ namespace AutoSplitVideo
 
 								outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
 
-								engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
+								engine.CustomCommand(string.Format(SplitCommand, now, t, mp4File.Filename, outputFile.Filename));
 
 								engine.GetMetadata(outputFile);
 								now += t;
@@ -728,7 +731,7 @@ namespace AutoSplitVideo
 							}
 							else
 							{
-								engine.CustomCommand($@"-i ""{inputFile.Filename}"" -c copy -copyts ""{mp4File.Filename}""");
+								engine.CustomCommand(string.Format(ConvertCommand, inputFile.Filename, mp4File.Filename));
 							}
 
 							progress += halfProgress;
@@ -755,7 +758,7 @@ namespace AutoSplitVideo
 
 										outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
 
-										engine.CustomCommand($@"-ss {now} -t {t} -accurate_seek -i ""{mp4File.Filename}"" -codec copy -avoid_negative_ts 1 ""{outputFile.Filename}""");
+										engine.CustomCommand(string.Format(SplitCommand, now, t, mp4File.Filename, outputFile.Filename));
 
 										engine.GetMetadata(outputFile);
 										now += t;
