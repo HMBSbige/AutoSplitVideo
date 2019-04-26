@@ -661,7 +661,7 @@ namespace AutoSplitVideo
 									t = duration - now;
 								}
 
-								outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
+								outputFile.Filename = Path.Combine(outputDirectoryPath, $@"{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4");
 
 								engine.CustomCommand(string.Format(SplitCommand, now, t, mp4File.Filename, outputFile.Filename));
 
@@ -756,7 +756,7 @@ namespace AutoSplitVideo
 											t = duration - now;
 										}
 
-										outputFile.Filename = $@"{outputDirectoryPath}{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4";
+										outputFile.Filename = Path.Combine(outputDirectoryPath, $@"{Path.GetFileNameWithoutExtension(mp4File.Filename)}_{i + 1}.mp4");
 
 										engine.CustomCommand(string.Format(SplitCommand, now, t, mp4File.Filename, outputFile.Filename));
 
