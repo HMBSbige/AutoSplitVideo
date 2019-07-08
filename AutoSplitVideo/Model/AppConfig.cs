@@ -23,6 +23,7 @@ namespace AutoSplitVideo.Model
 		public int IsSkipSameMp4;
 		public int IsSendToRecycleBin;
 		public int OutputSameAsInput;
+		public int UseFlvFix;
 
 		public decimal N1;
 		public decimal N2;
@@ -44,9 +45,10 @@ namespace AutoSplitVideo.Model
 			IsSkipSameMp4 = 1;
 			IsSendToRecycleBin = 1;
 			OutputSameAsInput = 1;
+			UseFlvFix = 0;
 
-			N1 = new decimal(8.000);
-			N2 = new decimal(180);
+			N1 = new decimal(16.000);
+			N2 = new decimal(360);
 		}
 
 		private void Write(string section, string key, string value)
@@ -118,6 +120,7 @@ namespace AutoSplitVideo.Model
 			WriteVideoConvert(nameof(IsSkipSameMp4), IsSkipSameMp4.ToString());
 			WriteVideoConvert(nameof(IsSendToRecycleBin), IsSendToRecycleBin.ToString());
 			WriteVideoConvert(nameof(OutputSameAsInput), OutputSameAsInput.ToString());
+			WriteVideoConvert(nameof(UseFlvFix), UseFlvFix.ToString());
 
 			WriteVideoConvert(nameof(N1), N1.ToString(CultureInfo.InvariantCulture));
 			WriteVideoConvert(nameof(N2), N2.ToString(CultureInfo.InvariantCulture));
@@ -154,13 +157,14 @@ namespace AutoSplitVideo.Model
 			IsSkipSameMp4 = ParseBool_VideoConvert(nameof(IsSkipSameMp4), 1);
 			IsSendToRecycleBin = ParseBool_VideoConvert(nameof(IsSendToRecycleBin), 1);
 			OutputSameAsInput = ParseBool_VideoConvert(nameof(OutputSameAsInput), 1);
+			UseFlvFix = ParseBool_VideoConvert(nameof(UseFlvFix), 0);
 
-			if (decimal.TryParse(ReadVideoConvert(nameof(N1), @"8.000"), out var n1))
+			if (decimal.TryParse(ReadVideoConvert(nameof(N1), @"16.000"), out var n1))
 			{
 				N1 = n1;
 			}
 
-			if (decimal.TryParse(ReadVideoConvert(nameof(N2), @"180"), out var n2))
+			if (decimal.TryParse(ReadVideoConvert(nameof(N2), @"360"), out var n2))
 			{
 				N2 = n2;
 			}

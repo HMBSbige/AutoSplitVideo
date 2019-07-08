@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>AutoSplitVideo</RootNamespace>
     <AssemblyName>AutoSplitVideo</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -56,6 +56,25 @@
     <Compile Include="Controller\AutoStartup.cs" />
     <Compile Include="Controller\Logging.cs" />
     <Compile Include="Controls\CustomProgressBar.cs" />
+    <Compile Include="Flv\AACWriter.cs" />
+    <Compile Include="Flv\AVIWriter.cs" />
+    <Compile Include="Flv\BitConverterBE.cs" />
+    <Compile Include="Flv\BitConverterLE.cs" />
+    <Compile Include="Flv\BitHelper.cs" />
+    <Compile Include="Flv\DummyAudioWriter.cs" />
+    <Compile Include="Flv\DummyVideoWriter.cs" />
+    <Compile Include="Flv\FLVFile.cs" />
+    <Compile Include="Flv\FractionUInt32.cs" />
+    <Compile Include="Flv\General.cs" />
+    <Compile Include="Flv\IAudioWriter.cs" />
+    <Compile Include="Flv\IVideoWriter.cs" />
+    <Compile Include="Flv\MP3Writer.cs" />
+    <Compile Include="Flv\MyWavWriter.cs" />
+    <Compile Include="Flv\OggCRC.cs" />
+    <Compile Include="Flv\RawH264Writer.cs" />
+    <Compile Include="Flv\SpeexWriter.cs" />
+    <Compile Include="Flv\TimeCodeWriter.cs" />
+    <Compile Include="Flv\WavWriter.cs" />
     <Compile Include="MediaInfo\MediaInfo.cs" />
     <Compile Include="MediaInfo\MediaInfoApi.cs" />
     <Compile Include="MediaInfo\MediaInfoDll.cs" />

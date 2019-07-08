@@ -1,6 +1,7 @@
 ﻿using AutoSplitVideo.Collections;
 using AutoSplitVideo.Controller;
 using AutoSplitVideo.Controls;
+using AutoSplitVideo.Flv;
 using AutoSplitVideo.Model;
 using AutoSplitVideo.Properties;
 using AutoSplitVideo.Utils;
@@ -46,6 +47,7 @@ namespace AutoSplitVideo
 
 		private const string ConvertCommand = @"-i ""{0}"" -c copy ""{1}""";
 		private const string SplitCommand = @"-ss {0} -t {1} -accurate_seek -i ""{2}"" -codec copy -avoid_negative_ts 1 ""{3}""";
+		private const string MuxCommand = @"-i ""{0}"" -i ""{1}"" -vcodec copy -acodec copy ""{2}""";
 
 		#region MainForm
 
@@ -75,6 +77,7 @@ namespace AutoSplitVideo
 			checkBox3.CheckedChanged += CheckBox3_CheckedChanged;
 			checkBox4.CheckedChanged += CheckBox4_CheckedChanged;
 			checkBox5.CheckedChanged += CheckBox5_CheckedChanged;
+			checkBox6.CheckedChanged += CheckBox6_CheckedChanged;
 			numericUpDown1.ValueChanged += NumericUpDown1_ValueChanged;
 			numericUpDown2.ValueChanged += NumericUpDown2_ValueChanged;
 
@@ -106,6 +109,7 @@ namespace AutoSplitVideo
 			checkBox3.Checked = _config.IsSkipSameMp4 != 0;
 			checkBox4.Checked = _config.IsSendToRecycleBin != 0;
 			checkBox5.Checked = _config.OutputSameAsInput != 0;
+			checkBox6.Checked = _config.UseFlvFix != 0;
 
 			numericUpDown1.Value = _config.N1;
 			numericUpDown2.Value = _config.N2;
@@ -140,7 +144,8 @@ namespace AutoSplitVideo
 				OnlyConvert = checkBox2.Checked,
 				IsSkipSameMp4 = checkBox3.Checked,
 				IsSendToRecycleBin = checkBox4.Checked,
-				OutputSameAsInput = checkBox5.Checked
+				OutputSameAsInput = checkBox5.Checked,
+				UseFlvFix = checkBox6.Checked
 			};
 		}
 
@@ -267,6 +272,7 @@ namespace AutoSplitVideo
 			checkBox2.Enabled = b;
 			checkBox3.Enabled = b;
 			checkBox5.Enabled = b;
+			checkBox6.Enabled = b;
 		}
 
 		private void CheckBox2Changed()
@@ -483,6 +489,7 @@ namespace AutoSplitVideo
 			_config.IsSkipSameMp4 = checkBox3.Checked ? 1 : 0;
 			_config.IsSendToRecycleBin = checkBox4.Checked ? 1 : 0;
 			_config.OutputSameAsInput = checkBox5.Checked ? 1 : 0;
+			_config.UseFlvFix = checkBox6.Checked ? 1 : 0;
 
 			_config.N1 = numericUpDown1.Value;
 			_config.N2 = numericUpDown2.Value;
@@ -531,6 +538,11 @@ namespace AutoSplitVideo
 		}
 
 		private void CheckBox4_CheckedChanged(object sender, EventArgs e)
+		{
+			SaveConfig();
+		}
+
+		private void CheckBox6_CheckedChanged(object sender, EventArgs e)
 		{
 			SaveConfig();
 		}
@@ -631,6 +643,18 @@ namespace AutoSplitVideo
 					{
 						mp4File.Filename = inputVideoPath;
 					}
+					else if (config.UseFlvFix)
+					{
+						using (var flv = new FlvFile(inputFile.Filename))
+						{
+							flv.ExtractStreams(true, true, false, true);
+
+							engine.CustomCommand(string.Format(MuxCommand, flv.VideoPath, flv.AudioPath, mp4File.Filename));
+
+							File.Delete(flv.VideoPath);
+							File.Delete(flv.AudioPath);
+						}
+					}
 					else
 					{
 						engine.CustomCommand(string.Format(ConvertCommand, inputFile.Filename, mp4File.Filename));
@@ -728,6 +752,18 @@ namespace AutoSplitVideo
 							if (config.IsSkipSameMp4 && File.Exists(mp4File.Filename))
 							{
 								//do nothing
+							}
+							else if (config.UseFlvFix)
+							{
+								using (var flvFile = new FlvFile(inputFile.Filename))
+								{
+									flvFile.ExtractStreams(true, true, false, true);
+
+									engine.CustomCommand(string.Format(MuxCommand, flvFile.VideoPath, flvFile.AudioPath, mp4File.Filename));
+
+									File.Delete(flvFile.VideoPath);
+									File.Delete(flvFile.AudioPath);
+								}
 							}
 							else
 							{

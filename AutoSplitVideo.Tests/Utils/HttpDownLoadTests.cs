@@ -1,11 +1,10 @@
-﻿using AutoSplitVideo.Model;
-using AutoSplitVideo.Utils;
+﻿using AutoSplitVideo.Controller;
+using AutoSplitVideo.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoSplitVideo.Controller;
 
 namespace AutoSplitVideo.Tests.Utils
 {
