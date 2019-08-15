@@ -11,7 +11,7 @@ namespace AutoSplitVideo.Model
 	{
 		private string RoomInfoUrl => $@"https://api.live.bilibili.com/room/v1/Room/get_info?room_id={_roomId}";
 		private string UserInfoUrl => $@"https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid={RealRoomId}";
-		private string LiveAddressUrl => $@"https://api.live.bilibili.com/api/playurl?cid={RealRoomId}&otype=json&quality=0&platform=web";
+		private string LiveAddressUrl => $@"https://api.live.bilibili.com/api/playurl?cid={RealRoomId}&otype=json&quality=4&platform=web";
 
 		private HttpClient _httpClient;
 
