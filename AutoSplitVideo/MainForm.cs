@@ -872,13 +872,13 @@ namespace AutoSplitVideo
 			var httpWay = RecordWay2.Checked;
 			var isConvert2Mp4 = AutoConvert.Checked;
 
-			var dir = Path.Combine(rootPath, $@"{room.RealRoomID}");
+			var dir = Path.Combine(rootPath, $@"{room.AnchorName}_{room.RealRoomID}");
 			if (!Directory.Exists(dir))
 			{
 				var dirInfo = Directory.CreateDirectory(dir);
 				if (!dirInfo.Exists)
 				{
-					throw new Exception($@"{room.RealRoomID}:存储目录创建失败");
+					throw new Exception($@"{room.AnchorName}_{room.RealRoomID}:存储目录创建失败");
 				}
 			}
 
@@ -886,7 +886,7 @@ namespace AutoSplitVideo
 			var urls = iEnumerableUrls.ToArray();
 			if (urls.Length == 0)
 			{
-				throw new Exception($@"{room.RealRoomID}:直播流获取失败");
+				throw new Exception($@"{room.AnchorName}_{room.RealRoomID}:直播流获取失败");
 			}
 
 			if (n >= urls.Length)
@@ -895,26 +895,26 @@ namespace AutoSplitVideo
 			}
 
 			var url = urls[n];
-			Logging.Info($@"{room.RealRoomID}:{url}");
+			Logging.Info($@"{room.AnchorName}_{room.RealRoomID}:{url}");
 
 			try
 			{
 				var isConnected = await room.TestHttpOk(url);
 				if (!isConnected)
 				{
-					Logging.Error($@"{room.RealRoomID}:直播流错误...");
+					Logging.Error($@"{room.AnchorName}_{room.RealRoomID}:直播流错误...");
 					return;
 				}
 			}
 			catch (TaskCanceledException)
 			{
-				Logging.Error($@"{room.RealRoomID}:直播流检测超时...");
+				Logging.Error($@"{room.AnchorName}_{room.RealRoomID}:直播流检测超时...");
 				return;
 			}
 
-			Logging.Info($@"{room.RealRoomID}:录制开始");
+			Logging.Info($@"{room.AnchorName}_{room.RealRoomID}:录制开始");
 
-			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}.flv");
+			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}_{room.Title}.flv");
 
 			room.IsRecording = true;
 			if (httpWay)
