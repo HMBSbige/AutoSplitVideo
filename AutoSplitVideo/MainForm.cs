@@ -871,14 +871,16 @@ namespace AutoSplitVideo
 			var n = GetStreamUrlIndex();//0,1,2,3
 			var httpWay = RecordWay2.Checked;
 			var isConvert2Mp4 = AutoConvert.Checked;
+			var anchorName = Util.GetPathString(room.AnchorName);
+			var title = Util.GetPathString(room.Title);
 
-			var dir = Path.Combine(rootPath, $@"{room.AnchorName}_{room.RealRoomID}");
+			var dir = Path.Combine(rootPath, $@"{anchorName}_{room.RealRoomID}");
 			if (!Directory.Exists(dir))
 			{
 				var dirInfo = Directory.CreateDirectory(dir);
 				if (!dirInfo.Exists)
 				{
-					throw new Exception($@"{room.AnchorName}_{room.RealRoomID}:存储目录创建失败");
+					throw new Exception($@"{anchorName}_{room.RealRoomID}:存储目录创建失败");
 				}
 			}
 
@@ -886,7 +888,7 @@ namespace AutoSplitVideo
 			var urls = iEnumerableUrls.ToArray();
 			if (urls.Length == 0)
 			{
-				throw new Exception($@"{room.AnchorName}_{room.RealRoomID}:直播流获取失败");
+				throw new Exception($@"{anchorName}_{room.RealRoomID}:直播流获取失败");
 			}
 
 			if (n >= urls.Length)
@@ -914,7 +916,7 @@ namespace AutoSplitVideo
 
 			Logging.Info($@"{room.AnchorName}_{room.RealRoomID}:录制开始");
 
-			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}_{room.Title}.flv");
+			var path = Path.Combine(dir, $@"{DateTime.Now:yyyyMMdd_HHmmss}_{title}.flv");
 
 			room.IsRecording = true;
 			if (httpWay)

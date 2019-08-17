@@ -227,5 +227,17 @@ namespace AutoSplitVideo.Utils
 				return (0, 0);
 			}
 		}
+
+		public static string GetPathString(string str)
+		{
+			var charSet = new[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
+
+			foreach (var c in charSet)
+			{
+				str = str.Replace(c, '_');
+			}
+
+			return str;
+		}
 	}
 }
