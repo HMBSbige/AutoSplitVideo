@@ -11,7 +11,9 @@ namespace AutoSplitVideo.Model
 	{
 		private string RoomInfoUrl => $@"https://api.live.bilibili.com/room/v1/Room/get_info?room_id={_roomId}";
 		private string UserInfoUrl => $@"https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid={RealRoomId}";
-		private string LiveAddressUrl => $@"https://api.live.bilibili.com/api/playurl?cid={RealRoomId}&otype=json&quality=4&platform=web";
+		private string LiveAddressUrl => $@"https://api.live.bilibili.com/room/v1/Room/playUrl?cid={RealRoomId}&quality=4&platform=web";
+
+		private const string DefaultUserAgent = @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36";
 
 		private HttpClient _httpClient;
 
@@ -55,6 +57,9 @@ namespace AutoSplitVideo.Model
 		{
 			_roomId = roomId;
 			_httpClient = new HttpClient();
+			_httpClient.DefaultRequestHeaders.Add(@"Accept", @"application/json, text/javascript, */*; q=0.01");
+			_httpClient.DefaultRequestHeaders.Add(@"Referer", @"https://live.bilibili.com/");
+			_httpClient.DefaultRequestHeaders.Add(@"User-Agent", DefaultUserAgent);
 		}
 
 		public async Task Refresh()
@@ -90,7 +95,7 @@ namespace AutoSplitVideo.Model
 			var jsonStr = await GetAsync(LiveAddressUrl);
 			dynamic o = SimpleJson.SimpleJson.DeserializeObject(jsonStr);
 			var liveUrl = new List<string>();
-			foreach (var url in o[@"durl"])
+			foreach (var url in o[@"data"][@"durl"])
 			{
 				liveUrl.Add(url[@"url"]);
 			}
