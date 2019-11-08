@@ -9,9 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaToolkit", "MediaToolki
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSplitVideo.Tests", "AutoSplitVideo.Tests\AutoSplitVideo.Tests.csproj", "{CFFEF8D0-DD12-4504-8F1A-A428682CC6F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSplitVideo.WPF", "AutoSplitVideo.WPF\AutoSplitVideo.WPF.csproj", "{A92672FA-7876-40E2-8E9C-E357DC537207}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoSplitVideo.WPF", "AutoSplitVideo.WPF\AutoSplitVideo.WPF.csproj", "{A92672FA-7876-40E2-8E9C-E357DC537207}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{D24A1ABA-3F10-4497-8CA8-FCC5B9D308CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{D24A1ABA-3F10-4497-8CA8-FCC5B9D308CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSplitVideo.Core", "AutoSplitVideo.Core\AutoSplitVideo.Core.csproj", "{3707491B-2B9A-4027-94A7-C392A9DA819C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D24A1ABA-3F10-4497-8CA8-FCC5B9D308CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D24A1ABA-3F10-4497-8CA8-FCC5B9D308CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D24A1ABA-3F10-4497-8CA8-FCC5B9D308CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutoSplitVideo.Core\AutoSplitVideo.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\Asaki.ico" />
   </ItemGroup>
 

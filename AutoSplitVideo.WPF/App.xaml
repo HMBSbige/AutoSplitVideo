@@ -1,8 +1,10 @@
-﻿<Application x:Class="AutoSplitVideo.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="View/MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+﻿<Application
+	x:Class="AutoSplitVideo.App"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Startup="App_OnStartup"
+	>
+	<Application.Resources>
+
+	</Application.Resources>
 </Application>

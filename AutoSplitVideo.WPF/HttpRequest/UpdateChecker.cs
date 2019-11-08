@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace AutoSplitVideo.HttpRequest
 {
@@ -21,7 +22,7 @@ namespace AutoSplitVideo.HttpRequest
 		public const string Copyright = @"Copyright © HMBSbige 2018 - 2020";
 		public const string Version = @"2.0.0";
 
-		public async void Check(bool notifyNoFound, bool isPreRelease)
+		public async Task Check(bool notifyNoFound, bool isPreRelease)
 		{
 			try
 			{
