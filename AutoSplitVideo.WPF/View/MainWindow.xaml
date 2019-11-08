@@ -5,11 +5,19 @@
 		xmlns:commands="clr-namespace:AutoSplitVideo.Commands"
 		x:Name="Mw"
 		Title="AutoSplitVideo" Height="618" Width="1000"
+		WindowStartupLocation="CenterScreen"
 		DataContext="{Binding MainWindowViewModel, ElementName=Mw}"
+		Loaded="MainWindow_OnLoaded"
+		Closing="MainWindow_OnClosing"
 		>
 		<Window.Resources>
 			<ResourceDictionary>
 				<commands:ShowWindowCommand x:Key="ShowHideCommand" />
+
+				<Style TargetType="MenuItem">
+					<Setter Property="BorderThickness" Value="3"></Setter>
+				</Style>
+
 				<ContextMenu x:Key="NotifyIconContextMenu">
 					<MenuItem Header="退出" Click="ExitMenuItem_OnClick"/>
 				</ContextMenu>
@@ -25,5 +33,6 @@
 						DoubleClickCommand="{StaticResource ShowHideCommand}"
 						DoubleClickCommandParameter="{Binding}">
 		</tb:TaskbarIcon>
+
 	</Grid>
 </Window>

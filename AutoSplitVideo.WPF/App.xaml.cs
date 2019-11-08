@@ -1,11 +1,13 @@
 ﻿using AutoSplitVideo.Core.SingleInstance;
 using AutoSplitVideo.HttpRequest;
+using AutoSplitVideo.Model;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -14,6 +16,8 @@ namespace AutoSplitVideo
 {
 	public partial class App
 	{
+		private static int _exited;
+
 		private void App_OnStartup(object sender, StartupEventArgs e)
 		{
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(Utils.Utils.GetExecutablePath()));
@@ -27,7 +31,20 @@ namespace AutoSplitVideo
 			}
 			singleInstance.ArgumentsReceived += SingleInstance_ArgumentsReceived;
 			singleInstance.ListenForArgumentsFromSuccessiveInstances();
+
+			GlobalConfig.Load();
+			Current.DispatcherUnhandledException += (o, args) =>
+			{
+				if (Interlocked.Increment(ref _exited) == 1)
+				{
+					GlobalConfig.Save();
+					Current.Shutdown();
+				}
+			};
+			Current.Exit += (o, args) => { GlobalConfig.Save(); };
+
 			CheckUpdateAsync();
+
 			MainWindow = new MainWindow();
 			MainWindow.Show();
 		}
