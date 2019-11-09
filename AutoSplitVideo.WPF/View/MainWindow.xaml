@@ -3,25 +3,30 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:commands="clr-namespace:AutoSplitVideo.Commands"
+		xmlns:valueConverter="clr-namespace:AutoSplitVideo.ValueConverter"
 		x:Name="Mw"
 		Title="AutoSplitVideo" Height="618" Width="1000"
 		WindowStartupLocation="CenterScreen"
 		DataContext="{Binding MainWindowViewModel, ElementName=Mw}"
 		Loaded="MainWindow_OnLoaded"
 		Closing="MainWindow_OnClosing"
+		Closed="MainWindow_OnClosed"
 		>
 		<Window.Resources>
 			<ResourceDictionary>
 				<commands:ShowWindowCommand x:Key="ShowHideCommand" />
 
 				<Style TargetType="MenuItem">
-					<Setter Property="BorderThickness" Value="3"></Setter>
+					<Setter Property="BorderThickness" Value="3" />
 				</Style>
 
-				<ContextMenu x:Key="NotifyIconContextMenu">
+				<ContextMenu x:Key="NotifyIconContextMenu" >
+					<MenuItem Header="显示/隐藏" Click="ShowHideMenuItem_OnClick"/>
 					<MenuItem Header="退出" Click="ExitMenuItem_OnClick"/>
 				</ContextMenu>
-			</ResourceDictionary>
+
+			<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
+		</ResourceDictionary>
 		</Window.Resources>
 	<Grid>
 		<tb:TaskbarIcon x:Name="NotifyIcon"
@@ -33,6 +38,47 @@
 						DoubleClickCommand="{StaticResource ShowHideCommand}"
 						DoubleClickCommandParameter="{Binding}">
 		</tb:TaskbarIcon>
+		<TabControl>
+			<TabItem Header="录播机">
+				<DockPanel>
+					<GroupBox Header="下次录制时生效" DockPanel.Dock="Top" Margin="3">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition />
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" 
+							Text="{Binding CurrentConfig.RecordDirectory,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+							<Grid Grid.Row="1" Grid.Column="0" Margin="3">
+								<ProgressBar Value="{Binding ProgressBarValue}" Foreground="{Binding ProgressBarValue,Converter={StaticResource ProgressValueToBrushConverter}}"/>
+								<TextBlock Text="{Binding ProgressBarStr}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+							</Grid>
+							<Button Grid.Row="0" Grid.Column="1" Content="选择目录" Margin="3" Padding="3" Click="SelectDirectoryButton_OnClick"/>
+							<Button Grid.Row="1" Grid.Column="1" Content="打开目录" Margin="3" Padding="3" Click="OpenDirectoryButton_OnClick"/>
+						</Grid>
+					</GroupBox>
+					<ToolBar DockPanel.Dock="Top" Background="Transparent" Loaded="ToolBar_OnLoaded" >
+						<Button Content="开始录制" />
+						<Button Content="停止录制" />
+						<Button Content="移除房间" />
+					</ToolBar>
+					<DataGrid Margin="3">
 
+					</DataGrid>
+				</DockPanel>
+			</TabItem>
+			<TabItem Header="自动分段"></TabItem>
+			<TabItem Header="日志">
+				<TextBox
+					IsReadOnly="True"
+					Text="{Binding Logs.Text,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
+				</TextBox>
+			</TabItem>
+			<TabItem Header="设置"></TabItem>
+		</TabControl>
 	</Grid>
 </Window>

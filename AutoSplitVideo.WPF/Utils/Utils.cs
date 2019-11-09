@@ -54,5 +54,57 @@ namespace AutoSplitVideo.Utils
 			var dllPath = GetDllPath();
 			return Path.Combine(Path.GetDirectoryName(dllPath) ?? throw new InvalidOperationException(), $@"{Path.GetFileNameWithoutExtension(dllPath)}.exe");
 		}
+
+		public static string CountSize(long size)
+		{
+			var mStrSize = string.Empty;
+			const double step = 1024.00;
+			var factSize = size;
+			if (factSize < step)
+			{
+				mStrSize = $@"{factSize:F2} Byte";
+			}
+			else if (factSize >= step && factSize < 1048576)
+			{
+				mStrSize = $@"{factSize / step:F2} KB";
+			}
+			else if (factSize >= 1048576 && factSize < 1073741824)
+			{
+				mStrSize = $@"{factSize / step / step:F2} MB";
+			}
+			else if (factSize >= 1073741824 && factSize < 1099511627776)
+			{
+				mStrSize = $@"{factSize / step / step / step:F2} GB";
+			}
+			else if (factSize >= 1099511627776)
+			{
+				mStrSize = $@"{factSize / step / step / step / step:F2} TB";
+			}
+
+			return mStrSize;
+		}
+
+		public static (long, long) GetDiskUsage(string path)
+		{
+			try
+			{
+				var allDrives = DriveInfo.GetDrives();
+				foreach (var d in allDrives)
+				{
+					if (d.Name == Path.GetPathRoot(path))
+					{
+						if (d.IsReady)
+						{
+							return (d.AvailableFreeSpace, d.TotalSize);
+						}
+					}
+				}
+				return (0, 0);
+			}
+			catch
+			{
+				return (0, 0);
+			}
+		}
 	}
 }

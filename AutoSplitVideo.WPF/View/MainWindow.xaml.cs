@@ -1,8 +1,10 @@
 ﻿using AutoSplitVideo.Model;
 using AutoSplitVideo.ViewModel;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 
 namespace AutoSplitVideo.View
@@ -72,6 +74,60 @@ namespace AutoSplitVideo.View
 					break;
 			}
 			return IntPtr.Zero;
+		}
+
+		#endregion
+
+		private void ShowHideMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MainWindowViewModel.TriggerShowHide();
+		}
+
+		private void SelectDirectoryButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dlg = new CommonOpenFileDialog
+			{
+				IsFolderPicker = true,
+				Multiselect = false,
+				Title = @"选择存储目录",
+				AddToMostRecentlyUsedList = false,
+				EnsurePathExists = true,
+				NavigateToShortcut = true,
+				InitialDirectory = MainWindowViewModel.CurrentConfig.RecordDirectory
+			};
+			if (dlg.ShowDialog(this) == CommonFileDialogResult.Ok)
+			{
+				MainWindowViewModel.CurrentConfig.RecordDirectory = dlg.FileName;
+			}
+		}
+
+		private void OpenDirectoryButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Utils.Utils.OpenUrl(MainWindowViewModel.CurrentConfig.RecordDirectory);
+		}
+
+		private void MainWindow_OnClosed(object sender, EventArgs e)
+		{
+			MainWindowViewModel.StopGetDiskUsage();
+		}
+
+		#region ToolBar hide grip Hack
+
+		private void ToolBar_OnLoaded(object sender, RoutedEventArgs e)
+		{
+			if (sender is ToolBar toolBar)
+			{
+				// Hide grip
+				if (toolBar.Template.FindName(@"OverflowGrid", toolBar) is FrameworkElement overflowGrid)
+				{
+					overflowGrid.Visibility = Visibility.Collapsed;
+				}
+
+				if (toolBar.Template.FindName(@"MainPanelBorder", toolBar) is FrameworkElement mainPanelBorder)
+				{
+					mainPanelBorder.Margin = new Thickness();
+				}
+			}
 		}
 
 		#endregion
