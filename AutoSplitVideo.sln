@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoSplitVideo.WPF", "AutoS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{D24A1ABA-3F10-4497-8CA8-FCC5B9D308CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSplitVideo.Core", "AutoSplitVideo.Core\AutoSplitVideo.Core.csproj", "{3707491B-2B9A-4027-94A7-C392A9DA819C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoSplitVideo.Core", "AutoSplitVideo.Core\AutoSplitVideo.Core.csproj", "{3707491B-2B9A-4027-94A7-C392A9DA819C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BilibiliApi", "BilibiliApi\BilibiliApi.csproj", "{52FDC212-2417-4B11-BACB-4C3C4BC6613F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlvProcessor", "FlvProcessor\FlvProcessor.csproj", "{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3707491B-2B9A-4027-94A7-C392A9DA819C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52FDC212-2417-4B11-BACB-4C3C4BC6613F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52FDC212-2417-4B11-BACB-4C3C4BC6613F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52FDC212-2417-4B11-BACB-4C3C4BC6613F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52FDC212-2417-4B11-BACB-4C3C4BC6613F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
