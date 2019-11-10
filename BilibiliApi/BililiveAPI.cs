@@ -19,9 +19,9 @@ namespace BilibiliApi
 		static BililiveApi()
 		{
 			_httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
-			_httpClient.DefaultRequestHeaders.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-			_httpClient.DefaultRequestHeaders.Add("Referer", "https://live.bilibili.com/");
-			_httpClient.DefaultRequestHeaders.Add("User-Agent", Utils.UserAgent);
+			_httpClient.DefaultRequestHeaders.Add(@"Accept", @"application/json, text/javascript, */*; q=0.01");
+			_httpClient.DefaultRequestHeaders.Add(@"Referer", @"https://live.bilibili.com/");
+			_httpClient.DefaultRequestHeaders.Add(@"User-Agent", Utils.UserAgent);
 		}
 
 		public static async Task ApplyCookieSettings(string cookieString)
@@ -110,16 +110,19 @@ namespace BilibiliApi
 		{
 			var url = $@"https://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomId}&quality=4&platform=web";
 			var json = await GetAsync(url);
-			var playUrl = JsonSerializer.Deserialize<PlayUrl>(json);
-			var dUrls = playUrl.data.durl;
+			using var document = JsonDocument.Parse(json);
+			var root = document.RootElement;
+			if (root.TryGetProperty(@"data", out var data)
+			&& data.TryGetProperty(@"durl", out var durls)
+			&& durls.ValueKind == JsonValueKind.Array)
 			{
-				var urls = dUrls.Select(dUrl => dUrl.url).Distinct().ToArray();
+				var urls = durls.EnumerateArray().Select(dUrl => dUrl.GetProperty(@"url").GetString()).Distinct().ToArray();
 				if (urls.Length > 0)
 				{
 					return urls[Random.Next(0, urls.Length - 1)];
 				}
 			}
-			throw new Exception("没有直播播放地址");
+			throw new Exception(@"没有直播播放地址");
 		}
 
 		/// <summary>
@@ -133,34 +136,36 @@ namespace BilibiliApi
 		{
 			try
 			{
+				var res = new Room();
 				var roomJson = await GetAsync($@"https://api.live.bilibili.com/room/v1/Room/get_info?id={roomId}");
-				var room = JsonSerializer.Deserialize<RoomInfo>(roomJson);
-				if (room.code != 0)
+				using var document = JsonDocument.Parse(roomJson);
+				var room = document.RootElement;
+				if (room.TryGetProperty(@"code", out var code) && code.GetInt32() != 0)
 				{
-					Debug.WriteLine($"不能获取 {roomId} 的信息1: {room.message}");
+					Debug.WriteLine($@"不能获取 {roomId} 的信息1: {room.GetProperty(@"message").GetString()}");
 					return null;
 				}
+
+				res.Title = room.GetProperty(@"data").GetProperty(@"title").GetString();
+				res.ShortRoomId = room.GetProperty(@"data").GetProperty(@"short_id").GetInt32();
+				res.RoomId = room.GetProperty(@"data").GetProperty(@"room_id").GetInt32();
+				res.IsStreaming = room.GetProperty(@"data").GetProperty(@"live_status").GetInt32() == 1;
 
 				var userJson = await GetAsync($@"https://api.live.bilibili.com/live_user/v1/UserInfo/get_anchor_in_room?roomid={roomId}");
-				var user = JsonSerializer.Deserialize<UserInfo>(userJson);
-				if (user.code != 0)
+				using var document2 = JsonDocument.Parse(userJson);
+				var user = document2.RootElement;
+				if (user.TryGetProperty(@"code", out var code2) && code2.GetInt32() != 0)
 				{
-					Debug.WriteLine($"不能获取 {roomId} 的信息2: {room.message}");
+					Debug.WriteLine($@"不能获取 {roomId} 的信息2: {user.GetProperty(@"message").GetString()}");
 					return null;
 				}
 
-				var i = new Room
-				{
-					ShortRoomId = room.data.short_id,
-					RoomId = room.data.room_id,
-					IsStreaming = 1 == room.data.live_status,
-					UserName = user.data.info.uname
-				};
-				return i;
+				res.UserName = user.GetProperty(@"data").GetProperty(@"info").GetProperty(@"uname").GetString();
+				return res;
 			}
 			catch
 			{
-				Debug.WriteLine($"获取直播间 {roomId} 的信息时出错");
+				Debug.WriteLine($@"获取直播间 {roomId} 的信息时出错");
 				throw;
 			}
 		}

@@ -1,10 +1,13 @@
 ﻿using AutoSplitVideo.Model;
+using AutoSplitVideo.Service;
 using AutoSplitVideo.ViewModel;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace AutoSplitVideo.View
@@ -109,6 +112,7 @@ namespace AutoSplitVideo.View
 		private void MainWindow_OnClosed(object sender, EventArgs e)
 		{
 			MainWindowViewModel.StopGetDiskUsage();
+			MainWindowViewModel.StopAllMonitors();
 		}
 
 		#region ToolBar hide grip Hack
@@ -131,5 +135,45 @@ namespace AutoSplitVideo.View
 		}
 
 		#endregion
+
+		private void AddRoomTextBox_OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				AddRoomButton_OnClick(sender, e);
+			}
+		}
+
+		private async void AddRoomButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			if (int.TryParse(AddRoomTextBox.Text, out var roomId) && roomId > 0)
+			{
+				if (await MainWindowViewModel.AddRoom(roomId))
+				{
+					AddRoomTextBox.Text = string.Empty;
+					return;
+				}
+			}
+
+			MessageBox.Show(@"添加失败", UpdateChecker.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		private void RemoveRoomButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			var removeRooms = new List<int>();
+			foreach (var item in DataGrid.SelectedItems)
+			{
+				if (item is RoomSetting setting)
+				{
+					removeRooms.Add(setting.RoomId);
+				}
+			}
+			if (removeRooms.Count == 0) return;
+			var str = string.Join(',', removeRooms);
+			if (MessageBox.Show($@"确定移除：{str}？", UpdateChecker.Name, MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
+			{
+				MainWindowViewModel.RemoveRoom(removeRooms);
+			}
+		}
 	}
 }

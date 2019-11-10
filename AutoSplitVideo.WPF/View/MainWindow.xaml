@@ -25,8 +25,9 @@
 					<MenuItem Header="退出" Click="ExitMenuItem_OnClick"/>
 				</ContextMenu>
 
-			<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
-		</ResourceDictionary>
+				<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
+				<SolidColorBrush Color="LightGray" x:Key="GridLinesBrush" />
+			</ResourceDictionary>
 		</Window.Resources>
 	<Grid>
 		<tb:TaskbarIcon x:Name="NotifyIcon"
@@ -64,10 +65,51 @@
 					<ToolBar DockPanel.Dock="Top" Background="Transparent" Loaded="ToolBar_OnLoaded" >
 						<Button Content="开始录制" />
 						<Button Content="停止录制" />
-						<Button Content="移除房间" />
+						<Button Content="移除房间" Click="RemoveRoomButton_OnClick"/>
+						<TextBox x:Name="AddRoomTextBox" Text="6154037" Width="100" KeyDown="AddRoomTextBox_OnKeyDown" />
+						<Button Content="添加房间" Click="AddRoomButton_OnClick"/>
 					</ToolBar>
-					<DataGrid Margin="3">
+					<DataGrid x:Name="DataGrid"
+					Margin="3"
+					GridLinesVisibility="All"
+					HorizontalGridLinesBrush="{StaticResource GridLinesBrush}"
+					VerticalGridLinesBrush="{StaticResource GridLinesBrush}"
+					Background="Transparent"
+					BorderThickness="0,1,0,0"
+					BorderBrush="{StaticResource GridLinesBrush}"
 
+					HeadersVisibility="Column"
+					AutoGenerateColumns="False"
+					SelectionUnit="FullRow" SelectionMode="Extended"
+					CanUserAddRows="False" CanUserResizeRows="False"
+					CanUserDeleteRows="False"
+					ItemsSource="{Binding Rooms}"
+					>
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="短号" Binding="{Binding ShortRoomId}" IsReadOnly="True" />
+							<DataGridTextColumn Header="房间号" Binding="{Binding RoomId}" IsReadOnly="True" />
+							<DataGridTextColumn Header="主播" Binding="{Binding UserName}" IsReadOnly="True" />
+							<DataGridTextColumn Header="直播间标题" Binding="{Binding Title}" IsReadOnly="True" />
+							<DataGridTextColumn Header="直播状态" Binding="{Binding IsLive}" IsReadOnly="True" />
+							<DataGridTextColumn Header="弹幕重连间隔（ms）" Binding="{Binding TimingDanmakuRetry}" IsReadOnly="False" />
+							<DataGridTextColumn Header="开播检查间隔（s）" Binding="{Binding TimingCheckInterval}" IsReadOnly="False" />
+							<DataGridTemplateColumn Header="是否录制">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+										          IsChecked="{Binding Path=IsMonitor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTemplateColumn Header="开播提醒">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+										          IsChecked="{Binding Path=IsNotify, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
 					</DataGrid>
 				</DockPanel>
 			</TabItem>

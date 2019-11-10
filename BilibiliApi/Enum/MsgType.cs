@@ -1,6 +1,6 @@
-﻿namespace BilibiliApi.Model
+﻿namespace BilibiliApi.Enum
 {
-	public enum MsgTypeEnum
+	public enum MsgType
 	{
 		/// <summary>
 		/// 弹幕
@@ -26,14 +26,17 @@
 		/// 直播結束
 		/// </summary>
 		LiveEnd,
+
 		/// <summary>
 		/// 其他
 		/// </summary>
 		Unknown,
+
 		/// <summary>
 		/// 欢迎船员
 		/// </summary>
 		WelcomeGuard,
+
 		/// <summary>
 		/// 购买船票（上船）
 		/// </summary>

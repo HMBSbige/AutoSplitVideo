@@ -11,12 +11,11 @@ namespace AutoSplitVideo.Model
 		#region private
 
 		private string _recordDirectory;
+		private List<RoomSetting> _rooms;
 
 		#endregion
 
 		#region Data
-
-		public List<long> RoomList { get; set; }
 
 		public string RecordDirectory
 		{
@@ -24,12 +23,18 @@ namespace AutoSplitVideo.Model
 			set => SetField(ref _recordDirectory, value);
 		}
 
+		public List<RoomSetting> Rooms
+		{
+			get => _rooms;
+			set => SetField(ref _rooms, value);
+		}
+
 		#endregion
 
 		public Config()
 		{
-			RoomList = new List<long>();
-			RecordDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+			_rooms = new List<RoomSetting>();
+			_recordDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 		}
 	}
 }

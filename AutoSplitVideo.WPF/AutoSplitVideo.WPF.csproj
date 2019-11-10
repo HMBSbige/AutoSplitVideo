@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoSplitVideo.Core\AutoSplitVideo.Core.csproj" />
+    <ProjectReference Include="..\BilibiliApi\BilibiliApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

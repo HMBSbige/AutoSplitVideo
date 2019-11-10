@@ -1,6 +1,6 @@
 ﻿using AutoSplitVideo.Core.SingleInstance;
-using AutoSplitVideo.HttpRequest;
 using AutoSplitVideo.Model;
+using AutoSplitVideo.Service;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
 using System;

@@ -1,4 +1,4 @@
-﻿using AutoSplitVideo.HttpRequest;
+﻿using AutoSplitVideo.Service;
 using System.IO;
 using System.Text.Json;
 

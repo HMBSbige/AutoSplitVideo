@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AutoSplitVideo.HttpRequest
+namespace AutoSplitVideo.Service
 {
 	public class UpdateChecker : HttpRequest
 	{
