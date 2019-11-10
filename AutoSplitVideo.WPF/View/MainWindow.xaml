@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:commands="clr-namespace:AutoSplitVideo.Commands"
-		xmlns:valueConverter="clr-namespace:AutoSplitVideo.ValueConverter"
+		xmlns:valueConverter="clr-namespace:AutoSplitVideo.View.ValueConverter"
 		x:Name="Mw"
 		Title="AutoSplitVideo" Height="618" Width="1000"
 		WindowStartupLocation="CenterScreen"

@@ -1,4 +1,4 @@
-﻿namespace AutoSplitVideo.GitHubRelease
+﻿namespace AutoSplitVideo.Core.GitHubRelease
 {
 	public class GitHubUser
 	{

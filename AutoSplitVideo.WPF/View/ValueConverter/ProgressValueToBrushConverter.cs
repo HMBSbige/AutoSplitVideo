@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace AutoSplitVideo.ValueConverter
+namespace AutoSplitVideo.View.ValueConverter
 {
 	public sealed class ProgressValueToBrushConverter : IValueConverter
 	{

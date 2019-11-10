@@ -1,4 +1,4 @@
-﻿using AutoSplitVideo.DataStructure;
+﻿using AutoSplitVideo.Core.DataStructure;
 using AutoSplitVideo.Model;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;

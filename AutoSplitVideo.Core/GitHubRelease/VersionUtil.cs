@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AutoSplitVideo.GitHubRelease
+namespace AutoSplitVideo.Core.GitHubRelease
 {
 	public static class VersionUtil
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AutoSplitVideo.GitHubRelease
+namespace AutoSplitVideo.Core.GitHubRelease
 {
 	public class VersionComparer : IComparer<object>
 	{

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace AutoSplitVideo.DataStructure
+namespace AutoSplitVideo.Core.DataStructure
 {
 	public class ObservableQueue<T> : Queue<T>, INotifyCollectionChanged, INotifyPropertyChanged
 	{

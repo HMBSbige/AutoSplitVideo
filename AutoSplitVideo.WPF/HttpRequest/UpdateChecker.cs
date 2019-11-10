@@ -1,4 +1,4 @@
-﻿using AutoSplitVideo.GitHubRelease;
+﻿using AutoSplitVideo.Core.GitHubRelease;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -26,7 +26,7 @@ namespace AutoSplitVideo.HttpRequest
 		{
 			try
 			{
-				var updater = new GitHubRelease.GitHubRelease(Owner, Repo);
+				var updater = new GitHubRelease(Owner, Repo);
 				var url = updater.AllReleaseUrl;
 
 				var json = await GetAsync(url);
