@@ -3,16 +3,17 @@ using AutoSplitVideo.Model;
 using AutoSplitVideo.Service;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
+using BilibiliApi.Enum;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace AutoSplitVideo.ViewModel
 {
@@ -164,8 +165,8 @@ namespace AutoSplitVideo.ViewModel
 			Rooms = new ObservableCollection<RoomSetting>(rooms);
 			foreach (var room in Rooms)
 			{
-				StartMonitor(room, true);
 				AddEvent(room);
+				StartMonitor(room, true);
 			}
 		}
 
@@ -182,8 +183,8 @@ namespace AutoSplitVideo.ViewModel
 				var room = new RoomSetting(roomInfo);
 				Rooms.Add(room);
 				CurrentConfig.Rooms.Add(room);
-				StartMonitor(room);
 				AddEvent(room);
+				StartMonitor(room);
 			}
 			catch
 			{
@@ -256,6 +257,15 @@ namespace AutoSplitVideo.ViewModel
 			}
 		}
 
+		public void ManualRefresh(IEnumerable<int> rooms)
+		{
+			foreach (var roomId in rooms)
+			{
+				var monitor = _monitors.SingleOrDefault(r => r.RoomId == roomId);
+				monitor?.Check(TriggerType.Manual);
+			}
+		}
+
 		#endregion
 
 		#region Event
@@ -280,7 +290,12 @@ namespace AutoSplitVideo.ViewModel
 		{
 			if (sender is RoomSetting room)
 			{
-				Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title, BalloonIcon.Info);
+				Window.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded,
+						new Action(() =>
+						{
+							Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title,
+									BalloonIcon.Info);
+						}));
 			}
 		}
 
@@ -288,7 +303,7 @@ namespace AutoSplitVideo.ViewModel
 		{
 			if (sender is RoomSetting room)
 			{
-				File.AppendAllTextAsync(@"Title.txt", $@"[{DateTime.Now}] [{room.RoomId}] [{room.UserName}]：[{room.Title}] {Environment.NewLine}");
+				TitleLog.AddLog(room);
 			}
 		}
 

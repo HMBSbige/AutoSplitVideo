@@ -26,15 +26,55 @@ namespace AutoSplitVideo.Utils
 			}
 		}
 
-		public static void OpenUrl(string path)
+		public static bool OpenUrl(string path)
 		{
-			new Process
+			try
 			{
-				StartInfo = new ProcessStartInfo(path)
+				new Process
 				{
-					UseShellExecute = true
+					StartInfo = new ProcessStartInfo(path)
+					{
+						UseShellExecute = true
+					}
+				}.Start();
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public static bool OpenDir(string dir)
+		{
+			if (Directory.Exists(dir))
+			{
+				try
+				{
+					return OpenUrl(dir);
 				}
-			}.Start();
+				catch
+				{
+					// ignored
+				}
+			}
+			return false;
+		}
+
+		public static bool OpenFile(string path)
+		{
+			if (File.Exists(path))
+			{
+				try
+				{
+					return OpenUrl(path);
+				}
+				catch
+				{
+					// ignored
+				}
+			}
+			return false;
 		}
 
 		public static string GetDllPath()

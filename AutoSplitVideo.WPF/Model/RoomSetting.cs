@@ -20,6 +20,7 @@ namespace AutoSplitVideo.Model
 		private uint _timingCheckInterval;
 		private bool _isMonitor;
 		private bool _isNotify;
+		private bool _logTitle;
 
 		#endregion
 
@@ -96,6 +97,12 @@ namespace AutoSplitVideo.Model
 			set => SetField(ref _isNotify, value);
 		}
 
+		public bool LogTitle
+		{
+			get => _logTitle;
+			set => SetField(ref _logTitle, value);
+		}
+
 		#endregion
 
 		#region Event
@@ -112,6 +119,7 @@ namespace AutoSplitVideo.Model
 			_timingCheckInterval = 300;
 			_isMonitor = true;
 			_isNotify = true;
+			_logTitle = true;
 
 			PropertyChanged += RoomSetting_PropertyChanged;
 		}

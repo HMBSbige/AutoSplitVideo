@@ -5,6 +5,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -106,7 +107,7 @@ namespace AutoSplitVideo.View
 
 		private void OpenDirectoryButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			Utils.Utils.OpenUrl(MainWindowViewModel.CurrentConfig.RecordDirectory);
+			Utils.Utils.OpenDir(MainWindowViewModel.CurrentConfig.RecordDirectory);
 		}
 
 		private void MainWindow_OnClosed(object sender, EventArgs e)
@@ -160,14 +161,7 @@ namespace AutoSplitVideo.View
 
 		private void RemoveRoomButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			var removeRooms = new List<int>();
-			foreach (var item in DataGrid.SelectedItems)
-			{
-				if (item is RoomSetting setting)
-				{
-					removeRooms.Add(setting.RoomId);
-				}
-			}
+			var removeRooms = GetSelectIds();
 			if (removeRooms.Count == 0) return;
 			var str = string.Join(',', removeRooms);
 			if (MessageBox.Show($@"确定移除：{str}？", UpdateChecker.Name, MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
@@ -179,6 +173,49 @@ namespace AutoSplitVideo.View
 		private void ClearLogButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			Log.ClearLog();
+		}
+
+		private void OpenLogButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Utils.Utils.OpenFile(Log.LogFileName);
+		}
+
+		private void ClearTitleFileButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			TitleLog.ClearLog();
+		}
+
+		private void OpenTitleFileButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Utils.Utils.OpenFile(TitleLog.TitleFileName);
+		}
+
+		private List<int> GetSelectIds()
+		{
+			var rooms = new List<int>();
+			foreach (var item in DataGrid.SelectedItems)
+			{
+				if (item is RoomSetting setting)
+				{
+					rooms.Add(setting.RoomId);
+				}
+			}
+			return rooms;
+		}
+
+		private void ManualRefreshMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			var rooms = GetSelectIds();
+			if (rooms.Count == 0) return;
+			MainWindowViewModel.ManualRefresh(rooms);
+		}
+
+		private void OpenRoomDirMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			if (DataGrid.SelectedItem is RoomSetting setting)
+			{
+				Utils.Utils.OpenDir(Path.Combine(GlobalConfig.Config.RecordDirectory, $@"{setting.RoomId}"));
+			}
 		}
 	}
 }

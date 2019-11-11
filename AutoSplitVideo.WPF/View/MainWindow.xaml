@@ -16,13 +16,13 @@
 			<ResourceDictionary>
 				<commands:ShowWindowCommand x:Key="ShowHideCommand" />
 
-				<Style TargetType="MenuItem">
+				<Style TargetType="MenuItem" x:Key="BaseMenuItemStyle">
 					<Setter Property="BorderThickness" Value="3" />
 				</Style>
 
 				<ContextMenu x:Key="NotifyIconContextMenu" >
-					<MenuItem Header="显示/隐藏" Click="ShowHideMenuItem_OnClick"/>
-					<MenuItem Header="退出" Click="ExitMenuItem_OnClick"/>
+					<MenuItem Header="显示/隐藏" Style="{StaticResource BaseMenuItemStyle}" Click="ShowHideMenuItem_OnClick"/>
+					<MenuItem Header="退出" Style="{StaticResource BaseMenuItemStyle}" Click="ExitMenuItem_OnClick"/>
 				</ContextMenu>
 
 				<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
@@ -64,7 +64,6 @@
 						</Grid>
 					</GroupBox>
 					<ToolBar DockPanel.Dock="Top" Background="Transparent" Loaded="ToolBar_OnLoaded" >
-						<Button Content="移除房间" Click="RemoveRoomButton_OnClick"/>
 						<TextBox x:Name="AddRoomTextBox" Text="6154037" Width="100" KeyDown="AddRoomTextBox_OnKeyDown" />
 						<Button Content="添加房间" Click="AddRoomButton_OnClick"/>
 					</ToolBar>
@@ -84,6 +83,13 @@
 					CanUserDeleteRows="False"
 					ItemsSource="{Binding Rooms}"
 					>
+						<DataGrid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="手动刷新" Style="{StaticResource BaseMenuItemStyle}" Click="ManualRefreshMenuItem_OnClick"/>
+								<MenuItem Header="打开目录" Style="{StaticResource BaseMenuItemStyle}" Click="OpenRoomDirMenuItem_OnClick"/>
+								<MenuItem Header="删除" Style="{StaticResource BaseMenuItemStyle}" Click="RemoveRoomButton_OnClick"/>
+							</ContextMenu>
+						</DataGrid.ContextMenu>
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="短号" Binding="{Binding ShortRoomId}" IsReadOnly="True" />
 							<DataGridTextColumn Header="房间号" Binding="{Binding RoomId}" IsReadOnly="True" />
@@ -116,6 +122,14 @@
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
+							<DataGridTemplateColumn Header="是否记录标题">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+										          IsChecked="{Binding Path=LogTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
 						</DataGrid.Columns>
 					</DataGrid>
 				</DockPanel>
@@ -124,6 +138,8 @@
 			<TabItem Header="日志">
 				<TextBox
 					IsReadOnly="True"
+					HorizontalScrollBarVisibility="Auto"
+					VerticalScrollBarVisibility="Auto"
 					Text="{Binding Logs.Text,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
 				</TextBox>
 			</TabItem>
@@ -136,10 +152,14 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 					<CheckBox Grid.Row="0" Grid.Column="0" Margin="3,6,3,3" Content="记录日志到文件" IsChecked="{Binding CurrentConfig.LogToFile}" />
-					<Button Grid.Row="0" Grid.Column="1" Margin="3" Content="清空日志" Click="ClearLogButton_OnClick"></Button>
-					
+					<Button Grid.Row="0" Grid.Column="1" Margin="3" Content="清空日志" Click="ClearLogButton_OnClick" />
+					<Button Grid.Row="0" Grid.Column="2" Margin="3" Content="打开日志文件" Click="OpenLogButton_OnClick" />
+
+					<Button Grid.Row="1" Grid.Column="1" Margin="3" Content="清空标题文件" Click="ClearTitleFileButton_OnClick" />
+					<Button Grid.Row="1" Grid.Column="2" Margin="3" Content="打开标题文件" Click="OpenTitleFileButton_OnClick" />
 				</Grid>
 			</TabItem>
 		</TabControl>

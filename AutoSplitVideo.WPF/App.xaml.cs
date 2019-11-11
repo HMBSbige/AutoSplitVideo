@@ -37,6 +37,7 @@ namespace AutoSplitVideo
 			{
 				if (Interlocked.Increment(ref _exited) == 1)
 				{
+					Log.ForceLog(args.Exception.ToString());
 					GlobalConfig.Save();
 					Current.Shutdown();
 				}
