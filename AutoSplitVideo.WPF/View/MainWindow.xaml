@@ -26,6 +26,7 @@
 				</ContextMenu>
 
 				<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
+				<valueConverter:LiveStatusConverter x:Key="LiveStatusConverter" />
 				<SolidColorBrush Color="LightGray" x:Key="GridLinesBrush" />
 			</ResourceDictionary>
 		</Window.Resources>
@@ -63,8 +64,6 @@
 						</Grid>
 					</GroupBox>
 					<ToolBar DockPanel.Dock="Top" Background="Transparent" Loaded="ToolBar_OnLoaded" >
-						<Button Content="开始录制" />
-						<Button Content="停止录制" />
 						<Button Content="移除房间" Click="RemoveRoomButton_OnClick"/>
 						<TextBox x:Name="AddRoomTextBox" Text="6154037" Width="100" KeyDown="AddRoomTextBox_OnKeyDown" />
 						<Button Content="添加房间" Click="AddRoomButton_OnClick"/>
@@ -75,7 +74,7 @@
 					HorizontalGridLinesBrush="{StaticResource GridLinesBrush}"
 					VerticalGridLinesBrush="{StaticResource GridLinesBrush}"
 					Background="Transparent"
-					BorderThickness="0,1,0,0"
+					BorderThickness="1"
 					BorderBrush="{StaticResource GridLinesBrush}"
 
 					HeadersVisibility="Column"
@@ -90,7 +89,15 @@
 							<DataGridTextColumn Header="房间号" Binding="{Binding RoomId}" IsReadOnly="True" />
 							<DataGridTextColumn Header="主播" Binding="{Binding UserName}" IsReadOnly="True" />
 							<DataGridTextColumn Header="直播间标题" Binding="{Binding Title}" IsReadOnly="True" />
-							<DataGridTextColumn Header="直播状态" Binding="{Binding IsLive}" IsReadOnly="True" />
+							<DataGridTextColumn Header="直播状态" 
+							Binding="{Binding IsLive,Converter={StaticResource LiveStatusConverter}}"
+							IsReadOnly="True">
+								<DataGridTextColumn.CellStyle>
+									<Style TargetType="DataGridCell">
+										<Setter Property="Foreground" Value="{Binding IsLive,Converter={StaticResource LiveStatusConverter}}" />
+									</Style>
+								</DataGridTextColumn.CellStyle>
+							</DataGridTextColumn>
 							<DataGridTextColumn Header="弹幕重连间隔（ms）" Binding="{Binding TimingDanmakuRetry}" IsReadOnly="False" />
 							<DataGridTextColumn Header="开播检查间隔（s）" Binding="{Binding TimingCheckInterval}" IsReadOnly="False" />
 							<DataGridTemplateColumn Header="是否录制">
@@ -120,7 +127,21 @@
 					Text="{Binding Logs.Text,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
 				</TextBox>
 			</TabItem>
-			<TabItem Header="设置"></TabItem>
+			<TabItem Header="设置">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<CheckBox Grid.Row="0" Grid.Column="0" Margin="3,6,3,3" Content="记录日志到文件" IsChecked="{Binding CurrentConfig.LogToFile}" />
+					<Button Grid.Row="0" Grid.Column="1" Margin="3" Content="清空日志" Click="ClearLogButton_OnClick"></Button>
+					
+				</Grid>
+			</TabItem>
 		</TabControl>
 	</Grid>
 </Window>

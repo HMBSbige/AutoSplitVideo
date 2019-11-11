@@ -98,12 +98,49 @@ namespace AutoSplitVideo.Model
 
 		#endregion
 
+		#region Event
+
+		public event EventHandler NotifyEvent;
+		public event EventHandler TitleChangedEvent;
+		public event EventHandler MonitorChangedEvent;
+
+		#endregion
+
 		public RoomSetting()
 		{
 			_timingDanmakuRetry = 2000;
-			_timingCheckInterval = 600;
+			_timingCheckInterval = 300;
 			_isMonitor = true;
 			_isNotify = true;
+
+			PropertyChanged += RoomSetting_PropertyChanged;
+		}
+
+		private void RoomSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(IsLive):
+				{
+					if (IsLive && IsNotify)
+					{
+						NotifyEvent?.Invoke(this, new EventArgs());
+					}
+					break;
+				}
+				case nameof(Title):
+				{
+					TitleChangedEvent?.Invoke(this, new EventArgs());
+					break;
+				}
+				case nameof(TimingDanmakuRetry):
+				case nameof(TimingCheckInterval):
+				{
+					MonitorChangedEvent?.Invoke(this, new EventArgs());
+					break;
+				}
+			}
+			GlobalConfig.Save();
 		}
 
 		public RoomSetting(Room room) : this()

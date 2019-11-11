@@ -1,7 +1,6 @@
 ﻿using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,8 +13,8 @@ namespace BilibiliApi
 {
 	public sealed class DanMuClient : IDisposable
 	{
-		private int _roomId;
-		private TimeSpan TimingDanmakuRetry;
+		private readonly int _roomId;
+		private TimeSpan _timingDanmakuRetry;
 		private TcpClient _client;
 		private const string DmServerHost = @"broadcastlv.chat.bilibili.com";
 		private const int DmServerPort = 2243;
@@ -25,13 +24,19 @@ namespace BilibiliApi
 		private bool DmTcpConnected => _client?.Connected ?? false;
 
 		public event ReceivedDanmakuEvent ReceivedDanmaku;
+		public event LogEvent LogEvent;
 
 		public DanMuClient(int roomId, TimeSpan timingDanmakuRetry)
 		{
 			_roomId = roomId;
-			TimingDanmakuRetry = timingDanmakuRetry;
+			_timingDanmakuRetry = timingDanmakuRetry;
 			_cts = new CancellationTokenSource();
 			HeartBeatTask(_cts.Token);
+		}
+
+		public void SetTimingDanmakuRetry(TimeSpan timingDanmakuRetry)
+		{
+			_timingDanmakuRetry = timingDanmakuRetry;
 		}
 
 		public void Start()
@@ -69,14 +74,14 @@ namespace BilibiliApi
 			var connectResult = false;
 			while (!DmTcpConnected && !_cts.Token.IsCancellationRequested)
 			{
-				await Task.Delay(TimingDanmakuRetry);
-				Debug.WriteLine($@"[{_roomId}] 正在连接弹幕服务器...");
+				await Task.Delay(_timingDanmakuRetry);
+				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 正在连接弹幕服务器..." });
 				connectResult = Connect();
 			}
 
 			if (connectResult)
 			{
-				Debug.WriteLine($@"[{_roomId}] 弹幕服务器连接成功");
+				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕服务器连接成功" });
 			}
 		}
 
@@ -101,14 +106,13 @@ namespace BilibiliApi
 			}
 			catch
 			{
-				Debug.WriteLine($@"[{_roomId}] 连接弹幕服务器错误");
+				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 连接弹幕服务器错误" });
 				return false;
 			}
 		}
 
 		private void ReceiveMessageLoop()
 		{
-			Debug.WriteLine($@"[{_roomId}] ReceiveMessageLoop Started");
 			try
 			{
 				var stableBuffer = new byte[_client.ReceiveBufferSize];
@@ -158,7 +162,7 @@ namespace BilibiliApi
 							}
 							catch (Exception ex)
 							{
-								Debug.WriteLine($@"[{_roomId}] {ex.Message}");
+								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex.Message}" });
 							}
 							break;
 						}
@@ -167,12 +171,11 @@ namespace BilibiliApi
 			}
 			catch
 			{
-				Debug.WriteLine($@"[{_roomId}] Disconnected");
 				_client?.Close();
 				_dmNetStream = null;
 				if (!(_cts?.IsCancellationRequested ?? true))
 				{
-					Debug.WriteLine($@"[{_roomId}] 弹幕连接被断开，将尝试重连");
+					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕连接被断开，将尝试重连" });
 					ConnectWithRetry();
 				}
 			}

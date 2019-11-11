@@ -39,6 +39,7 @@ namespace AutoSplitVideo.Model
 
 		public static void Save()
 		{
+			if (Config == null) return;
 			var options = new JsonSerializerOptions
 			{
 				WriteIndented = true

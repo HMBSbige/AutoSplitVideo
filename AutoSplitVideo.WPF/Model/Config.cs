@@ -12,6 +12,7 @@ namespace AutoSplitVideo.Model
 
 		private string _recordDirectory;
 		private List<RoomSetting> _rooms;
+		private bool _logToFile;
 
 		#endregion
 
@@ -29,12 +30,20 @@ namespace AutoSplitVideo.Model
 			set => SetField(ref _rooms, value);
 		}
 
+		public bool LogToFile
+		{
+			get => _logToFile;
+			set => SetField(ref _logToFile, value);
+		}
+
 		#endregion
 
 		public Config()
 		{
 			_rooms = new List<RoomSetting>();
 			_recordDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+			LogToFile = true;
+			PropertyChanged += (o, args) => { GlobalConfig.Save(); };
 		}
 	}
 }

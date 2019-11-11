@@ -175,5 +175,10 @@ namespace AutoSplitVideo.View
 				MainWindowViewModel.RemoveRoom(removeRooms);
 			}
 		}
+
+		private void ClearLogButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Log.ClearLog();
+		}
 	}
 }

@@ -4,7 +4,6 @@ using BilibiliApi.Enum;
 using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
 
@@ -15,14 +14,23 @@ namespace AutoSplitVideo.Service
 		public int RoomId { get; }
 		public event RoomInfoUpdatedEvent RoomInfoUpdated;
 		public event StreamStartedEvent StreamStarted;
+		public event LogEvent LogEvent;
 
-		private readonly Timer httpTimer;
+		private readonly Timer _httpTimer;
 		private readonly DanMuClient _danMuClient;
 
 		public StreamMonitor(RoomSetting setting)
 		{
 			RoomId = setting.RoomId;
+			StreamStarted += (o, args) =>
+			{
+				LogEvent?.Invoke(this,
+						args.IsLive
+								? new LogEventArgs { Log = $@"[{RoomId}] [{args.Type}] [{setting.UserName}] 开播：{setting.Title}" }
+								: new LogEventArgs { Log = $@"[{RoomId}] [{args.Type}] [{setting.UserName}] 下播/未开播" });
+			};
 			_danMuClient = new DanMuClient(RoomId, TimeSpan.FromMilliseconds(setting.TimingDanmakuRetry));
+			_danMuClient.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
 			_danMuClient.ReceivedDanmaku += (o, args) =>
 			{
 				switch (args.Danmaku.MsgType)
@@ -43,27 +51,20 @@ namespace AutoSplitVideo.Service
 						break;
 				}
 			};
-			httpTimer = new Timer(TimeSpan.FromSeconds(setting.TimingCheckInterval).TotalMilliseconds)
+			_httpTimer = new Timer(TimeSpan.FromSeconds(setting.TimingCheckInterval).TotalMilliseconds)
 			{
 				Enabled = false,
 				AutoReset = true,
 				SynchronizingObject = null,
 				Site = null
 			};
-			httpTimer.Elapsed += (sender, e) =>
+			_httpTimer.Elapsed += (sender, e) =>
 			{
-				try
-				{
-					Check(TriggerType.HttpApi);
-				}
-				catch
-				{
-					Debug.WriteLine($@"[{RoomId}] 获取直播间开播状态出错");
-				}
+				Check(TriggerType.HttpApi);
 			};
 		}
 
-		public bool Start()
+		public bool Start(bool isInit)
 		{
 			if (disposedValue)
 			{
@@ -71,7 +72,11 @@ namespace AutoSplitVideo.Service
 			}
 
 			_danMuClient.Start();
-			httpTimer.Start();
+			_httpTimer.Start();
+			if (isInit)
+			{
+				Check(TriggerType.HttpApi);
+			}
 			return true;
 		}
 
@@ -82,7 +87,7 @@ namespace AutoSplitVideo.Service
 				throw new ObjectDisposedException(nameof(StreamMonitor));
 			}
 
-			httpTimer.Stop();
+			_httpTimer.Stop();
 		}
 
 		public async void Check(TriggerType type, int millisecondsDelay = 0)
@@ -97,10 +102,17 @@ namespace AutoSplitVideo.Service
 				throw new ArgumentOutOfRangeException(nameof(millisecondsDelay), @"不能小于0");
 			}
 
-			await Task.Delay(millisecondsDelay);
-			StreamStarted?.Invoke(this, (await FetchRoomInfoAsync()).IsStreaming
-							? new StreamStartedArgs { Type = type, IsLive = true }
-							: new StreamStartedArgs { Type = type, IsLive = false });
+			try
+			{
+				await Task.Delay(millisecondsDelay);
+				StreamStarted?.Invoke(this, (await FetchRoomInfoAsync()).IsStreaming
+						? new StreamStartedArgs { Type = type, IsLive = true }
+						: new StreamStartedArgs { Type = type, IsLive = false });
+			}
+			catch (Exception ex)
+			{
+				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] 获取直播间开播状态出错：{ex.Message}" });
+			}
 		}
 
 		public async Task<Room> FetchRoomInfoAsync()
@@ -108,6 +120,17 @@ namespace AutoSplitVideo.Service
 			var room = await BililiveApi.GetRoomInfoAsync(RoomId);
 			RoomInfoUpdated?.Invoke(this, new RoomInfoUpdatedArgs { Room = room });
 			return room;
+		}
+
+		public void SettingChanged(RoomSetting setting)
+		{
+			if (disposedValue)
+			{
+				throw new ObjectDisposedException(nameof(StreamMonitor));
+			}
+
+			_httpTimer.Interval = TimeSpan.FromSeconds(setting.TimingCheckInterval).TotalMilliseconds;
+			_danMuClient.SetTimingDanmakuRetry(TimeSpan.FromMilliseconds(setting.TimingDanmakuRetry));
 		}
 
 		#region IDisposable Support
@@ -119,7 +142,7 @@ namespace AutoSplitVideo.Service
 			{
 				if (disposing)
 				{
-					httpTimer?.Dispose();
+					_httpTimer?.Dispose();
 					_danMuClient?.Dispose();
 				}
 

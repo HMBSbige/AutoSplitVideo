@@ -3,9 +3,12 @@ using AutoSplitVideo.Model;
 using AutoSplitVideo.Service;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
+using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +18,10 @@ namespace AutoSplitVideo.ViewModel
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
-		private const int MaxLogNum = 100;
+		public static Config CurrentConfig => GlobalConfig.Config;
+
+		private const int MaxLogNum = 1000;
+
 		public MainWindowViewModel()
 		{
 			Window = null;
@@ -23,12 +29,8 @@ namespace AutoSplitVideo.ViewModel
 			_progressBarValue = 0;
 			_ctsGetDisk = new CancellationTokenSource();
 			StartGetDiskUsage(_ctsGetDisk.Token);
-			Rooms = new ObservableCollection<RoomSetting>();
 			_monitors = new List<StreamMonitor>();
-			foreach (var room in CurrentConfig.Rooms)
-			{
-				var _ = AddRoom(room.RoomId, true);
-			}
+			InitRooms(CurrentConfig.Rooms);
 		}
 
 		#region Window
@@ -129,6 +131,27 @@ namespace AutoSplitVideo.ViewModel
 
 		#endregion
 
+		#region Log
+
+		private ObservableQueue<string> _logs;
+
+		public ObservableQueue<string> Logs
+		{
+			get => _logs;
+			set => SetField(ref _logs, value);
+		}
+
+		public void AddLog(string str)
+		{
+			var log = $@"[{DateTime.Now}] {str}";
+			Logs.Enqueue(log);
+			Log.AddLog(log);
+		}
+
+		#endregion
+
+		#region Room
+
 		private ObservableCollection<RoomSetting> _rooms;
 		public ObservableCollection<RoomSetting> Rooms
 		{
@@ -136,31 +159,39 @@ namespace AutoSplitVideo.ViewModel
 			set => SetField(ref _rooms, value);
 		}
 
-		private ObservableQueue<string> _logs;
-		public ObservableQueue<string> Logs { get => _logs; set => SetField(ref _logs, value); }
+		private void InitRooms(IEnumerable<RoomSetting> rooms)
+		{
+			Rooms = new ObservableCollection<RoomSetting>(rooms);
+			foreach (var room in Rooms)
+			{
+				StartMonitor(room, true);
+				AddEvent(room);
+			}
+		}
 
-		public static Config CurrentConfig => GlobalConfig.Config;
-
-		public async Task<bool> AddRoom(int roomId, bool isInit = false)
+		public async Task<bool> AddRoom(int roomId)
 		{
 			if (Rooms.Any(roomSetting => roomId == roomSetting.RoomId || roomId == roomSetting.ShortRoomId))
 			{
 				return false;
 			}
+
 			try
 			{
 				var roomInfo = await BilibiliApi.BililiveApi.GetRoomInfoAsync(roomId);
 				var room = new RoomSetting(roomInfo);
 				Rooms.Add(room);
-				if (!isInit)
-				{
-					CurrentConfig.Rooms.Add(room);
-				}
+				CurrentConfig.Rooms.Add(room);
 				StartMonitor(room);
+				AddEvent(room);
 			}
 			catch
 			{
 				return false;
+			}
+			finally
+			{
+				GlobalConfig.Save();
 			}
 			return true;
 		}
@@ -169,7 +200,7 @@ namespace AutoSplitVideo.ViewModel
 		{
 			foreach (var room in rooms)
 			{
-				StopMonitor(room);
+				RemoveMonitor(room);
 
 				var removedRoom = Rooms.SingleOrDefault(r => r.RoomId == room);
 				if (removedRoom != null)
@@ -183,39 +214,37 @@ namespace AutoSplitVideo.ViewModel
 					CurrentConfig.Rooms.Remove(removedRoom2);
 				}
 			}
+			GlobalConfig.Save();
 		}
 
+		#endregion
+
+		#region Monitor
+
 		private readonly List<StreamMonitor> _monitors;
-		public void StartMonitor(RoomSetting room)
+
+		private void StartMonitor(RoomSetting room, bool isInit = false)
 		{
 			var monitor = new StreamMonitor(room);
-			monitor.RoomInfoUpdated += (o, args) =>
+			monitor.RoomInfoUpdated += (o, args) => { room.Parse(args.Room); };
+			monitor.StreamStarted += (o, args) => { room.IsLive = args.IsLive; };
+			monitor.LogEvent += (o, args) =>
 			{
-				room.Parse(args.Room);
+				AddLog(args.Log);
+				Debug.WriteLine(args.Log);
 			};
-			monitor.StreamStarted += (o, args) =>
-			{
-				room.IsLive = args.IsLive;
-			};
-			monitor.Start();
+			monitor.Start(isInit);
+			AddEvent(room, monitor);
 			_monitors.Add(monitor);
 		}
 
-		public void StopMonitor(int roomId)
+		private void RemoveMonitor(int roomId)
 		{
 			var removedMonitors = _monitors.SingleOrDefault(r => r.RoomId == roomId);
 			if (removedMonitors != null)
 			{
-				removedMonitors.Stop();
+				removedMonitors.Dispose();
 				_monitors.Remove(removedMonitors);
-			}
-		}
-
-		public void StopMonitor(IEnumerable<int> rooms)
-		{
-			foreach (var room in rooms)
-			{
-				StopMonitor(room);
 			}
 		}
 
@@ -226,5 +255,43 @@ namespace AutoSplitVideo.ViewModel
 				monitor.Dispose();
 			}
 		}
+
+		#endregion
+
+		#region Event
+
+		private void AddEvent(RoomSetting room)
+		{
+			room.NotifyEvent -= Room_NotifyEvent;
+			room.NotifyEvent += Room_NotifyEvent;
+			room.TitleChangedEvent -= RoomTitleChangedEvent;
+			room.TitleChangedEvent += RoomTitleChangedEvent;
+		}
+
+		private void AddEvent(RoomSetting room, StreamMonitor monitor)
+		{
+			room.MonitorChangedEvent += (o, args) =>
+			{
+				monitor.SettingChanged(room);
+			};
+		}
+
+		private void Room_NotifyEvent(object sender, EventArgs e)
+		{
+			if (sender is RoomSetting room)
+			{
+				Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title, BalloonIcon.Info);
+			}
+		}
+
+		private void RoomTitleChangedEvent(object sender, EventArgs e)
+		{
+			if (sender is RoomSetting room)
+			{
+				File.AppendAllTextAsync(@"Title.txt", $@"[{DateTime.Now}] [{room.RoomId}] [{room.UserName}]：[{room.Title}] {Environment.NewLine}");
+			}
+		}
+
+		#endregion
 	}
 }
