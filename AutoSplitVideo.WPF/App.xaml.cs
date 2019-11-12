@@ -22,7 +22,7 @@ namespace AutoSplitVideo
 		{
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(Utils.Utils.GetExecutablePath()));
 			var identifier = $@"Global\{UpdateChecker.Name}_{Directory.GetCurrentDirectory().GetDeterministicHashCode()}";
-			using var singleInstance = new SingleInstance(identifier);
+			var singleInstance = new SingleInstance(identifier);
 			if (!singleInstance.IsFirstInstance)
 			{
 				singleInstance.PassArgumentsToFirstInstance(e.Args.Append(@"--show"));
@@ -39,10 +39,15 @@ namespace AutoSplitVideo
 				{
 					Log.ForceLog(args.Exception.ToString());
 					GlobalConfig.Save();
+					singleInstance.Dispose();
 					Current.Shutdown();
 				}
 			};
-			Current.Exit += (o, args) => { GlobalConfig.Save(); };
+			Current.Exit += (o, args) =>
+			{
+				singleInstance.Dispose();
+				GlobalConfig.Save();
+			};
 
 			CheckUpdateAsync();
 
