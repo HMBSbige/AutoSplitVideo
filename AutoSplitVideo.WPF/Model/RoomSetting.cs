@@ -1,4 +1,5 @@
-﻿using AutoSplitVideo.ViewModel;
+﻿using AutoSplitVideo.Service;
+using AutoSplitVideo.ViewModel;
 using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
@@ -26,6 +27,8 @@ namespace AutoSplitVideo.Model
 		#endregion
 
 		#region Public
+
+		public StreamMonitor Monitor;
 
 		[JsonIgnore]
 		public int ShortRoomId
@@ -110,7 +113,6 @@ namespace AutoSplitVideo.Model
 
 		public event EventHandler NotifyEvent;
 		public event EventHandler TitleChangedEvent;
-		public event EventHandler MonitorChangedEvent;
 		public event LogEvent LogEvent;
 
 		#endregion
@@ -123,6 +125,7 @@ namespace AutoSplitVideo.Model
 			_isNotify = true;
 			_logTitle = true;
 
+			Monitor = new StreamMonitor(this);
 			PropertyChanged += RoomSetting_PropertyChanged;
 		}
 
@@ -158,12 +161,27 @@ namespace AutoSplitVideo.Model
 				case nameof(IsMonitor):
 				{
 					//TODO
+					if (IsMonitor)
+					{
+						if (Monitor == null)
+						{
+							StartMonitor();
+						}
+						else
+						{
+							Monitor.Start();
+						}
+					}
+					else
+					{
+						Monitor?.Stop();
+					}
 					break;
 				}
 				case nameof(TimingDanmakuRetry):
 				case nameof(TimingCheckInterval):
 				{
-					MonitorChangedEvent?.Invoke(this, new EventArgs());
+					Monitor?.SettingChanged(this);
 					break;
 				}
 			}
@@ -176,13 +194,29 @@ namespace AutoSplitVideo.Model
 			IsLive = false;
 		}
 
-		public void Parse(Room room)
+		private void Parse(Room room)
 		{
 			ShortRoomId = room.ShortRoomId;
 			RoomId = room.RoomId;
 			UserName = room.UserName;
 			IsLive = room.IsStreaming;
 			Title = room.Title;
+		}
+
+		public void StartMonitor()
+		{
+			StopMonitor();
+			Monitor = new StreamMonitor(this);
+			Monitor.RoomInfoUpdated += (o, args) => { Parse(args.Room); };
+			Monitor.StreamStarted += (o, args) => { IsLive = args.IsLive; };
+			Monitor.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
+			Monitor.Start();
+		}
+
+		public void StopMonitor()
+		{
+			Monitor?.Dispose();
+			Monitor = null;
 		}
 	}
 }

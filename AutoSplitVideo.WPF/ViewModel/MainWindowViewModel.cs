@@ -30,7 +30,6 @@ namespace AutoSplitVideo.ViewModel
 			_progressBarValue = 0;
 			_ctsGetDisk = new CancellationTokenSource();
 			StartGetDiskUsage(_ctsGetDisk.Token);
-			_monitors = new List<StreamMonitor>();
 			InitRooms(CurrentConfig.Rooms);
 		}
 
@@ -166,7 +165,7 @@ namespace AutoSplitVideo.ViewModel
 			foreach (var room in Rooms)
 			{
 				AddEvent(room);
-				StartMonitor(room);
+				room.StartMonitor();
 			}
 		}
 
@@ -184,7 +183,7 @@ namespace AutoSplitVideo.ViewModel
 				Rooms.Add(room);
 				CurrentConfig.Rooms.Add(room);
 				AddEvent(room);
-				StartMonitor(room);
+				room.StartMonitor();
 			}
 			catch
 			{
@@ -201,11 +200,10 @@ namespace AutoSplitVideo.ViewModel
 		{
 			foreach (var room in rooms)
 			{
-				RemoveMonitor(room);
-
 				var removedRoom = Rooms.SingleOrDefault(r => r.RoomId == room);
 				if (removedRoom != null)
 				{
+					removedRoom.StopMonitor();
 					Rooms.Remove(removedRoom);
 				}
 
@@ -222,34 +220,11 @@ namespace AutoSplitVideo.ViewModel
 
 		#region Monitor
 
-		private readonly List<StreamMonitor> _monitors;
-
-		private void StartMonitor(RoomSetting room)
-		{
-			var monitor = new StreamMonitor(room);
-			monitor.RoomInfoUpdated += (o, args) => { room.Parse(args.Room); };
-			monitor.StreamStarted += (o, args) => { room.IsLive = args.IsLive; };
-			monitor.LogEvent += Room_LogEvent;
-			monitor.Start();
-			AddEvent(room, monitor);
-			_monitors.Add(monitor);
-		}
-
-		private void RemoveMonitor(int roomId)
-		{
-			var removedMonitors = _monitors.SingleOrDefault(r => r.RoomId == roomId);
-			if (removedMonitors != null)
-			{
-				removedMonitors.Dispose();
-				_monitors.Remove(removedMonitors);
-			}
-		}
-
 		public void StopAllMonitors()
 		{
-			foreach (var monitor in _monitors)
+			foreach (var room in Rooms)
 			{
-				monitor.Dispose();
+				room.StopMonitor();
 			}
 		}
 
@@ -257,8 +232,8 @@ namespace AutoSplitVideo.ViewModel
 		{
 			foreach (var roomId in rooms)
 			{
-				var monitor = _monitors.SingleOrDefault(r => r.RoomId == roomId);
-				monitor?.Check(TriggerType.Manual);
+				var room = Rooms.SingleOrDefault(r => r.RoomId == roomId);
+				room?.Monitor?.Check(TriggerType.Manual);
 			}
 		}
 
@@ -272,6 +247,7 @@ namespace AutoSplitVideo.ViewModel
 			room.NotifyEvent += Room_NotifyEvent;
 			room.TitleChangedEvent -= RoomTitleChangedEvent;
 			room.TitleChangedEvent += RoomTitleChangedEvent;
+			room.LogEvent -= Room_LogEvent;
 			room.LogEvent += Room_LogEvent;
 		}
 
@@ -279,14 +255,6 @@ namespace AutoSplitVideo.ViewModel
 		{
 			AddLog(e.Log);
 			Debug.WriteLine(e.Log);
-		}
-
-		private void AddEvent(RoomSetting room, StreamMonitor monitor)
-		{
-			room.MonitorChangedEvent += (o, args) =>
-			{
-				monitor.SettingChanged(room);
-			};
 		}
 
 		private void Room_NotifyEvent(object sender, EventArgs e)

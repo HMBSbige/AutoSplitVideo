@@ -119,6 +119,12 @@ namespace BilibiliApi
 				var urls = durls.EnumerateArray().Select(dUrl => dUrl.GetProperty(@"url").GetString()).Distinct().ToArray();
 				if (urls.Length > 0)
 				{
+#if DEBUG
+					foreach (var s in urls)
+					{
+						Debug.WriteLine(s);
+					}
+#endif
 					return urls[Random.Next(0, urls.Length - 1)];
 				}
 			}
