@@ -29,6 +29,7 @@ namespace AutoSplitVideo.Model
 		#region Public
 
 		public StreamMonitor Monitor;
+		public Recorder Recorder;
 
 		[JsonIgnore]
 		public int ShortRoomId
@@ -135,6 +136,7 @@ namespace AutoSplitVideo.Model
 			{
 				case nameof(IsLive):
 				{
+					//TODO:Stop/Start Record
 					if (IsLive)
 					{
 						LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] [{UserName}] 开播：{Title}" });
@@ -144,11 +146,12 @@ namespace AutoSplitVideo.Model
 						}
 						if (IsMonitor)
 						{
-							//TODO:Record
+							StartRecorder();
 						}
 					}
 					else
 					{
+						StopRecorder();
 						LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] [{UserName}] 下播/未开播" });
 					}
 					break;
@@ -160,7 +163,7 @@ namespace AutoSplitVideo.Model
 				}
 				case nameof(IsMonitor):
 				{
-					//TODO
+					//TODO:Stop/Start Record
 					if (IsMonitor)
 					{
 						if (Monitor == null)
@@ -171,10 +174,15 @@ namespace AutoSplitVideo.Model
 						{
 							Monitor.Start();
 						}
+						if (IsLive)
+						{
+							StartRecorder();
+						}
 					}
 					else
 					{
 						Monitor?.Stop();
+						StopRecorder();
 					}
 					break;
 				}
@@ -211,12 +219,29 @@ namespace AutoSplitVideo.Model
 			Monitor.StreamStarted += (o, args) => { IsLive = args.IsLive; };
 			Monitor.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
 			Monitor.Start();
+			if (!IsMonitor)
+			{
+				Monitor.Stop();
+			}
 		}
 
 		public void StopMonitor()
 		{
 			Monitor?.Dispose();
 			Monitor = null;
+		}
+
+		public void StartRecorder()
+		{
+			StopRecorder();
+			Recorder = new Recorder(this);
+			Recorder.Start();
+		}
+
+		public void StopRecorder()
+		{
+			Recorder?.Dispose();
+			Recorder = null;
 		}
 	}
 }

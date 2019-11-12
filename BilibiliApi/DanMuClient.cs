@@ -162,7 +162,7 @@ namespace BilibiliApi
 							}
 							catch (Exception ex)
 							{
-								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex.Message}" });
+								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
 							}
 							break;
 						}
