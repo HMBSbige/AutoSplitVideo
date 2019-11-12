@@ -72,6 +72,9 @@ namespace BilibiliApi.Model
 			// TODO: 检查验证
 			RawData = json;
 			JsonVersion = 2;
+
+			Debug.WriteLine(RawData);
+
 			using var document = JsonDocument.Parse(json);
 			var obj = document.RootElement;
 			var cmd = obj.GetProperty(@"cmd").GetString();
@@ -147,7 +150,6 @@ namespace BilibiliApi.Model
 				}
 				default:
 				{
-					Debug.WriteLine(RawData);
 					MsgType = MsgType.Unknown;
 					break;
 				}
