@@ -1,4 +1,5 @@
 ﻿using AutoSplitVideo.ViewModel;
+using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
 using System.Text.Json.Serialization;
@@ -110,6 +111,7 @@ namespace AutoSplitVideo.Model
 		public event EventHandler NotifyEvent;
 		public event EventHandler TitleChangedEvent;
 		public event EventHandler MonitorChangedEvent;
+		public event LogEvent LogEvent;
 
 		#endregion
 
@@ -130,15 +132,32 @@ namespace AutoSplitVideo.Model
 			{
 				case nameof(IsLive):
 				{
-					if (IsLive && IsNotify)
+					if (IsLive)
 					{
-						NotifyEvent?.Invoke(this, new EventArgs());
+						LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] [{UserName}] 开播：{Title}" });
+						if (IsNotify)
+						{
+							NotifyEvent?.Invoke(this, new EventArgs());
+						}
+						if (IsMonitor)
+						{
+							//TODO:Record
+						}
+					}
+					else
+					{
+						LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] [{UserName}] 下播/未开播" });
 					}
 					break;
 				}
 				case nameof(Title):
 				{
 					TitleChangedEvent?.Invoke(this, new EventArgs());
+					break;
+				}
+				case nameof(IsMonitor):
+				{
+					//TODO
 					break;
 				}
 				case nameof(TimingDanmakuRetry):
@@ -154,6 +173,7 @@ namespace AutoSplitVideo.Model
 		public RoomSetting(Room room) : this()
 		{
 			Parse(room);
+			IsLive = false;
 		}
 
 		public void Parse(Room room)

@@ -147,7 +147,7 @@ namespace AutoSplitVideo.View
 
 		private async void AddRoomButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			if (int.TryParse(AddRoomTextBox.Text, out var roomId) && roomId > 0)
+			if (int.TryParse(AddRoomTextBox.Text.Trim(), out var roomId) && roomId > 0)
 			{
 				if (await MainWindowViewModel.AddRoom(roomId))
 				{
@@ -216,6 +216,11 @@ namespace AutoSplitVideo.View
 			{
 				Utils.Utils.OpenDir(Path.Combine(GlobalConfig.Config.RecordDirectory, $@"{setting.RoomId}"));
 			}
+		}
+
+		private void ClearLogMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MainWindowViewModel.Logs.Clear();
 		}
 	}
 }

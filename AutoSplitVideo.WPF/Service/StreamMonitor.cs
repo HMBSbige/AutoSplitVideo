@@ -4,6 +4,7 @@ using BilibiliApi.Enum;
 using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
 
@@ -24,6 +25,11 @@ namespace AutoSplitVideo.Service
 			RoomId = setting.RoomId;
 			StreamStarted += (o, args) =>
 			{
+				if (args.Type == TriggerType.HttpApi)
+				{
+					Debug.WriteLine($@"[{RoomId}] [{args.Type}] [{setting.UserName}]: {args.IsLive}");
+					return;
+				}
 				LogEvent?.Invoke(this,
 						args.IsLive
 								? new LogEventArgs { Log = $@"[{RoomId}] [{args.Type}] [{setting.UserName}] 开播：{setting.Title}" }
@@ -64,7 +70,7 @@ namespace AutoSplitVideo.Service
 			};
 		}
 
-		public bool Start(bool isInit)
+		public bool Start()
 		{
 			if (disposedValue)
 			{
@@ -73,10 +79,7 @@ namespace AutoSplitVideo.Service
 
 			_danMuClient.Start();
 			_httpTimer.Start();
-			if (isInit)
-			{
-				Check(TriggerType.HttpApi);
-			}
+			Check(TriggerType.HttpApi);
 			return true;
 		}
 
@@ -144,6 +147,7 @@ namespace AutoSplitVideo.Service
 				{
 					_httpTimer?.Dispose();
 					_danMuClient?.Dispose();
+					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] 弹幕连接已断开" });
 				}
 
 				disposedValue = true;

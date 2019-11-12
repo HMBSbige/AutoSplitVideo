@@ -43,7 +43,7 @@
 		<TabControl>
 			<TabItem Header="录播机">
 				<DockPanel>
-					<GroupBox Header="下次录制时生效" DockPanel.Dock="Top" Margin="3">
+					<GroupBox Header="根目录" DockPanel.Dock="Top" Margin="3">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition />
@@ -64,7 +64,7 @@
 						</Grid>
 					</GroupBox>
 					<ToolBar DockPanel.Dock="Top" Background="Transparent" Loaded="ToolBar_OnLoaded" >
-						<TextBox x:Name="AddRoomTextBox" Text="6154037" Width="100" KeyDown="AddRoomTextBox_OnKeyDown" />
+						<TextBox x:Name="AddRoomTextBox" Text="6154037" Width="100" BorderBrush="{StaticResource GridLinesBrush}" KeyDown="AddRoomTextBox_OnKeyDown" />
 						<Button Content="添加房间" Click="AddRoomButton_OnClick"/>
 					</ToolBar>
 					<DataGrid x:Name="DataGrid"
@@ -104,8 +104,6 @@
 									</Style>
 								</DataGridTextColumn.CellStyle>
 							</DataGridTextColumn>
-							<DataGridTextColumn Header="弹幕重连间隔（ms）" Binding="{Binding TimingDanmakuRetry}" IsReadOnly="False" />
-							<DataGridTextColumn Header="开播检查间隔（s）" Binding="{Binding TimingCheckInterval}" IsReadOnly="False" />
 							<DataGridTemplateColumn Header="是否录制">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
@@ -130,6 +128,8 @@
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
+							<DataGridTextColumn Header="弹幕重连间隔（ms）" Binding="{Binding TimingDanmakuRetry}" IsReadOnly="False" />
+							<DataGridTextColumn Header="开播检查间隔（s）" Binding="{Binding TimingCheckInterval}" IsReadOnly="False" />
 						</DataGrid.Columns>
 					</DataGrid>
 				</DockPanel>
@@ -141,6 +141,11 @@
 					HorizontalScrollBarVisibility="Auto"
 					VerticalScrollBarVisibility="Auto"
 					Text="{Binding Logs.Text,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
+					<TextBox.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="清空" Click="ClearLogMenuItem_OnClick"/>
+						</ContextMenu>
+					</TextBox.ContextMenu>
 				</TextBox>
 			</TabItem>
 			<TabItem Header="设置">

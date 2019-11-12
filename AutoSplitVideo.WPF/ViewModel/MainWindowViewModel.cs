@@ -166,7 +166,7 @@ namespace AutoSplitVideo.ViewModel
 			foreach (var room in Rooms)
 			{
 				AddEvent(room);
-				StartMonitor(room, true);
+				StartMonitor(room);
 			}
 		}
 
@@ -224,17 +224,13 @@ namespace AutoSplitVideo.ViewModel
 
 		private readonly List<StreamMonitor> _monitors;
 
-		private void StartMonitor(RoomSetting room, bool isInit = false)
+		private void StartMonitor(RoomSetting room)
 		{
 			var monitor = new StreamMonitor(room);
 			monitor.RoomInfoUpdated += (o, args) => { room.Parse(args.Room); };
 			monitor.StreamStarted += (o, args) => { room.IsLive = args.IsLive; };
-			monitor.LogEvent += (o, args) =>
-			{
-				AddLog(args.Log);
-				Debug.WriteLine(args.Log);
-			};
-			monitor.Start(isInit);
+			monitor.LogEvent += Room_LogEvent;
+			monitor.Start();
 			AddEvent(room, monitor);
 			_monitors.Add(monitor);
 		}
@@ -276,6 +272,13 @@ namespace AutoSplitVideo.ViewModel
 			room.NotifyEvent += Room_NotifyEvent;
 			room.TitleChangedEvent -= RoomTitleChangedEvent;
 			room.TitleChangedEvent += RoomTitleChangedEvent;
+			room.LogEvent += Room_LogEvent;
+		}
+
+		private void Room_LogEvent(object sender, BilibiliApi.Event.LogEventArgs e)
+		{
+			AddLog(e.Log);
+			Debug.WriteLine(e.Log);
 		}
 
 		private void AddEvent(RoomSetting room, StreamMonitor monitor)
