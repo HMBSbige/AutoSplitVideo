@@ -145,7 +145,7 @@
 					</DataGrid>
 				</DockPanel>
 			</TabItem>
-			<TabItem Header="自动分段"></TabItem>
+			<TabItem Header="Flv 处理"></TabItem>
 			<TabItem Header="日志">
 				<TextBox
 					IsReadOnly="True"
@@ -164,6 +164,7 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
@@ -176,6 +177,11 @@
 
 					<Button Grid.Row="1" Grid.Column="1" Margin="3" Content="清空标题文件" Click="ClearTitleFileButton_OnClick" />
 					<Button Grid.Row="1" Grid.Column="2" Margin="3" Content="打开标题文件" Click="OpenTitleFileButton_OnClick" />
+
+					<CheckBox x:Name="AutoStartupCheckBox" Grid.Row="2" Grid.Column="0" Margin="3,6,3,3" Content="开机自启动"
+					Checked="AutoStartupCheckBox_CheckedChanged"
+					Unchecked="AutoStartupCheckBox_CheckedChanged"
+					/>
 				</Grid>
 			</TabItem>
 		</TabControl>

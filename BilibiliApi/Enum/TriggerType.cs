@@ -2,9 +2,9 @@
 {
 	public enum TriggerType
 	{
-		Danmaku,
+		弹幕,
 		HttpApi,
 		HttpApiRecheck,
-		Manual,
+		手动,
 	}
 }

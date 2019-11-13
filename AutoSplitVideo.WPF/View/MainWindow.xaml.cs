@@ -42,6 +42,7 @@ namespace AutoSplitVideo.View
 
 			#endregion
 
+			AutoStartupCheckBox.IsChecked = AutoStartup.Check();
 		}
 
 		#region CloseReasonHack
@@ -164,7 +165,7 @@ namespace AutoSplitVideo.View
 			var removeRooms = GetSelectIds();
 			if (removeRooms.Count == 0) return;
 			var str = string.Join(',', removeRooms);
-			if (MessageBox.Show($@"确定移除：{str}？", UpdateChecker.Name, MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
+			if (MessageBox.Show($@"确定移除：{str}？", UpdateChecker.Name, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
 			{
 				MainWindowViewModel.RemoveRoom(removeRooms);
 			}
@@ -221,6 +222,15 @@ namespace AutoSplitVideo.View
 		private void ClearLogMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			MainWindowViewModel.Logs.Clear();
+		}
+
+		private void AutoStartupCheckBox_CheckedChanged(object sender, RoutedEventArgs e)
+		{
+			if (!AutoStartup.Set(AutoStartupCheckBox.IsChecked.GetValueOrDefault()))
+			{
+				MessageBox.Show(@"设置失败", @"错误", MessageBoxButton.OK, MessageBoxImage.Error);
+				AutoStartupCheckBox.IsChecked = !AutoStartupCheckBox.IsChecked;
+			}
 		}
 	}
 }

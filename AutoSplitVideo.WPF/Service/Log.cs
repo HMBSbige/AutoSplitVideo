@@ -15,7 +15,7 @@ namespace AutoSplitVideo.Service
 			Lock.EnterWriteLock();
 			try
 			{
-				File.AppendAllTextAsync(LogFileName, $@"{str}{Environment.NewLine}");
+				File.AppendAllTextAsync(LogFileName, $@"[{DateTime.Now}] {str}{Environment.NewLine}");
 			}
 			finally
 			{

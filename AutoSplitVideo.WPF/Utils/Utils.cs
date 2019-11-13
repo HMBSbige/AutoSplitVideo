@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -145,6 +146,44 @@ namespace AutoSplitVideo.Utils
 			{
 				return (0, 0);
 			}
+		}
+
+		public static RegistryKey OpenRegKey(string name, bool writable, RegistryHive hive = RegistryHive.CurrentUser)
+		{
+			var userKey = RegistryKey.OpenBaseKey(hive, Environment.Is64BitProcess ? RegistryView.Registry64 : RegistryView.Registry32)
+					.OpenSubKey(name, writable);
+			return userKey;
+		}
+
+		public const string ParameterSetAutoRun = @"--setAutoRun";
+
+		public static int RunAsAdmin(string arguments)
+		{
+			Process process;
+			var processInfo = new ProcessStartInfo
+			{
+				Verb = @"runas",
+				FileName = GetExecutablePath(),
+				Arguments = arguments
+			};
+			try
+			{
+				process = Process.Start(processInfo);
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				return -1;
+			}
+
+			process?.WaitForExit();
+			if (process != null)
+			{
+				var ret = process.ExitCode;
+				process.Close();
+				return ret;
+			}
+
+			return -1;
 		}
 	}
 }

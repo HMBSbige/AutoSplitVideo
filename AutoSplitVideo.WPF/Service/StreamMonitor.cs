@@ -38,14 +38,14 @@ namespace AutoSplitVideo.Service
 					case MsgType.LiveStart:
 						Task.Run(() => StreamStarted?.Invoke(this, new StreamStartedArgs
 						{
-							Type = TriggerType.Danmaku,
+							Type = TriggerType.弹幕,
 							IsLive = true
 						}));
 						break;
 					case MsgType.LiveEnd:
 						Task.Run(() => StreamStarted?.Invoke(this, new StreamStartedArgs
 						{
-							Type = TriggerType.Danmaku,
+							Type = TriggerType.弹幕,
 							IsLive = false
 						}));
 						break;

@@ -21,6 +21,16 @@ namespace AutoSplitVideo
 		private void App_OnStartup(object sender, StartupEventArgs e)
 		{
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(Utils.Utils.GetExecutablePath()));
+			if (e.Args.Contains(Utils.Utils.ParameterSetAutoRun))
+			{
+				if (!AutoStartup.Switch())
+				{
+					Environment.Exit(1);
+				}
+				Current.Shutdown();
+				return;
+			}
+
 			var identifier = $@"Global\{UpdateChecker.Name}_{Directory.GetCurrentDirectory().GetDeterministicHashCode()}";
 			var singleInstance = new SingleInstance(identifier);
 			if (!singleInstance.IsFirstInstance)

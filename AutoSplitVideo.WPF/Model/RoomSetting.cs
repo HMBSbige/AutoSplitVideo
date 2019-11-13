@@ -159,7 +159,6 @@ namespace AutoSplitVideo.Model
 			{
 				case nameof(IsLive):
 				{
-					//TODO:Stop/Start Record
 					if (IsLive)
 					{
 						LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] [{UserName}] 开播：{Title}" });
@@ -186,7 +185,6 @@ namespace AutoSplitVideo.Model
 				}
 				case nameof(IsMonitor):
 				{
-					//TODO:Stop/Start Record
 					if (IsMonitor)
 					{
 						if (Monitor == null)

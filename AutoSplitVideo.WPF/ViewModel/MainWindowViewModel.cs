@@ -234,7 +234,7 @@ namespace AutoSplitVideo.ViewModel
 			foreach (var roomId in rooms)
 			{
 				var room = Rooms.SingleOrDefault(r => r.RoomId == roomId);
-				room?.Monitor?.Check(TriggerType.Manual);
+				room?.Monitor?.Check(TriggerType.手动);
 			}
 		}
 
