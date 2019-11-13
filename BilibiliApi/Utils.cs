@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace BilibiliApi
 {
-	internal static class Utils
+	public static class Utils
 	{
 		internal static byte[] ToBE(this byte[] b)
 		{
@@ -32,7 +32,7 @@ namespace BilibiliApi
 			}
 		}
 
-		internal static string UserAgent
+		public static string UserAgent
 		{
 			get
 			{

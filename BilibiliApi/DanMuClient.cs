@@ -1,6 +1,7 @@
 ﻿using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -160,9 +161,13 @@ namespace BilibiliApi
 							{
 								ReceivedDanmaku?.Invoke(this, new ReceivedDanmakuArgs { Danmaku = new Danmaku(json) });
 							}
+							catch (KeyNotFoundException)
+							{
+								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕识别错误 {json}" });
+							}
 							catch (Exception ex)
 							{
-								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
+								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex} {json}" });
 							}
 							break;
 						}

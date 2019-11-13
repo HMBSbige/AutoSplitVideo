@@ -27,6 +27,7 @@
 
 				<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
 				<valueConverter:LiveStatusConverter x:Key="LiveStatusConverter" />
+				<valueConverter:RecordingStatusConverter x:Key="RecordingStatusConverter" />
 				<SolidColorBrush Color="LightGray" x:Key="GridLinesBrush" />
 			</ResourceDictionary>
 		</Window.Resources>
@@ -104,6 +105,14 @@
 									</Style>
 								</DataGridTextColumn.CellStyle>
 							</DataGridTextColumn>
+							<DataGridTextColumn Header="录制状态"
+							Binding="{Binding IsRecording,Converter={StaticResource RecordingStatusConverter}}" IsReadOnly="True">
+								<DataGridTextColumn.CellStyle>
+									<Style TargetType="DataGridCell">
+										<Setter Property="Foreground" Value="{Binding IsRecording,Converter={StaticResource RecordingStatusConverter}}" />
+									</Style>
+								</DataGridTextColumn.CellStyle>
+							</DataGridTextColumn>
 							<DataGridTemplateColumn Header="是否录制">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
@@ -128,8 +137,10 @@
 									</DataTemplate>
 								</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
-							<DataGridTextColumn Header="弹幕重连间隔（ms）" Binding="{Binding TimingDanmakuRetry}" IsReadOnly="False" />
-							<DataGridTextColumn Header="开播检查间隔（s）" Binding="{Binding TimingCheckInterval}" IsReadOnly="False" />
+							<DataGridTextColumn Header="弹幕重连间隔(ms)" Binding="{Binding TimingDanmakuRetry}" IsReadOnly="False" />
+							<DataGridTextColumn Header="开播检查间隔(s)" Binding="{Binding TimingCheckInterval}" IsReadOnly="False" />
+							<DataGridTextColumn Header="录制重连间隔(s)" Binding="{Binding TimingStreamRetry}" IsReadOnly="False" />
+							<DataGridTextColumn Header="录制连接超时(ms)" Binding="{Binding TimingStreamConnect}" IsReadOnly="False" />
 						</DataGrid.Columns>
 					</DataGrid>
 				</DockPanel>

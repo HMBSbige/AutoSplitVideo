@@ -16,10 +16,12 @@ namespace AutoSplitVideo.Model
 		private int _roomId;
 		private string _title;
 		private bool _isLive;
-		private bool _isRecording;
 		private string _userName;
 		private uint _timingDanmakuRetry;
 		private uint _timingCheckInterval;
+		private uint _timingStreamRetry;
+		private uint _timingStreamConnect;
+		private RecordingStatus _isRecording;
 		private bool _isMonitor;
 		private bool _isNotify;
 		private bool _logTitle;
@@ -83,8 +85,26 @@ namespace AutoSplitVideo.Model
 			set => SetField(ref _timingCheckInterval, value);
 		}
 
+		/// <summary>
+		/// 录制断开重连时间间隔 毫秒
+		/// </summary>
+		public uint TimingStreamRetry
+		{
+			get => _timingStreamRetry;
+			set => SetField(ref _timingStreamRetry, value);
+		}
+
+		/// <summary>
+		/// 连接直播服务器超时时间 毫秒
+		/// </summary>
+		public uint TimingStreamConnect
+		{
+			get => _timingStreamConnect;
+			set => SetField(ref _timingStreamConnect, value);
+		}
+
 		[JsonIgnore]
-		public bool IsRecording
+		public RecordingStatus IsRecording
 		{
 			get => _isRecording;
 			set => SetField(ref _isRecording, value);
@@ -122,6 +142,9 @@ namespace AutoSplitVideo.Model
 		{
 			_timingDanmakuRetry = 2000;
 			_timingCheckInterval = 300;
+			_timingStreamRetry = 6000;
+			_timingStreamConnect = 3000;
+			_isRecording = RecordingStatus.Stopped;
 			_isMonitor = true;
 			_isNotify = true;
 			_logTitle = true;
@@ -233,8 +256,13 @@ namespace AutoSplitVideo.Model
 
 		public void StartRecorder()
 		{
+			if (Recorder != null && IsRecording != RecordingStatus.Stopped)
+			{
+				return;
+			}
 			StopRecorder();
 			Recorder = new Recorder(this);
+			Recorder.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
 			Recorder.Start();
 		}
 

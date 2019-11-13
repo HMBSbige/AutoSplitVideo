@@ -225,6 +225,7 @@ namespace AutoSplitVideo.ViewModel
 			foreach (var room in Rooms)
 			{
 				room.StopMonitor();
+				room.StopRecorder();
 			}
 		}
 
