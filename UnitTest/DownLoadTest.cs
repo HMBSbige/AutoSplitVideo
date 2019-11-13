@@ -10,7 +10,7 @@ namespace UnitTest
 	public class DownLoadTest
 	{
 		//bytes
-		public static long GetFileSize(string sFullName)
+		private static long GetFileSize(string sFullName)
 		{
 			long lSize = 0;
 			if (File.Exists(sFullName))

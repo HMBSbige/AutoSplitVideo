@@ -9,7 +9,7 @@ namespace BilibiliApi.Model
 		/// <summary>
 		/// 消息类型
 		/// </summary>
-		public MsgType MsgType;
+		public MsgType MsgType = MsgType.Unknown;
 
 		/// <summary>
 		/// 弹幕内容
@@ -77,7 +77,12 @@ namespace BilibiliApi.Model
 
 			using var document = JsonDocument.Parse(json);
 			var obj = document.RootElement;
-			var cmd = obj.GetProperty(@"cmd").GetString();
+
+			if (!obj.TryGetProperty(@"cmd", out var cmdJson))
+			{
+				return;
+			}
+			var cmd = cmdJson.GetString();
 			switch (cmd)
 			{
 				case @"LIVE":

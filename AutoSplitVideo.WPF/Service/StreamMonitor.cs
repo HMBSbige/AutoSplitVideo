@@ -11,7 +11,7 @@ namespace AutoSplitVideo.Service
 {
 	public sealed class StreamMonitor : IDisposable
 	{
-		public int RoomId { get; }
+		private int RoomId { get; }
 		public event RoomInfoUpdatedEvent RoomInfoUpdated;
 		public event StreamStartedEvent StreamStarted;
 		public event LogEvent LogEvent;
