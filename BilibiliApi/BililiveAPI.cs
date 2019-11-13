@@ -18,7 +18,7 @@ namespace BilibiliApi
 
 		static BililiveApi()
 		{
-			_httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+			_httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 			_httpClient.DefaultRequestHeaders.Add(@"Accept", @"application/json, text/javascript, */*; q=0.01");
 			_httpClient.DefaultRequestHeaders.Add(@"Referer", @"https://live.bilibili.com/");
 			_httpClient.DefaultRequestHeaders.Add(@"User-Agent", Utils.UserAgent);
@@ -117,15 +117,20 @@ namespace BilibiliApi
 			&& durls.ValueKind == JsonValueKind.Array)
 			{
 				var urls = durls.EnumerateArray().Select(dUrl => dUrl.GetProperty(@"url").GetString()).Distinct().ToArray();
+#if DEBUG
+				foreach (var s in urls)
+				{
+					Debug.WriteLine(s);
+				}
+#endif
+				var withoutTxy = urls.Where(u => !u.Contains(@"txy.")).ToArray();
+				if (withoutTxy.Length > 0)
+				{
+					return withoutTxy[Random.Next(withoutTxy.Length)];
+				}
 				if (urls.Length > 0)
 				{
-#if DEBUG
-					foreach (var s in urls)
-					{
-						Debug.WriteLine(s);
-					}
-#endif
-					return urls[Random.Next(0, urls.Length - 1)];
+					return urls[Random.Next(urls.Length)];
 				}
 			}
 			throw new Exception(@"没有直播播放地址");
