@@ -1,6 +1,6 @@
-﻿using BilibiliApi.Enum;
+﻿using AutoSplitVideo.Model;
 
-namespace BilibiliApi.Event
+namespace AutoSplitVideo.Event
 {
 	public delegate void StreamStartedEvent(object sender, StreamStartedArgs e);
 

@@ -1,4 +1,5 @@
-﻿using AutoSplitVideo.Model;
+﻿using AutoSplitVideo.Event;
+using AutoSplitVideo.Model;
 using BilibiliApi;
 using BilibiliApi.Enum;
 using BilibiliApi.Event;
@@ -22,6 +23,7 @@ namespace AutoSplitVideo.Service
 		public StreamMonitor(RoomSetting setting)
 		{
 			RoomId = setting.RoomId;
+#if DEBUG
 			StreamStarted += (o, args) =>
 			{
 				LogEvent?.Invoke(this,
@@ -29,6 +31,7 @@ namespace AutoSplitVideo.Service
 								? new LogEventArgs { Log = $@"[{RoomId}] [{args.Type}] [{setting.UserName}] 开播：{setting.Title}" }
 								: new LogEventArgs { Log = $@"[{RoomId}] [{args.Type}] [{setting.UserName}] 下播/未开播" });
 			};
+#endif
 			_danMuClient = new DanMuClient(RoomId, TimeSpan.FromMilliseconds(setting.TimingDanmakuRetry));
 			_danMuClient.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
 			_danMuClient.ReceivedDanmaku += (o, args) =>
@@ -73,7 +76,7 @@ namespace AutoSplitVideo.Service
 
 			_danMuClient.Start();
 			_httpTimer.Start();
-			Check(TriggerType.HttpApi);
+			Check(TriggerType.HttpApiRecheck);
 			return true;
 		}
 

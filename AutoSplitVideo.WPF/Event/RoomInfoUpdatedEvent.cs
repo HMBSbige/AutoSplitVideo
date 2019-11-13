@@ -1,6 +1,6 @@
 ﻿using BilibiliApi.Model;
 
-namespace BilibiliApi.Event
+namespace AutoSplitVideo.Event
 {
 	public delegate void RoomInfoUpdatedEvent(object sender, RoomInfoUpdatedArgs e);
 

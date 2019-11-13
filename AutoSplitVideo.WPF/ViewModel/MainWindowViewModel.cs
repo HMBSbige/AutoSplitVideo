@@ -3,7 +3,6 @@ using AutoSplitVideo.Model;
 using AutoSplitVideo.Service;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
-using BilibiliApi.Enum;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;

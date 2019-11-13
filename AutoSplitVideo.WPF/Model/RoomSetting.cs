@@ -202,8 +202,31 @@ namespace AutoSplitVideo.Model
 					}
 					else
 					{
-						Monitor?.Stop();
+						if (!LogTitle)
+						{
+							Monitor?.Stop();
+						}
 						StopRecorder();
+					}
+					break;
+				}
+				case nameof(LogTitle):
+				{
+					if (IsMonitor) return;
+					if (LogTitle)
+					{
+						if (Monitor == null)
+						{
+							StartMonitor();
+						}
+						else
+						{
+							Monitor.Start();
+						}
+					}
+					else
+					{
+						Monitor?.Stop();
 					}
 					break;
 				}
@@ -240,7 +263,7 @@ namespace AutoSplitVideo.Model
 			Monitor.StreamStarted += (o, args) => { IsLive = args.IsLive; };
 			Monitor.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
 			Monitor.Start();
-			if (!IsMonitor)
+			if (!IsMonitor && !LogTitle)
 			{
 				Monitor.Stop();
 			}

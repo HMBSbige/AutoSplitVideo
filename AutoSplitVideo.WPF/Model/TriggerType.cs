@@ -1,4 +1,4 @@
-﻿namespace BilibiliApi.Enum
+﻿namespace AutoSplitVideo.Model
 {
 	public enum TriggerType
 	{

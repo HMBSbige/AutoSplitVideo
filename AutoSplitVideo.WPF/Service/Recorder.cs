@@ -1,7 +1,6 @@
 ﻿using AutoSplitVideo.Model;
 using AutoSplitVideo.ViewModel;
 using BilibiliApi;
-using BilibiliApi.Enum;
 using BilibiliApi.Event;
 using System;
 using System.Diagnostics;
