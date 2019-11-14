@@ -123,7 +123,7 @@ namespace BilibiliApi
 					Debug.WriteLine(s);
 				}
 #endif
-				var withoutTxy = urls.Where(u => !u.Contains(@"txy.")).ToArray();
+				var withoutTxy = urls.Where(u => !u.Contains(@"txy.")).ToArray(); //尽量避开腾讯云的服务器
 				if (withoutTxy.Length > 0)
 				{
 					return withoutTxy[Random.Next(withoutTxy.Length)];

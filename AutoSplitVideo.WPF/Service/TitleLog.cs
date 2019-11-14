@@ -16,7 +16,7 @@ namespace AutoSplitVideo.Service
 			Lock.EnterWriteLock();
 			try
 			{
-				File.AppendAllTextAsync(TitleFileName, $@"[{DateTime.Now}] [{room.RoomId}] [{room.UserName}]：[{room.Title}] {Environment.NewLine}");
+				File.AppendAllTextAsync(TitleFileName, $@"[{DateTime.Now}] [{room.RoomId}] [{room.UserName}]：{room.Title}{Environment.NewLine}");
 			}
 			finally
 			{

@@ -28,7 +28,7 @@ namespace AutoSplitVideo.Service
 			_currentRoom = setting;
 		}
 
-		public async void Start()
+		public async Task Start()
 		{
 			while (true)
 			{
@@ -43,14 +43,19 @@ namespace AutoSplitVideo.Service
 					return;
 				}
 
-				_currentRoom.IsRecording = RecordingStatus.Starting;
-
 				EnsureDirectory();
 
 				if (!_currentRoom.IsLive) return;
-
-				var url = await BililiveApi.GetPlayUrlAsync(_currentRoom.RoomId);
-				url = await GetRedirectUrl(url);
+				string url;
+				try
+				{
+					url = await BililiveApi.GetPlayUrlAsync(_currentRoom.RoomId);
+					url = await GetRedirectUrl(url);
+				}
+				catch
+				{
+					continue;
+				}
 
 				if (_response.StatusCode != HttpStatusCode.OK)
 				{
@@ -64,6 +69,7 @@ namespace AutoSplitVideo.Service
 				try
 				{
 					_currentRoom.IsRecording = RecordingStatus.Recording;
+					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 开始录制" });
 					await _downLoadTask.Start(_response)
 							.ContinueWith(task =>
 							{
@@ -78,7 +84,7 @@ namespace AutoSplitVideo.Service
 				{
 					Stop();
 					await ReCheck();
-					Start();
+					await Start();
 				}
 
 				break;
@@ -92,7 +98,7 @@ namespace AutoSplitVideo.Service
 				var dirInfo = Directory.CreateDirectory(DirName);
 				if (!dirInfo.Exists)
 				{
-					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 存储目录创建失败" });
+					throw new FileNotFoundException($@"[{_currentRoom.RoomId}] 存储目录创建失败");
 				}
 			}
 		}
@@ -150,7 +156,7 @@ namespace AutoSplitVideo.Service
 				return;
 			}
 
-			_currentRoom.IsRecording = RecordingStatus.Stopped;
+			_currentRoom.IsRecording = RecordingStatus.Starting;
 			_response?.Dispose();
 			_downLoadTask?.Dispose();
 		}
@@ -165,6 +171,8 @@ namespace AutoSplitVideo.Service
 				if (disposing)
 				{
 					Stop();
+					_currentRoom.IsRecording = RecordingStatus.Stopped;
+					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 不再录制" });
 				}
 
 				_response = null;

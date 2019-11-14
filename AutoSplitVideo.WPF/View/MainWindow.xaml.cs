@@ -1,5 +1,6 @@
 ﻿using AutoSplitVideo.Model;
 using AutoSplitVideo.Service;
+using AutoSplitVideo.Utils;
 using AutoSplitVideo.ViewModel;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -230,6 +231,17 @@ namespace AutoSplitVideo.View
 			{
 				MessageBox.Show(@"设置失败", @"错误", MessageBoxButton.OK, MessageBoxImage.Error);
 				AutoStartupCheckBox.IsChecked = !AutoStartupCheckBox.IsChecked;
+			}
+		}
+
+		private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (sender is TextBox logTextBox)
+			{
+				if (logTextBox.SelectionStart == 0 || logTextBox.IsScrolledToEnd())
+				{
+					logTextBox.ScrollToEnd();
+				}
 			}
 		}
 	}

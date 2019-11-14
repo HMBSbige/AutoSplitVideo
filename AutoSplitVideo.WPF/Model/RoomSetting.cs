@@ -4,6 +4,7 @@ using BilibiliApi.Event;
 using BilibiliApi.Model;
 using System;
 using System.Text.Json.Serialization;
+using System.Threading;
 
 namespace AutoSplitVideo.Model
 {
@@ -242,8 +243,10 @@ namespace AutoSplitVideo.Model
 
 		public RoomSetting(Room room) : this()
 		{
-			Parse(room);
-			IsLive = false;
+			ShortRoomId = room.ShortRoomId;
+			RoomId = room.RoomId;
+			UserName = room.UserName;
+			Title = room.Title;
 		}
 
 		private void Parse(Room room)
@@ -275,16 +278,27 @@ namespace AutoSplitVideo.Model
 			Monitor = null;
 		}
 
-		public void StartRecorder()
+		private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1, 1);
+		public async void StartRecorder()
 		{
-			if (Recorder != null && IsRecording != RecordingStatus.Stopped)
+			await _semaphoreSlim.WaitAsync();
+			try
 			{
-				return;
+				if (IsRecording != RecordingStatus.Stopped)
+				{
+					return;
+				}
+
+				IsRecording = RecordingStatus.Starting;
+				StopRecorder();
+				Recorder = new Recorder(this);
+				Recorder.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
+				await Recorder.Start();
 			}
-			StopRecorder();
-			Recorder = new Recorder(this);
-			Recorder.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
-			Recorder.Start();
+			finally
+			{
+				_semaphoreSlim.Release();
+			}
 		}
 
 		public void StopRecorder()

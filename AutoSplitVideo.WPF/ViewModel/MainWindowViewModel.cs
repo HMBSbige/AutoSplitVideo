@@ -203,6 +203,7 @@ namespace AutoSplitVideo.ViewModel
 				if (removedRoom != null)
 				{
 					removedRoom.StopMonitor();
+					removedRoom.StopRecorder();
 					Rooms.Remove(removedRoom);
 				}
 

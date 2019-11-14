@@ -39,18 +39,18 @@ namespace AutoSplitVideo.Service
 				switch (args.Danmaku.MsgType)
 				{
 					case MsgType.LiveStart:
-						Task.Run(() => StreamStarted?.Invoke(this, new StreamStartedArgs
+						StreamStarted?.Invoke(this, new StreamStartedArgs
 						{
 							Type = TriggerType.弹幕,
 							IsLive = true
-						}));
+						});
 						break;
 					case MsgType.LiveEnd:
-						Task.Run(() => StreamStarted?.Invoke(this, new StreamStartedArgs
+						StreamStarted?.Invoke(this, new StreamStartedArgs
 						{
 							Type = TriggerType.弹幕,
 							IsLive = false
-						}));
+						});
 						break;
 				}
 			};
@@ -76,7 +76,7 @@ namespace AutoSplitVideo.Service
 
 			_danMuClient.Start();
 			_httpTimer.Start();
-			Check(TriggerType.HttpApiRecheck);
+			Check(TriggerType.HttpApiFirstCheck);
 			return true;
 		}
 

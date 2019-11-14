@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace AutoSplitVideo.Utils
 {
@@ -17,6 +19,11 @@ namespace AutoSplitVideo.Utils
 				window.Topmost = true;
 				window.Topmost = false;
 			}
+		}
+
+		public static bool IsScrolledToEnd(this TextBox textBox)
+		{
+			return Math.Abs(textBox.VerticalOffset + textBox.ViewportHeight - textBox.ExtentHeight) < 0.001;
 		}
 	}
 }
