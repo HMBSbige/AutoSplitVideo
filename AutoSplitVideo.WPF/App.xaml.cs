@@ -47,6 +47,7 @@ namespace AutoSplitVideo
 			{
 				if (Interlocked.Increment(ref _exited) == 1)
 				{
+					MessageBox.Show($@"未捕获异常：{args.Exception}", UpdateChecker.Name, MessageBoxButton.OK, MessageBoxImage.Error);
 					Log.ForceLog(args.Exception.ToString());
 					GlobalConfig.Save();
 					singleInstance.Dispose();
