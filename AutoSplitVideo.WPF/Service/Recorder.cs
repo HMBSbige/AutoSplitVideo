@@ -54,6 +54,7 @@ namespace AutoSplitVideo.Service
 				}
 				catch
 				{
+					await ReCheck();
 					continue;
 				}
 
