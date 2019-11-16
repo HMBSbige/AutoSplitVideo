@@ -29,6 +29,11 @@
 				<valueConverter:LiveStatusConverter x:Key="LiveStatusConverter" />
 				<valueConverter:RecordingStatusConverter x:Key="RecordingStatusConverter" />
 				<SolidColorBrush Color="LightGray" x:Key="GridLinesBrush" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
+
 			</ResourceDictionary>
 		</Window.Resources>
 	<Grid>
@@ -87,8 +92,10 @@
 						<DataGrid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="手动刷新" Style="{StaticResource BaseMenuItemStyle}" Click="ManualRefreshMenuItem_OnClick"/>
-								<MenuItem Header="打开目录" Style="{StaticResource BaseMenuItemStyle}" Click="OpenRoomDirMenuItem_OnClick"/>
 								<MenuItem Header="删除" Style="{StaticResource BaseMenuItemStyle}" Click="RemoveRoomButton_OnClick"/>
+								<Separator />
+								<MenuItem Header="打开目录" Style="{StaticResource BaseMenuItemStyle}" Click="OpenRoomDirMenuItem_OnClick" />
+								<MenuItem Header="打开直播间" Style="{StaticResource BaseMenuItemStyle}" Click="OpenRoomMenuItem_OnClick" />
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 						<DataGrid.Columns>

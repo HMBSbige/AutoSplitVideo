@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,8 +29,18 @@ namespace AutoSplitVideo.View
 
 		private void ExitMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
-			_closeReason = CloseReason.Unknown;
-			Close();
+			Task.Run(() =>
+			{
+				if (MessageBox.Show(@"确定退出？", UpdateChecker.Name,
+							MessageBoxButton.OKCancel, MessageBoxImage.Question)
+					!= MessageBoxResult.OK)
+				{
+					return;
+				}
+
+				_closeReason = CloseReason.Unknown;
+				Dispatcher?.Invoke(Close);
+			});
 		}
 
 		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -242,6 +253,14 @@ namespace AutoSplitVideo.View
 				{
 					logTextBox.ScrollToEnd();
 				}
+			}
+		}
+
+		private void OpenRoomMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			if (DataGrid.SelectedItem is RoomSetting setting)
+			{
+				Utils.Utils.OpenUrl($@"https://live.bilibili.com/{setting.RoomId}");
 			}
 		}
 	}

@@ -90,6 +90,7 @@ namespace AutoSplitVideo.Service
 
 				break;
 			}
+			Dispose();
 		}
 
 		private void EnsureDirectory()
@@ -172,7 +173,6 @@ namespace AutoSplitVideo.Service
 				if (disposing)
 				{
 					Stop();
-					_currentRoom.IsRecording = RecordingStatus.Stopped;
 					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 不再录制" });
 				}
 
@@ -181,6 +181,7 @@ namespace AutoSplitVideo.Service
 
 				_disposedValue = true;
 			}
+			_currentRoom.IsRecording = RecordingStatus.Stopped;
 		}
 
 		public void Dispose()
