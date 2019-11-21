@@ -8,9 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace AutoSplitVideo
 {
@@ -66,6 +64,7 @@ namespace AutoSplitVideo
 			MainWindow.Show();
 		}
 
+		[Conditional("RELEASE")]
 		private static async void CheckUpdateAsync()
 		{
 			var updater = new UpdateChecker();
@@ -86,18 +85,14 @@ namespace AutoSplitVideo
 			{
 				Debug.WriteLine($@"已是最新版本：{UpdateChecker.Version} ≥ {updater.LatestVersionNumber}");
 			};
-#if !DEBUG
 			await updater.Check(true, true);
-#else
-			await Task.Delay(0);
-#endif
 		}
 
 		private void SingleInstance_ArgumentsReceived(object sender, ArgumentsReceivedEventArgs e)
 		{
 			if (e.Args.Contains(@"--show"))
 			{
-				Dispatcher?.BeginInvoke(() =>
+				Dispatcher?.InvokeAsync(() =>
 				{
 					MainWindow?.ShowWindow();
 				});

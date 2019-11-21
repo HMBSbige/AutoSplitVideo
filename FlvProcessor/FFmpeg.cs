@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FlvProcessor.Event;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -7,12 +8,13 @@ namespace FlvProcessor
 {
 	public class FFmpeg
 	{
-		public string FFmpegExePath = @"ffmpeg.exe";
+		public string FFmpegExePath = DefaultFFmpegExePath;
 
-		private const string DefaultFFmpegExePath = @"ffmpeg.exe";
+		private const string DefaultFFmpegExePath = @"ffmpeg";
 
 		private Process _process;
 		public event EventHandler ProcessExited;
+		public event MessageUpdatedEvent MessageUpdated;
 
 		#region Constructor
 
@@ -58,15 +60,19 @@ namespace FlvProcessor
 
 		public void EnsureExists()
 		{
-			if (Exists(DefaultFFmpegExePath))
+			if (Exists(FFmpegExePath))
 			{
-				FFmpegExePath = DefaultFFmpegExePath; //默认使用系统的 FFmpeg
 				return;
 			}
-			if (!Exists(FFmpegExePath))
+
+			//尝试使用系统的 FFmpeg
+			if (Exists(DefaultFFmpegExePath))
 			{
-				throw new FileNotFoundException(@"未找到 FFmpeg！", FFmpegExePath);
+				FFmpegExePath = DefaultFFmpegExePath;
+				return;
 			}
+
+			throw new FileNotFoundException(@"未找到 FFmpeg！", FFmpegExePath);
 		}
 
 		public void StartAsync(string parameters)
@@ -111,15 +117,14 @@ namespace FlvProcessor
 			_process = null;
 		}
 
-		private static async void ReadOutputAsync(TextReader reader)
+		private async void ReadOutputAsync(TextReader reader)
 		{
 			await Task.Run(() =>
 			{
 				string processOutput;
 				while ((processOutput = reader.ReadLine()) != null)
 				{
-					//TODO
-					Console.WriteLine(processOutput);
+					MessageUpdated?.Invoke(this, new MessageUpdatedEventArgs { Message = processOutput });
 				}
 			});
 		}

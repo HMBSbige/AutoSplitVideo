@@ -262,12 +262,11 @@ namespace AutoSplitVideo.ViewModel
 		{
 			if (sender is RoomSetting room)
 			{
-				Window.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded,
-						new Action(() =>
-						{
-							Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title,
-									BalloonIcon.Info);
-						}));
+				Window.Dispatcher?.InvokeAsync(() =>
+				{
+					Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title,
+							BalloonIcon.Info);
+				}, DispatcherPriority.Loaded);
 			}
 		}
 

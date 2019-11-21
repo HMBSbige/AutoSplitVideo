@@ -4,6 +4,7 @@
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:commands="clr-namespace:AutoSplitVideo.Commands"
 		xmlns:valueConverter="clr-namespace:AutoSplitVideo.View.ValueConverter"
+		xmlns:control="clr-namespace:AutoSplitVideo.View.Control"
 		x:Name="Mw"
 		Title="AutoSplitVideo" Height="618" Width="1000"
 		WindowStartupLocation="CenterScreen"
@@ -153,7 +154,74 @@
 				</DockPanel>
 			</TabItem>
 			<TabItem Header="Flv 处理">
-			
+				<DockPanel>
+					<GroupBox Header="手动剪辑" DockPanel.Dock="Top">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}" />
+							<TextBox Grid.Row="1" Grid.Column="0" Margin="3" />
+
+							<Button Grid.Row="0" Grid.Column="1" Content="视频" Margin="3" Padding="5" />
+							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" />
+							<Button Grid.Row="2" Grid.Column="1" Content="截取" Margin="3" Padding="5" />
+
+							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
+								<TextBlock Text="开始时刻" VerticalAlignment="Center" Margin="3"/>
+								<control:TimeControl Margin="3" />
+								<TextBlock Text="持续时间" VerticalAlignment="Center" Margin="3" />
+								<control:TimeControl Margin="3" Text="01:30:00.000"/>
+							</WrapPanel>
+							</Grid>
+					</GroupBox>
+					<GroupBox Header="转封装" DockPanel.Dock="Top">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}" />
+							<TextBox Grid.Row="1" Grid.Column="0" Margin="3" />
+
+							<Button Grid.Row="0" Grid.Column="1" Content="选择" Margin="3" Padding="5" />
+							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" />
+							<Button Grid.Row="2" Grid.Column="1" Content="封装" Margin="3" Padding="5" />
+							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
+								<CheckBox Content="转换完成删除" Margin="6" />
+								<CheckBox Content="删除到回收站" Margin="6" />
+								<CheckBox Content="修复时间轴" Margin="6" />
+							</WrapPanel>
+						</Grid>
+					</GroupBox>
+					<DataGrid x:Name="FlvDataGrid"
+						Margin="3"
+						GridLinesVisibility="All"
+						HorizontalGridLinesBrush="{StaticResource GridLinesBrush}"
+						VerticalGridLinesBrush="{StaticResource GridLinesBrush}"
+						Background="Transparent"
+						BorderThickness="1"
+						BorderBrush="{StaticResource GridLinesBrush}"
+
+						HeadersVisibility="Column"
+						AutoGenerateColumns="False"
+						SelectionUnit="FullRow" SelectionMode="Extended"
+						CanUserAddRows="False" CanUserResizeRows="False"
+						CanUserDeleteRows="False">
+
+					</DataGrid>
+				</DockPanel>
 			</TabItem>
 			<TabItem Header="日志">
 				<TextBox

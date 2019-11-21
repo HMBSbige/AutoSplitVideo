@@ -39,7 +39,7 @@ namespace AutoSplitVideo.View
 				}
 
 				_closeReason = CloseReason.Unknown;
-				Dispatcher?.Invoke(Close);
+				Dispatcher?.InvokeAsync(Close);
 			});
 		}
 
@@ -263,5 +263,6 @@ namespace AutoSplitVideo.View
 				Utils.Utils.OpenUrl($@"https://live.bilibili.com/{setting.RoomId}");
 			}
 		}
+
 	}
 }
