@@ -25,24 +25,6 @@ namespace AutoSplitVideo.View
 			MainWindowViewModel.Window = this;
 		}
 
-		private CloseReason _closeReason = CloseReason.Unknown;
-
-		private void ExitMenuItem_OnClick(object sender, RoutedEventArgs e)
-		{
-			Task.Run(() =>
-			{
-				if (MessageBox.Show(@"确定退出？", UpdateChecker.Name,
-							MessageBoxButton.OKCancel, MessageBoxImage.Question)
-					!= MessageBoxResult.OK)
-				{
-					return;
-				}
-
-				_closeReason = CloseReason.Unknown;
-				Dispatcher?.InvokeAsync(Close);
-			});
-		}
-
 		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
 		{
 			#region CloseReasonHack
@@ -57,7 +39,15 @@ namespace AutoSplitVideo.View
 			AutoStartupCheckBox.IsChecked = AutoStartup.Check();
 		}
 
+		private void MainWindow_OnClosed(object sender, EventArgs e)
+		{
+			MainWindowViewModel.StopGetDiskUsage();
+			MainWindowViewModel.StopAllMonitors();
+		}
+
 		#region CloseReasonHack
+
+		private CloseReason _closeReason = CloseReason.Unknown;
 
 		private void MainWindow_OnClosing(object sender, CancelEventArgs e)
 		{
@@ -95,10 +85,105 @@ namespace AutoSplitVideo.View
 
 		#endregion
 
+		#region ToolBar hide grip Hack
+
+		private void ToolBar_OnLoaded(object sender, RoutedEventArgs e)
+		{
+			if (sender is ToolBar toolBar)
+			{
+				// Hide grip
+				if (toolBar.Template.FindName(@"OverflowGrid", toolBar) is FrameworkElement overflowGrid)
+				{
+					overflowGrid.Visibility = Visibility.Collapsed;
+				}
+
+				if (toolBar.Template.FindName(@"MainPanelBorder", toolBar) is FrameworkElement mainPanelBorder)
+				{
+					mainPanelBorder.Margin = new Thickness();
+				}
+			}
+		}
+
+		#endregion
+
+		#region 通知栏图标右键菜单
+
 		private void ShowHideMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			MainWindowViewModel.TriggerShowHide();
 		}
+
+		private void ExitMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			Task.Run(() =>
+			{
+				if (MessageBox.Show(@"确定退出？", UpdateChecker.Name,
+							MessageBoxButton.OKCancel, MessageBoxImage.Question)
+					!= MessageBoxResult.OK)
+				{
+					return;
+				}
+
+				_closeReason = CloseReason.Unknown;
+				Dispatcher?.InvokeAsync(Close);
+			});
+		}
+
+		#endregion
+
+		#region 设置
+
+		private void ClearLogButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Log.ClearLog();
+		}
+
+		private void OpenLogButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Utils.Utils.OpenFile(Log.LogFileName);
+		}
+
+		private void ClearTitleFileButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			TitleLog.ClearLog();
+		}
+
+		private void OpenTitleFileButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			Utils.Utils.OpenFile(TitleLog.TitleFileName);
+		}
+
+		private void AutoStartupCheckBox_CheckedChanged(object sender, RoutedEventArgs e)
+		{
+			if (!AutoStartup.Set(AutoStartupCheckBox.IsChecked.GetValueOrDefault()))
+			{
+				MessageBox.Show(@"设置失败", @"错误", MessageBoxButton.OK, MessageBoxImage.Error);
+				AutoStartupCheckBox.IsChecked = !AutoStartupCheckBox.IsChecked;
+			}
+		}
+		#endregion
+
+		#region 日志
+
+		private void LogTextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (sender is TextBox logTextBox)
+			{
+				if (logTextBox.SelectionStart == 0 || logTextBox.IsScrolledToEnd())
+				{
+					logTextBox.ScrollToEnd();
+				}
+			}
+		}
+
+		private void ClearLogMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MainWindowViewModel.Logs.Clear();
+		}
+
+		#endregion
+
+		#region 录播机
 
 		private void SelectDirectoryButton_OnClick(object sender, RoutedEventArgs e)
 		{
@@ -122,33 +207,6 @@ namespace AutoSplitVideo.View
 		{
 			Utils.Utils.OpenDir(MainWindowViewModel.CurrentConfig.RecordDirectory);
 		}
-
-		private void MainWindow_OnClosed(object sender, EventArgs e)
-		{
-			MainWindowViewModel.StopGetDiskUsage();
-			MainWindowViewModel.StopAllMonitors();
-		}
-
-		#region ToolBar hide grip Hack
-
-		private void ToolBar_OnLoaded(object sender, RoutedEventArgs e)
-		{
-			if (sender is ToolBar toolBar)
-			{
-				// Hide grip
-				if (toolBar.Template.FindName(@"OverflowGrid", toolBar) is FrameworkElement overflowGrid)
-				{
-					overflowGrid.Visibility = Visibility.Collapsed;
-				}
-
-				if (toolBar.Template.FindName(@"MainPanelBorder", toolBar) is FrameworkElement mainPanelBorder)
-				{
-					mainPanelBorder.Margin = new Thickness();
-				}
-			}
-		}
-
-		#endregion
 
 		private void AddRoomTextBox_OnKeyDown(object sender, KeyEventArgs e)
 		{
@@ -183,26 +241,6 @@ namespace AutoSplitVideo.View
 			}
 		}
 
-		private void ClearLogButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			Log.ClearLog();
-		}
-
-		private void OpenLogButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			Utils.Utils.OpenFile(Log.LogFileName);
-		}
-
-		private void ClearTitleFileButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			TitleLog.ClearLog();
-		}
-
-		private void OpenTitleFileButton_OnClick(object sender, RoutedEventArgs e)
-		{
-			Utils.Utils.OpenFile(TitleLog.TitleFileName);
-		}
-
 		private List<int> GetSelectIds()
 		{
 			var rooms = new List<int>();
@@ -231,31 +269,6 @@ namespace AutoSplitVideo.View
 			}
 		}
 
-		private void ClearLogMenuItem_OnClick(object sender, RoutedEventArgs e)
-		{
-			MainWindowViewModel.Logs.Clear();
-		}
-
-		private void AutoStartupCheckBox_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (!AutoStartup.Set(AutoStartupCheckBox.IsChecked.GetValueOrDefault()))
-			{
-				MessageBox.Show(@"设置失败", @"错误", MessageBoxButton.OK, MessageBoxImage.Error);
-				AutoStartupCheckBox.IsChecked = !AutoStartupCheckBox.IsChecked;
-			}
-		}
-
-		private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (sender is TextBox logTextBox)
-			{
-				if (logTextBox.SelectionStart == 0 || logTextBox.IsScrolledToEnd())
-				{
-					logTextBox.ScrollToEnd();
-				}
-			}
-		}
-
 		private void OpenRoomMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			if (DataGrid.SelectedItem is RoomSetting setting)
@@ -264,5 +277,189 @@ namespace AutoSplitVideo.View
 			}
 		}
 
+		#endregion
+
+		#region 拖拽
+
+		private void UIElement_OnPreviewDragOver(object sender, DragEventArgs e)
+		{
+			if (sender is TextBox)
+			{
+				e.Handled = true;
+				return;
+			}
+
+			if (sender is TabItem tabItem)
+			{
+				TabControl.SelectedItem = tabItem;
+			}
+		}
+
+		private void TextBox_OnPreviewDrop(object sender, DragEventArgs e)
+		{
+			if (!(sender is TextBox textBox)) return;
+			var path = ((Array)e.Data.GetData(DataFormats.FileDrop))?.GetValue(0).ToString();
+			if (path != null && File.Exists(path))
+			{
+				path = Path.GetFullPath(path);
+				textBox.Text = path;
+
+				e.Handled = true;
+			}
+		}
+
+		private void TextBox2_OnPreviewDrop(object sender, DragEventArgs e)
+		{
+			if (!(sender is TextBox textBox)) return;
+			var path = ((Array)e.Data.GetData(DataFormats.FileDrop))?.GetValue(0).ToString();
+			if (path != null && (File.Exists(path) || Directory.Exists(path)))
+			{
+				path = Path.GetFullPath(path);
+				textBox.Text = path;
+
+				e.Handled = true;
+			}
+		}
+
+		#endregion
+
+		#region FLV
+
+		private void InputFileTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (!(sender is TextBox textBox)) return;
+			var path = textBox.Text;
+			var ext = Path.GetExtension(path);
+			var oldName = Path.ChangeExtension(path, null);
+			for (var i = 1; i < int.MaxValue; ++i)
+			{
+				var newPath = $@"{oldName}_{i}{ext}";
+				if (!File.Exists(newPath))
+				{
+					OutputFileTextBox.Text = newPath;
+					break;
+				}
+			}
+		}
+
+		private void InputFileButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dlg = new CommonOpenFileDialog
+			{
+				IsFolderPicker = false,
+				Multiselect = false,
+				Title = @"打开",
+				AddToMostRecentlyUsedList = false,
+				EnsurePathExists = true,
+				NavigateToShortcut = true,
+				Filters =
+				{
+					new CommonFileDialogFilter(@"视频文件",@"*.mp4;*.flv;*.mkv"),
+					new CommonFileDialogFilter(@"所有文件",@"*.*")
+				}
+			};
+			if (dlg.ShowDialog(this) == CommonFileDialogResult.Ok)
+			{
+				InputFileTextBox.Text = dlg.FileName;
+			}
+		}
+
+		private void OutputButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dlg = new CommonSaveFileDialog
+			{
+				Title = @"另存为",
+				AddToMostRecentlyUsedList = false,
+				NavigateToShortcut = true,
+				DefaultFileName = Path.GetFileName(OutputFileTextBox.Text),
+				DefaultExtension = Path.GetExtension(OutputFileTextBox.Text),
+				DefaultDirectory = Path.GetDirectoryName(OutputFileTextBox.Text),
+				Filters =
+				{
+					new CommonFileDialogFilter(@"视频文件", @"*.mp4;*.flv;*.mkv"),
+					new CommonFileDialogFilter(@"所有文件", @"*.*")
+				}
+			};
+			if (dlg.ShowDialog(this) == CommonFileDialogResult.Ok)
+			{
+				OutputFileTextBox.Text = dlg.FileName;
+			}
+		}
+
+		private void ClipButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			//TODO
+		}
+
+		private void InputFileTextBox2_OnTextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (!(sender is TextBox textBox)) return;
+			var path = textBox.Text;
+			if (Directory.Exists(path))
+			{
+				OutputFileTextBox2.Text = path;
+				return;
+			}
+
+			if (File.Exists(path) && Path.GetExtension(path) != @".mp4")
+			{
+				var newPath = Path.ChangeExtension(path, @"mp4");
+				if (!File.Exists(newPath))
+				{
+					OutputFileTextBox2.Text = newPath;
+				}
+			}
+		}
+
+		private void SelectButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dlg = new CommonOpenFileDialog
+			{
+				IsFolderPicker = false,
+				Multiselect = false,
+				Title = @"打开",
+				AddToMostRecentlyUsedList = false,
+				EnsurePathExists = true,
+				NavigateToShortcut = true,
+				Filters =
+				{
+						new CommonFileDialogFilter(@"视频文件", @"*.mp4;*.flv;*.mkv"),
+						new CommonFileDialogFilter(@"所有文件", @"*.*")
+				}
+			};
+			if (dlg.ShowDialog(this) == CommonFileDialogResult.Ok)
+			{
+				InputFileTextBox2.Text = dlg.FileName;
+			}
+		}
+
+		private void OutputButton2_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dlg = new CommonSaveFileDialog
+			{
+				Title = @"另存为",
+				AddToMostRecentlyUsedList = false,
+				NavigateToShortcut = true,
+				DefaultFileName = Path.GetFileName(OutputFileTextBox2.Text),
+				DefaultExtension = Path.GetExtension(OutputFileTextBox2.Text),
+				DefaultDirectory = Path.GetDirectoryName(OutputFileTextBox2.Text),
+				Filters =
+				{
+						new CommonFileDialogFilter(@"视频文件", @"*.mp4;*.flv;*.mkv"),
+						new CommonFileDialogFilter(@"所有文件", @"*.*")
+				}
+			};
+			if (dlg.ShowDialog(this) == CommonFileDialogResult.Ok)
+			{
+				OutputFileTextBox2.Text = dlg.FileName;
+			}
+		}
+
+		private void ConvertButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			//TODO
+		}
+
+		#endregion
 	}
 }

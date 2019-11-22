@@ -47,8 +47,8 @@
 						DoubleClickCommand="{StaticResource ShowHideCommand}"
 						DoubleClickCommandParameter="{Binding}">
 		</tb:TaskbarIcon>
-		<TabControl>
-			<TabItem Header="录播机">
+		<TabControl x:Name="TabControl" AllowDrop="True">
+			<TabItem Header="录播机" PreviewDragOver="UIElement_OnPreviewDragOver">
 				<DockPanel>
 					<GroupBox Header="根目录" DockPanel.Dock="Top" Margin="3">
 						<Grid>
@@ -153,7 +153,7 @@
 					</DataGrid>
 				</DockPanel>
 			</TabItem>
-			<TabItem Header="Flv 处理">
+			<TabItem Header="Flv 处理" PreviewDragOver="UIElement_OnPreviewDragOver">
 				<DockPanel>
 					<GroupBox Header="手动剪辑" DockPanel.Dock="Top">
 						<Grid>
@@ -166,12 +166,13 @@
 								<ColumnDefinition />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}" />
-							<TextBox Grid.Row="1" Grid.Column="0" Margin="3" />
+							<TextBox x:Name="InputFileTextBox" Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}"
+							AllowDrop="True" PreviewDragOver="UIElement_OnPreviewDragOver" Drop="TextBox_OnPreviewDrop" TextChanged="InputFileTextBox_OnTextChanged"/>
+							<TextBox x:Name="OutputFileTextBox" Grid.Row="1" Grid.Column="0" Margin="3" />
 
-							<Button Grid.Row="0" Grid.Column="1" Content="视频" Margin="3" Padding="5" />
-							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" />
-							<Button Grid.Row="2" Grid.Column="1" Content="截取" Margin="3" Padding="5" />
+							<Button Grid.Row="0" Grid.Column="1" Content="视频" Margin="3" Padding="5" Click="InputFileButton_OnClick"/>
+							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" Click="OutputButton_OnClick"/>
+							<Button Grid.Row="2" Grid.Column="1" Content="截取" Margin="3" Padding="5" Click="ClipButton_OnClick"/>
 
 							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
 								<TextBlock Text="开始时刻" VerticalAlignment="Center" Margin="3"/>
@@ -192,16 +193,18 @@
 								<ColumnDefinition />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}" />
-							<TextBox Grid.Row="1" Grid.Column="0" Margin="3" />
+							<TextBox x:Name="InputFileTextBox2" Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}"
+							AllowDrop="True" PreviewDragOver="UIElement_OnPreviewDragOver" Drop="TextBox2_OnPreviewDrop" TextChanged="InputFileTextBox2_OnTextChanged" />
+							<TextBox x:Name="OutputFileTextBox2" Grid.Row="1" Grid.Column="0" Margin="3" />
 
-							<Button Grid.Row="0" Grid.Column="1" Content="选择" Margin="3" Padding="5" />
-							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" />
-							<Button Grid.Row="2" Grid.Column="1" Content="封装" Margin="3" Padding="5" />
+							<Button Grid.Row="0" Grid.Column="1" Content="选择" Margin="3" Padding="5" Click="SelectButton_OnClick"/>
+							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" Click="OutputButton2_OnClick"/>
+							<Button Grid.Row="2" Grid.Column="1" Content="封装" Margin="3" Padding="5" Click="ConvertButton_OnClick"/>
 							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
-								<CheckBox Content="转换完成删除" Margin="6" />
-								<CheckBox Content="删除到回收站" Margin="6" />
-								<CheckBox Content="修复时间轴" Margin="6" />
+								<CheckBox x:Name="IsDeleteCheckBox" Content="转换完成删除" Margin="6" VerticalContentAlignment="Center"/>
+								<CheckBox Content="删除到回收站" Margin="6" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked,ElementName=IsDeleteCheckBox}"/>
+								<CheckBox Content="修复时间轴" Margin="6" VerticalContentAlignment="Center" />
+								<TextBlock Text="拖拽目录的话会自动寻找目录内的flv文件" Margin="6" VerticalAlignment="Center" Foreground="Red"/>
 							</WrapPanel>
 						</Grid>
 					</GroupBox>
@@ -223,13 +226,13 @@
 					</DataGrid>
 				</DockPanel>
 			</TabItem>
-			<TabItem Header="日志">
+			<TabItem Header="日志" PreviewDragOver="UIElement_OnPreviewDragOver">
 				<TextBox
 					IsReadOnly="True"
 					HorizontalScrollBarVisibility="Auto"
 					VerticalScrollBarVisibility="Auto"
 					Text="{Binding Logs.Text,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
-					TextChanged="TextBoxBase_OnTextChanged">
+					TextChanged="LogTextBoxBase_OnTextChanged">
 					<TextBox.ContextMenu>
 						<ContextMenu>
 							<MenuItem Header="清空" Click="ClearLogMenuItem_OnClick"/>
@@ -237,7 +240,7 @@
 					</TextBox.ContextMenu>
 				</TextBox>
 			</TabItem>
-			<TabItem Header="设置">
+			<TabItem Header="设置" PreviewDragOver="UIElement_OnPreviewDragOver">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />
