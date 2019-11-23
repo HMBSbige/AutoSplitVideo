@@ -75,8 +75,10 @@ namespace FlvProcessor
 			throw new FileNotFoundException(@"未找到 FFmpeg！", FFmpegExePath);
 		}
 
-		public void StartAsync(string parameters)
+		public async void StartAsync(string parameters)
 		{
+			await Task.Yield();
+
 			EnsureExists();
 			Stop(); //单实例单进程
 			_process = new Process
@@ -100,7 +102,7 @@ namespace FlvProcessor
 			};
 			_process.Start();
 
-			ReadOutputAsync(_process.StandardError);
+			await ReadOutputAsync(_process.StandardError);
 		}
 
 		public void Stop()
@@ -117,15 +119,18 @@ namespace FlvProcessor
 			_process = null;
 		}
 
-		private async void ReadOutputAsync(TextReader reader)
+		private async Task ReadOutputAsync(TextReader reader)
 		{
 			await Task.Run(() =>
 			{
 				string processOutput;
+				string lastMessage = null;
 				while ((processOutput = reader.ReadLine()) != null)
 				{
-					MessageUpdated?.Invoke(this, new MessageUpdatedEventArgs { Message = processOutput });
+					lastMessage = processOutput;
+					MessageUpdated?.Invoke(this, new MessageUpdatedEventArgs { Message = lastMessage });
 				}
+				MessageUpdated?.Invoke(this, new MessageUpdatedEventArgs { Message = $@"[已完成]{lastMessage}" });
 			});
 		}
 	}

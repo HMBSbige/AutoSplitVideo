@@ -30,11 +30,6 @@
 				<valueConverter:LiveStatusConverter x:Key="LiveStatusConverter" />
 				<valueConverter:RecordingStatusConverter x:Key="RecordingStatusConverter" />
 				<SolidColorBrush Color="LightGray" x:Key="GridLinesBrush" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
-
 			</ResourceDictionary>
 		</Window.Resources>
 	<Grid>
@@ -60,7 +55,7 @@
 								<ColumnDefinition />
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
-							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" 
+							<TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" VerticalContentAlignment="Center"
 							Text="{Binding CurrentConfig.RecordDirectory,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
 							<Grid Grid.Row="1" Grid.Column="0" Margin="3">
 								<ProgressBar Value="{Binding ProgressBarValue}" Foreground="{Binding ProgressBarValue,Converter={StaticResource ProgressValueToBrushConverter}}"/>
@@ -90,6 +85,12 @@
 					CanUserDeleteRows="False"
 					ItemsSource="{Binding Rooms}"
 					>
+						<DataGrid.Resources>
+							<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
+							<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent" />
+							<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+							<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
+						</DataGrid.Resources>
 						<DataGrid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="手动刷新" Style="{StaticResource BaseMenuItemStyle}" Click="ManualRefreshMenuItem_OnClick"/>
@@ -153,7 +154,7 @@
 					</DataGrid>
 				</DockPanel>
 			</TabItem>
-			<TabItem Header="Flv 处理" PreviewDragOver="UIElement_OnPreviewDragOver">
+			<TabItem Header="视频处理" PreviewDragOver="UIElement_OnPreviewDragOver">
 				<DockPanel>
 					<GroupBox Header="手动剪辑" DockPanel.Dock="Top">
 						<Grid>
@@ -166,9 +167,10 @@
 								<ColumnDefinition />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<TextBox x:Name="InputFileTextBox" Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}"
+							<TextBox x:Name="InputFileTextBox" Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3"
+							Background="{StaticResource GridLinesBrush}" VerticalContentAlignment="Center"
 							AllowDrop="True" PreviewDragOver="UIElement_OnPreviewDragOver" Drop="TextBox_OnPreviewDrop" TextChanged="InputFileTextBox_OnTextChanged"/>
-							<TextBox x:Name="OutputFileTextBox" Grid.Row="1" Grid.Column="0" Margin="3" />
+							<TextBox x:Name="OutputFileTextBox" Grid.Row="1" Grid.Column="0" Margin="3" VerticalContentAlignment="Center" />
 
 							<Button Grid.Row="0" Grid.Column="1" Content="视频" Margin="3" Padding="5" Click="InputFileButton_OnClick"/>
 							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" Click="OutputButton_OnClick"/>
@@ -176,9 +178,9 @@
 
 							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
 								<TextBlock Text="开始时刻" VerticalAlignment="Center" Margin="3"/>
-								<control:TimeControl Margin="3" />
+								<control:TimeControl x:Name="StartTimeControl" Margin="3" Text="00:00:00.000" />
 								<TextBlock Text="持续时间" VerticalAlignment="Center" Margin="3" />
-								<control:TimeControl Margin="3" Text="01:30:00.000"/>
+								<control:TimeControl x:Name="DurationControl" Margin="3" Text="01:30:00.000"/>
 							</WrapPanel>
 							</Grid>
 					</GroupBox>
@@ -193,18 +195,19 @@
 								<ColumnDefinition />
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<TextBox x:Name="InputFileTextBox2" Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3" Background="{StaticResource GridLinesBrush}"
+							<TextBox x:Name="InputFileTextBox2" Grid.Row="0" Grid.Column="0" IsReadOnly="True" Margin="3"
+							Background="{StaticResource GridLinesBrush}" VerticalContentAlignment="Center"
 							AllowDrop="True" PreviewDragOver="UIElement_OnPreviewDragOver" Drop="TextBox2_OnPreviewDrop" TextChanged="InputFileTextBox2_OnTextChanged" />
-							<TextBox x:Name="OutputFileTextBox2" Grid.Row="1" Grid.Column="0" Margin="3" />
+							<TextBox x:Name="OutputFileTextBox2" Grid.Row="1" Grid.Column="0" Margin="3" VerticalContentAlignment="Center" />
 
 							<Button Grid.Row="0" Grid.Column="1" Content="选择" Margin="3" Padding="5" Click="SelectButton_OnClick"/>
 							<Button Grid.Row="1" Grid.Column="1" Content="输出" Margin="3" Padding="5" Click="OutputButton2_OnClick"/>
 							<Button Grid.Row="2" Grid.Column="1" Content="封装" Margin="3" Padding="5" Click="ConvertButton_OnClick"/>
 							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
 								<CheckBox x:Name="IsDeleteCheckBox" Content="转换完成删除" Margin="6" VerticalContentAlignment="Center"/>
-								<CheckBox Content="删除到回收站" Margin="6" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked,ElementName=IsDeleteCheckBox}"/>
+								<CheckBox x:Name="IsDeleteToRecycleCheckBox" Content="删除到回收站" Margin="6" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked,ElementName=IsDeleteCheckBox}"/>
 								<CheckBox Content="修复时间轴" Margin="6" VerticalContentAlignment="Center" />
-								<TextBlock Text="拖拽目录的话会自动寻找目录内的flv文件" Margin="6" VerticalAlignment="Center" Foreground="Red"/>
+								<TextBlock Text="拖拽目录的话会自动将目录内的所有 Flv 文件转成 Mp4" Margin="6" VerticalAlignment="Center" Foreground="Red"/>
 							</WrapPanel>
 						</Grid>
 					</GroupBox>
@@ -221,8 +224,17 @@
 						AutoGenerateColumns="False"
 						SelectionUnit="FullRow" SelectionMode="Extended"
 						CanUserAddRows="False" CanUserResizeRows="False"
-						CanUserDeleteRows="False">
-
+						CanUserDeleteRows="False"
+						ItemsSource="{Binding VideoConverter}">
+						<DataGrid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="移除选中任务" Style="{StaticResource BaseMenuItemStyle}" Click="RemoveTaskMenuItem_OnClick"/>
+							</ContextMenu>
+						</DataGrid.ContextMenu>
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="状态" Binding="{Binding CurrentStatus}" IsReadOnly="True" Width="300"/>
+							<DataGridTextColumn Header="描述" Binding="{Binding Description}" IsReadOnly="True" Width="300" />
+						</DataGrid.Columns>
 					</DataGrid>
 				</DockPanel>
 			</TabItem>

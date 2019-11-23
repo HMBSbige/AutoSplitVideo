@@ -54,6 +54,7 @@ namespace AutoSplitVideo
 			};
 			Current.Exit += (o, args) =>
 			{
+				Utils.Utils.KillFFmpeg();
 				singleInstance.Dispose();
 				GlobalConfig.Save();
 			};

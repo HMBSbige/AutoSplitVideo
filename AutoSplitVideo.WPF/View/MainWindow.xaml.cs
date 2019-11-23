@@ -43,6 +43,7 @@ namespace AutoSplitVideo.View
 		{
 			MainWindowViewModel.StopGetDiskUsage();
 			MainWindowViewModel.StopAllMonitors();
+			MainWindowViewModel.StopAllVideoConvert();
 		}
 
 		#region CloseReasonHack
@@ -325,21 +326,32 @@ namespace AutoSplitVideo.View
 
 		#region FLV
 
-		private void InputFileTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+		private void GetOutputPath(string path, string oldPath)
 		{
-			if (!(sender is TextBox textBox)) return;
-			var path = textBox.Text;
+			if (string.IsNullOrEmpty(path) || !File.Exists(path))
+			{
+				OutputFileTextBox.Text = string.Empty;
+				return;
+			}
+
 			var ext = Path.GetExtension(path);
 			var oldName = Path.ChangeExtension(path, null);
 			for (var i = 1; i < int.MaxValue; ++i)
 			{
 				var newPath = $@"{oldName}_{i}{ext}";
-				if (!File.Exists(newPath))
+				if (!File.Exists(newPath) && newPath != oldPath)
 				{
 					OutputFileTextBox.Text = newPath;
 					break;
 				}
 			}
+		}
+
+		private void InputFileTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (!(sender is TextBox textBox)) return;
+			var path = textBox.Text;
+			GetOutputPath(path, null);
 		}
 
 		private void InputFileButton_OnClick(object sender, RoutedEventArgs e)
@@ -388,7 +400,12 @@ namespace AutoSplitVideo.View
 
 		private void ClipButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			//TODO
+			var inputPath = InputFileTextBox.Text;
+			var outputPath = OutputFileTextBox.Text;
+			var startTime = StartTimeControl.Text;
+			var duration = DurationControl.Text;
+			MainWindowViewModel.FFmpegSplit(inputPath, outputPath, startTime, duration);
+			GetOutputPath(inputPath, outputPath);
 		}
 
 		private void InputFileTextBox2_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -457,7 +474,50 @@ namespace AutoSplitVideo.View
 
 		private void ConvertButton_OnClick(object sender, RoutedEventArgs e)
 		{
-			//TODO
+			var inputPath = InputFileTextBox2.Text;
+			var outputPath = OutputFileTextBox2.Text;
+			var isDelete = IsDeleteCheckBox.IsChecked.GetValueOrDefault();
+			var isDeleteToRecycle = IsDeleteToRecycleCheckBox.IsChecked.GetValueOrDefault();
+
+			if (File.Exists(inputPath))
+			{
+				MainWindowViewModel.FFmpegConvert(inputPath, outputPath, isDelete, isDeleteToRecycle);
+			}
+			else if (Directory.Exists(inputPath))
+			{
+				if (!Directory.Exists(outputPath))
+				{
+					outputPath = inputPath;
+				}
+				var flvs = Utils.Utils.GetAllFlvList(inputPath);
+
+				foreach (var flv in flvs)
+				{
+					MainWindowViewModel.FFmpegConvert(flv, Path.Combine(outputPath, Path.ChangeExtension(flv, @"mp4")), isDelete, isDeleteToRecycle);
+				}
+			}
+
+			InputFileTextBox2.Clear();
+			OutputFileTextBox2.Clear();
+			//TODO:修复时间轴
+		}
+
+		private void RemoveTaskMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			var selectedItems = new List<VideoConvert>();
+			foreach (var selectedItem in FlvDataGrid.SelectedItems)
+			{
+				if (selectedItem is VideoConvert vc)
+				{
+					selectedItems.Add(vc);
+				}
+			}
+
+			foreach (var selectedItem in selectedItems)
+			{
+				selectedItem.Stop();
+				MainWindowViewModel.VideoConverter.Remove(selectedItem);
+			}
 		}
 
 		#endregion

@@ -26,6 +26,7 @@ namespace AutoSplitVideo.ViewModel
 		{
 			Window = null;
 			_logs = new ObservableQueue<string>(MaxLogNum);
+			_videoConverter = new ObservableCollection<VideoConvert>();
 			_progressBarValue = 0;
 			_ctsGetDisk = new CancellationTokenSource();
 			StartGetDiskUsage(_ctsGetDisk.Token);
@@ -275,6 +276,40 @@ namespace AutoSplitVideo.ViewModel
 			if (sender is RoomSetting room)
 			{
 				TitleLog.AddLog(room);
+			}
+		}
+
+		#endregion
+
+		#region VideoConvert
+
+		private ObservableCollection<VideoConvert> _videoConverter;
+
+		public ObservableCollection<VideoConvert> VideoConverter
+		{
+			get => _videoConverter;
+			set => SetField(ref _videoConverter, value);
+		}
+
+		public void FFmpegConvert(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle)
+		{
+			var videoConvert = new VideoConvert();
+			VideoConverter.Add(videoConvert);
+			videoConvert.Convert(inputPath, outputPath, isDelete, deleteToRecycle);
+		}
+
+		public void FFmpegSplit(string inputPath, string outputPath, string startTime, string duration)
+		{
+			var videoConvert = new VideoConvert();
+			VideoConverter.Add(videoConvert);
+			videoConvert.Split(inputPath, outputPath, startTime, duration);
+		}
+
+		public void StopAllVideoConvert()
+		{
+			foreach (var videoConvert in VideoConverter)
+			{
+				videoConvert.Stop();
 			}
 		}
 
