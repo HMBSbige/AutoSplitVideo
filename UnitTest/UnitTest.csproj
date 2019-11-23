@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BilibiliApi\BilibiliApi.csproj" />
+    <ProjectReference Include="..\FlvProcessor\FlvProcessor.csproj" />
   </ItemGroup>
 
 </Project>
