@@ -291,14 +291,14 @@ namespace AutoSplitVideo.ViewModel
 			set => SetField(ref _videoConverter, value);
 		}
 
-		public void FFmpegConvert(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle)
+		public void AddConvertTask(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle, bool fixTimestamp)
 		{
 			var videoConvert = new VideoConvert();
 			VideoConverter.Add(videoConvert);
-			videoConvert.Convert(inputPath, outputPath, isDelete, deleteToRecycle);
+			videoConvert.Convert(inputPath, outputPath, isDelete, deleteToRecycle, fixTimestamp);
 		}
 
-		public void FFmpegSplit(string inputPath, string outputPath, string startTime, string duration)
+		public void AddSplitTask(string inputPath, string outputPath, string startTime, string duration)
 		{
 			var videoConvert = new VideoConvert();
 			VideoConverter.Add(videoConvert);

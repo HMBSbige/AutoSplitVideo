@@ -404,7 +404,7 @@ namespace AutoSplitVideo.View
 			var outputPath = OutputFileTextBox.Text;
 			var startTime = StartTimeControl.Text;
 			var duration = DurationControl.Text;
-			MainWindowViewModel.FFmpegSplit(inputPath, outputPath, startTime, duration);
+			MainWindowViewModel.AddSplitTask(inputPath, outputPath, startTime, duration);
 			GetOutputPath(inputPath, outputPath);
 		}
 
@@ -478,10 +478,11 @@ namespace AutoSplitVideo.View
 			var outputPath = OutputFileTextBox2.Text;
 			var isDelete = IsDeleteCheckBox.IsChecked.GetValueOrDefault();
 			var isDeleteToRecycle = IsDeleteToRecycleCheckBox.IsChecked.GetValueOrDefault();
+			var fixTimestamp = FixTimestampCheckBox.IsChecked.GetValueOrDefault();
 
 			if (File.Exists(inputPath))
 			{
-				MainWindowViewModel.FFmpegConvert(inputPath, outputPath, isDelete, isDeleteToRecycle);
+				MainWindowViewModel.AddConvertTask(inputPath, outputPath, isDelete, isDeleteToRecycle, fixTimestamp);
 			}
 			else if (Directory.Exists(inputPath))
 			{
@@ -493,13 +494,12 @@ namespace AutoSplitVideo.View
 
 				foreach (var flv in flvs)
 				{
-					MainWindowViewModel.FFmpegConvert(flv, Path.Combine(outputPath, Path.ChangeExtension(flv, @"mp4")), isDelete, isDeleteToRecycle);
+					MainWindowViewModel.AddConvertTask(flv, Path.Combine(outputPath, Path.ChangeExtension(flv, @"mp4")), isDelete, isDeleteToRecycle, fixTimestamp);
 				}
 			}
 
 			InputFileTextBox2.Clear();
 			OutputFileTextBox2.Clear();
-			//TODO:修复时间轴
 		}
 
 		private void RemoveTaskMenuItem_OnClick(object sender, RoutedEventArgs e)

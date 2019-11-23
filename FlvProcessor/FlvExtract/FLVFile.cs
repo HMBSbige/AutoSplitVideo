@@ -40,21 +40,6 @@ namespace FlvProcessor.FlvExtract
 			_fileLength = _fs.Length;
 		}
 
-		public void Dispose()
-		{
-			if (_fs != null)
-			{
-				_fs.Close();
-				_fs = null;
-			}
-			CloseOutput(null, true);
-		}
-
-		public void Close()
-		{
-			Dispose();
-		}
-
 		public string OutputDirectory { get; set; }
 
 		public FractionUInt32? AverageFrameRate { get; private set; }
@@ -471,5 +456,39 @@ namespace FlvProcessor.FlvExtract
 			_fileOffset += length;
 			return buff;
 		}
+
+		#region IDisposable Support
+		private bool _disposedValue;
+
+		// instance based lock
+		private readonly object _lock = new object();
+
+		protected virtual void Dispose(bool disposing)
+		{
+			lock (_lock)
+			{
+				if (_disposedValue)
+				{
+					return;
+				}
+				_disposedValue = true;
+			}
+
+			if (disposing)
+			{
+				if (_fs != null)
+				{
+					_fs.Close();
+					_fs = null;
+				}
+				CloseOutput(null, true);
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+		#endregion
 	}
 }

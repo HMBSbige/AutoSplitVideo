@@ -206,7 +206,7 @@
 							<WrapPanel Grid.Row="2" Grid.Column="0" Margin="3">
 								<CheckBox x:Name="IsDeleteCheckBox" Content="转换完成删除" Margin="6" VerticalContentAlignment="Center"/>
 								<CheckBox x:Name="IsDeleteToRecycleCheckBox" Content="删除到回收站" Margin="6" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked,ElementName=IsDeleteCheckBox}"/>
-								<CheckBox Content="修复时间轴" Margin="6" VerticalContentAlignment="Center" />
+								<CheckBox x:Name="FixTimestampCheckBox" Content="修复时间戳（仅 Flv）" Margin="6" VerticalContentAlignment="Center" />
 								<TextBlock Text="拖拽目录的话会自动将目录内的所有 Flv 文件转成 Mp4" Margin="6" VerticalAlignment="Center" Foreground="Red"/>
 							</WrapPanel>
 						</Grid>
