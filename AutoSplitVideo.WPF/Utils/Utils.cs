@@ -156,8 +156,6 @@ namespace AutoSplitVideo.Utils
 			return userKey;
 		}
 
-		public const string ParameterSetAutoRun = @"--setAutoRun";
-
 		public static int RunAsAdmin(string arguments)
 		{
 			Process process;

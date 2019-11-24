@@ -3,11 +3,13 @@ using AutoSplitVideo.Model;
 using AutoSplitVideo.Service;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
+using BilibiliApi.Event;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -251,9 +253,11 @@ namespace AutoSplitVideo.ViewModel
 			room.TitleChangedEvent += RoomTitleChangedEvent;
 			room.LogEvent -= Room_LogEvent;
 			room.LogEvent += Room_LogEvent;
+			room.RecordCompletedEvent -= Room_RecordCompletedEvent;
+			room.RecordCompletedEvent += Room_RecordCompletedEvent;
 		}
 
-		private void Room_LogEvent(object sender, BilibiliApi.Event.LogEventArgs e)
+		private void Room_LogEvent(object sender, LogEventArgs e)
 		{
 			AddLog(e.Log);
 			Debug.WriteLine(e.Log);
@@ -276,6 +280,19 @@ namespace AutoSplitVideo.ViewModel
 			if (sender is RoomSetting room)
 			{
 				TitleLog.AddLog(room);
+			}
+		}
+
+		private void Room_RecordCompletedEvent(object sender, LogEventArgs e)
+		{
+			var filePath = e.Log;
+			if (File.Exists(filePath) && CurrentConfig.EnableAutoConvert)
+			{
+				Window.Dispatcher?.InvokeAsync(() =>
+				{
+					AddConvertTask(filePath, Path.ChangeExtension(filePath, @"mp4"),
+					CurrentConfig.DeleteAfterConvert, CurrentConfig.DeleteToRecycle, CurrentConfig.FixTimestamp);
+				});
 			}
 		}
 

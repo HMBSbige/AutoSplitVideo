@@ -13,6 +13,10 @@ namespace AutoSplitVideo.Model
 		private string _recordDirectory;
 		private List<RoomSetting> _rooms;
 		private bool _logToFile;
+		private bool _enableAutoConvert;
+		private bool _deleteAfterConvert;
+		private bool _deleteToRecycle;
+		private bool _fixTimestamp;
 
 		#endregion
 
@@ -34,6 +38,30 @@ namespace AutoSplitVideo.Model
 		{
 			get => _logToFile;
 			set => SetField(ref _logToFile, value);
+		}
+
+		public bool EnableAutoConvert
+		{
+			get => _enableAutoConvert;
+			set => SetField(ref _enableAutoConvert, value);
+		}
+
+		public bool DeleteAfterConvert
+		{
+			get => _deleteAfterConvert;
+			set => SetField(ref _deleteAfterConvert, value);
+		}
+
+		public bool DeleteToRecycle
+		{
+			get => _deleteToRecycle;
+			set => SetField(ref _deleteToRecycle, value);
+		}
+
+		public bool FixTimestamp
+		{
+			get => _fixTimestamp;
+			set => SetField(ref _fixTimestamp, value);
 		}
 
 		#endregion

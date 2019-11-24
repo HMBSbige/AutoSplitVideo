@@ -16,7 +16,7 @@ namespace AutoSplitVideo.Service
 			RegistryKey runKey = null;
 			try
 			{
-				var path = Utils.Utils.GetExecutablePath();
+				var path = $@"""{Utils.Utils.GetExecutablePath()}"" {Constants.ParameterSilent}";
 				runKey = Utils.Utils.OpenRegKey(RegistryRunPath, true);
 				if (enabled)
 				{
@@ -32,7 +32,7 @@ namespace AutoSplitVideo.Service
 			}
 			catch
 			{
-				return Utils.Utils.RunAsAdmin(Utils.Utils.ParameterSetAutoRun) == 0;
+				return Utils.Utils.RunAsAdmin(Constants.ParameterSetAutoRun) == 0;
 			}
 			finally
 			{

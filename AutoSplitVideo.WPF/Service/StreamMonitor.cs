@@ -69,7 +69,7 @@ namespace AutoSplitVideo.Service
 
 		public bool Start()
 		{
-			if (disposedValue)
+			if (_disposedValue)
 			{
 				throw new ObjectDisposedException(nameof(StreamMonitor));
 			}
@@ -82,7 +82,7 @@ namespace AutoSplitVideo.Service
 
 		public void Stop()
 		{
-			if (disposedValue)
+			if (_disposedValue)
 			{
 				throw new ObjectDisposedException(nameof(StreamMonitor));
 			}
@@ -92,7 +92,7 @@ namespace AutoSplitVideo.Service
 
 		public async void Check(TriggerType type, int millisecondsDelay = 0)
 		{
-			if (disposedValue)
+			if (_disposedValue)
 			{
 				throw new ObjectDisposedException(nameof(StreamMonitor));
 			}
@@ -115,7 +115,7 @@ namespace AutoSplitVideo.Service
 			}
 		}
 
-		public async Task<Room> FetchRoomInfoAsync()
+		private async Task<Room> FetchRoomInfoAsync()
 		{
 			var room = await BililiveApi.GetRoomInfoAsync(RoomId);
 			RoomInfoUpdated?.Invoke(this, new RoomInfoUpdatedArgs { Room = room });
@@ -124,7 +124,7 @@ namespace AutoSplitVideo.Service
 
 		public void SettingChanged(RoomSetting setting)
 		{
-			if (disposedValue)
+			if (_disposedValue)
 			{
 				throw new ObjectDisposedException(nameof(StreamMonitor));
 			}
@@ -134,11 +134,11 @@ namespace AutoSplitVideo.Service
 		}
 
 		#region IDisposable Support
-		private bool disposedValue; // 要检测冗余调用
+		private bool _disposedValue; // 要检测冗余调用
 
 		private void Dispose(bool disposing)
 		{
-			if (!disposedValue)
+			if (!_disposedValue)
 			{
 				if (disposing)
 				{
@@ -151,7 +151,7 @@ namespace AutoSplitVideo.Service
 				StreamStarted = null;
 				LogEvent = null;
 
-				disposedValue = true;
+				_disposedValue = true;
 			}
 		}
 

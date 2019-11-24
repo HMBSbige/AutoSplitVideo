@@ -19,7 +19,7 @@ namespace AutoSplitVideo
 		private void App_OnStartup(object sender, StartupEventArgs e)
 		{
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(Utils.Utils.GetExecutablePath()));
-			if (e.Args.Contains(Utils.Utils.ParameterSetAutoRun))
+			if (e.Args.Contains(Constants.ParameterSetAutoRun))
 			{
 				if (!AutoStartup.Switch())
 				{
@@ -33,7 +33,7 @@ namespace AutoSplitVideo
 			var singleInstance = new SingleInstance(identifier);
 			if (!singleInstance.IsFirstInstance)
 			{
-				singleInstance.PassArgumentsToFirstInstance(e.Args.Append(@"--show"));
+				singleInstance.PassArgumentsToFirstInstance(e.Args.Append(Constants.ParameterShow));
 				Current.Shutdown();
 				return;
 			}
@@ -62,7 +62,10 @@ namespace AutoSplitVideo
 			CheckUpdateAsync();
 
 			MainWindow = new MainWindow();
-			MainWindow.Show();
+			if (!e.Args.Contains(Constants.ParameterSilent))
+			{
+				MainWindow.Show();
+			}
 		}
 
 		[Conditional("RELEASE")]
@@ -91,7 +94,7 @@ namespace AutoSplitVideo
 
 		private void SingleInstance_ArgumentsReceived(object sender, ArgumentsReceivedEventArgs e)
 		{
-			if (e.Args.Contains(@"--show"))
+			if (e.Args.Contains(Constants.ParameterShow))
 			{
 				Dispatcher?.InvokeAsync(() =>
 				{

@@ -136,6 +136,7 @@ namespace AutoSplitVideo.Model
 		public event EventHandler NotifyEvent;
 		public event EventHandler TitleChangedEvent;
 		public event LogEvent LogEvent;
+		public event LogEvent RecordCompletedEvent;
 
 		#endregion
 
@@ -293,6 +294,7 @@ namespace AutoSplitVideo.Model
 				StopRecorder();
 				Recorder = new Recorder(this);
 				Recorder.LogEvent += (o, args) => LogEvent?.Invoke(o, args);
+				Recorder.RecordCompletedEvent += (o, args) => RecordCompletedEvent?.Invoke(o, args);
 				await Recorder.Start();
 			}
 			finally

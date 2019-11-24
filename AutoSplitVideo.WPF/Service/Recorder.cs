@@ -19,6 +19,7 @@ namespace AutoSplitVideo.Service
 
 		private readonly RoomSetting _currentRoom;
 		public event LogEvent LogEvent;
+		public event LogEvent RecordCompletedEvent;
 
 		private HttpResponseMessage _response;
 		private HttpDownLoad _downLoadTask;
@@ -66,7 +67,8 @@ namespace AutoSplitVideo.Service
 					continue;
 				}
 
-				_downLoadTask = new HttpDownLoad(url, FileName, true);
+				var filename = FileName;
+				_downLoadTask = new HttpDownLoad(url, filename, true);
 				try
 				{
 					_currentRoom.IsRecording = RecordingStatus.Recording;
@@ -75,6 +77,7 @@ namespace AutoSplitVideo.Service
 							.ContinueWith(task =>
 							{
 								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 录制结束" });
+								RecordCompletedEvent?.Invoke(this, new LogEventArgs { Log = filename });
 							});
 				}
 				catch (Exception ex)

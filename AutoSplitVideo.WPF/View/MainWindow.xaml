@@ -229,6 +229,8 @@
 						<DataGrid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="移除选中任务" Style="{StaticResource BaseMenuItemStyle}" Click="RemoveTaskMenuItem_OnClick"/>
+								<Separator />
+								<MenuItem Header="清空所有任务" Style="{StaticResource BaseMenuItemStyle}" Click="ClearTaskMenuItem_OnClick"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 						<DataGrid.Columns>
@@ -253,29 +255,62 @@
 				</TextBox>
 			</TabItem>
 			<TabItem Header="设置" PreviewDragOver="UIElement_OnPreviewDragOver">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="Auto" />
-					</Grid.ColumnDefinitions>
-					<CheckBox Grid.Row="0" Grid.Column="0" Margin="3,6,3,3" Content="记录日志到文件" IsChecked="{Binding CurrentConfig.LogToFile}" />
-					<Button Grid.Row="0" Grid.Column="1" Margin="3" Content="清空日志" Click="ClearLogButton_OnClick" />
-					<Button Grid.Row="0" Grid.Column="2" Margin="3" Content="打开日志文件" Click="OpenLogButton_OnClick" />
+				<StackPanel>
+					<GroupBox Header="其他">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							<CheckBox Grid.Row="0" Grid.Column="0" Margin="3,6,3,3" Content="记录日志到文件" IsChecked="{Binding CurrentConfig.LogToFile}" />
+							<Button Grid.Row="0" Grid.Column="1" Margin="3" Content="清空日志" Click="ClearLogButton_OnClick" />
+							<Button Grid.Row="0" Grid.Column="2" Margin="3" Content="打开日志文件" Click="OpenLogButton_OnClick" />
 
-					<Button Grid.Row="1" Grid.Column="1" Margin="3" Content="清空标题文件" Click="ClearTitleFileButton_OnClick" />
-					<Button Grid.Row="1" Grid.Column="2" Margin="3" Content="打开标题文件" Click="OpenTitleFileButton_OnClick" />
+							<Button Grid.Row="1" Grid.Column="1" Margin="3" Content="清空标题文件" Click="ClearTitleFileButton_OnClick" />
+							<Button Grid.Row="1" Grid.Column="2" Margin="3" Content="打开标题文件" Click="OpenTitleFileButton_OnClick" />
 
-					<CheckBox x:Name="AutoStartupCheckBox" Grid.Row="2" Grid.Column="0" Margin="3,6,3,3" Content="开机自启动"
-					Checked="AutoStartupCheckBox_CheckedChanged"
-					Unchecked="AutoStartupCheckBox_CheckedChanged"
-					/>
-				</Grid>
+							<CheckBox x:Name="AutoStartupCheckBox" Grid.Row="2" Grid.Column="0" Margin="3,6,3,3" Content="开机自启动"
+							Checked="AutoStartupCheckBox_CheckedChanged"
+							Unchecked="AutoStartupCheckBox_CheckedChanged" />
+						</Grid>
+					</GroupBox>
+					<GroupBox Header="自动转封装">
+						<StackPanel>
+							<CheckBox x:Name="EnableAutoConvertCheckBox" Margin="3,6,3,3" Content="启用"
+							IsChecked="{Binding CurrentConfig.EnableAutoConvert}" />
+
+							<Grid IsEnabled="{Binding IsChecked,ElementName=EnableAutoConvertCheckBox}">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" x:Name="GlobalIsDeleteCheckBox"
+								Content="转换完成删除" Margin="3" VerticalContentAlignment="Center"
+								IsChecked="{Binding CurrentConfig.DeleteAfterConvert}"/>
+
+								<CheckBox Grid.Row="0" Grid.Column="1"
+								Content="删除到回收站" Margin="3" VerticalContentAlignment="Center"
+								IsEnabled="{Binding IsChecked,ElementName=GlobalIsDeleteCheckBox}"
+								IsChecked="{Binding CurrentConfig.DeleteToRecycle}" />
+
+								<CheckBox Grid.Row="1" Grid.Column="0"
+								Content="修复时间戳" Margin="3" VerticalContentAlignment="Center"
+								IsChecked="{Binding CurrentConfig.FixTimestamp}" />
+							</Grid>
+						</StackPanel>
+						
+					</GroupBox>
+				</StackPanel>
 			</TabItem>
 		</TabControl>
 	</Grid>

@@ -520,6 +520,15 @@ namespace AutoSplitVideo.View
 			}
 		}
 
+		private void ClearTaskMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			foreach (var videoConvert in MainWindowViewModel.VideoConverter)
+			{
+				videoConvert.Stop();
+			}
+			MainWindowViewModel.VideoConverter.Clear();
+		}
+
 		#endregion
 	}
 }
