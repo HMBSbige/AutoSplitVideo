@@ -18,69 +18,18 @@ namespace BilibiliApi
 
 		static BililiveApi()
 		{
+			Reload(null);
+		}
+
+		public static void Reload(string token)
+		{
 			_httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 			_httpClient.DefaultRequestHeaders.Add(@"Accept", @"application/json, text/javascript, */*; q=0.01");
 			_httpClient.DefaultRequestHeaders.Add(@"Referer", @"https://live.bilibili.com/");
 			_httpClient.DefaultRequestHeaders.Add(@"User-Agent", Utils.UserAgent);
-		}
-
-		public static async Task ApplyCookieSettings(string cookieString)
-		{
-			await SemaphoreSlim.WaitAsync();
-			try
+			if (!string.IsNullOrEmpty(token))
 			{
-				if (!string.IsNullOrWhiteSpace(cookieString))
-				{
-					try
-					{
-						var cc = new CookieContainer { PerDomainCapacity = 300 };
-						foreach (var t in cookieString.Trim(' ', ';').Split(';').Select(x => x.Trim().Split(new[] { '=' }, 2)))
-						{
-							try
-							{
-								var v = string.Empty;
-								if (t.Length == 2)
-								{
-									v = System.Web.HttpUtility.UrlDecode(t[1])?.Trim();
-								}
-
-								cc.Add(new Cookie(t[0].Trim(), v, "/", ".bilibili.com"));
-							}
-							catch (Exception)
-							{
-								// ignored
-							}
-						}
-
-						var pclient = new HttpClient(new HttpClientHandler
-						{
-							CookieContainer = cc
-						}, true)
-						{
-							Timeout = TimeSpan.FromSeconds(5)
-						};
-						pclient.DefaultRequestHeaders.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-						pclient.DefaultRequestHeaders.Add("Referer", "https://live.bilibili.com/");
-						pclient.DefaultRequestHeaders.Add("User-Agent", Utils.UserAgent);
-
-						_httpClient = pclient;
-						return;
-					}
-					catch
-					{
-						Debug.WriteLine("设置 Cookie 时发生错误");
-					}
-				}
-
-				var cleanclient = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
-				cleanclient.DefaultRequestHeaders.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-				cleanclient.DefaultRequestHeaders.Add("Referer", "https://live.bilibili.com/");
-				cleanclient.DefaultRequestHeaders.Add("User-Agent", Utils.UserAgent);
-				_httpClient = cleanclient;
-			}
-			finally
-			{
-				SemaphoreSlim.Release();
+				_httpClient.DefaultRequestHeaders.Add(@"Cookie", $@"SESSDATA={token}");
 			}
 		}
 

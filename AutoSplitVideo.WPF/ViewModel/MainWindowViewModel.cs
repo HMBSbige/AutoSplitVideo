@@ -269,8 +269,7 @@ namespace AutoSplitVideo.ViewModel
 			{
 				Window.Dispatcher?.InvokeAsync(() =>
 				{
-					Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title,
-							BalloonIcon.Info);
+					Window.NotifyIcon.ShowBalloonTip($@"{room.UserName} 开播了！", room.Title, BalloonIcon.Info);
 				}, DispatcherPriority.Loaded);
 			}
 		}
