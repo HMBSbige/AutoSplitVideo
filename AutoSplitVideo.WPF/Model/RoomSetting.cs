@@ -239,7 +239,21 @@ namespace AutoSplitVideo.Model
 					break;
 				}
 			}
-			GlobalConfig.Save();
+
+			switch (e.PropertyName)
+			{
+				case nameof(TimingDanmakuRetry):
+				case nameof(TimingCheckInterval):
+				case nameof(TimingStreamRetry):
+				case nameof(TimingStreamConnect):
+				case nameof(IsMonitor):
+				case nameof(IsNotify):
+				case nameof(LogTitle):
+				{
+					GlobalConfig.Save();
+					break;
+				}
+			}
 		}
 
 		public RoomSetting(Room room) : this()

@@ -1,11 +1,13 @@
 ﻿using AutoSplitVideo.Service;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 
 namespace AutoSplitVideo.Model
 {
 	public static class GlobalConfig
 	{
+		private static readonly ReaderWriterLockSlim Lock = new ReaderWriterLockSlim();
 		public static readonly string ConfigFileName = $@"{UpdateChecker.Name}.json";
 
 		#region Data
@@ -45,7 +47,16 @@ namespace AutoSplitVideo.Model
 				WriteIndented = true
 			};
 			var jsonStr = JsonSerializer.Serialize(Config, options);
-			File.WriteAllTextAsync(ConfigFileName, jsonStr);
+
+			Lock.EnterWriteLock();
+			try
+			{
+				File.WriteAllTextAsync(ConfigFileName, jsonStr);
+			}
+			finally
+			{
+				Lock.ExitWriteLock();
+			}
 		}
 
 		#endregion
