@@ -88,7 +88,7 @@ namespace BilibiliApi
 
 		public static bool IsToken(string token)
 		{
-			return token.Length == 32 && Regex.IsMatch(token, @"^[a-f0-9]+$");
+			return !string.IsNullOrEmpty(token) && token.Length == 32 && Regex.IsMatch(token, @"^[a-f0-9]+$");
 		}
 	}
 }
