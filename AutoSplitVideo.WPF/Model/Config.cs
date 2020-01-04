@@ -67,7 +67,7 @@ namespace AutoSplitVideo.Model
 
 		public string Token
 		{
-			get => string.IsNullOrEmpty(_token) || _token.Length != 32 ? string.Empty : _token;
+			get => BilibiliApi.Utils.IsToken(_token) ? _token : string.Empty;
 			set => SetField(ref _token, value);
 		}
 

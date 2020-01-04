@@ -538,10 +538,7 @@ namespace AutoSplitVideo.View
 			LoginButton.IsEnabled = false;
 			MainWindowViewModel.Login().ContinueWith(task =>
 			{
-				Dispatcher?.InvokeAsync(() =>
-				{
-					LoginButton.IsEnabled = true;
-				});
+				Dispatcher?.InvokeAsync(() => { LoginButton.IsEnabled = true; });
 			});
 		}
 
@@ -550,10 +547,16 @@ namespace AutoSplitVideo.View
 			ApplyToApiButton.IsEnabled = false;
 			MainWindowViewModel.ApplyToApi().ContinueWith(task =>
 			{
-				Dispatcher?.InvokeAsync(() =>
-				{
-					ApplyToApiButton.IsEnabled = true;
-				});
+				Dispatcher?.InvokeAsync(() => { ApplyToApiButton.IsEnabled = true; });
+			});
+		}
+
+		private void RevokeButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			RevokeButton.IsEnabled = false;
+			MainWindowViewModel.Revoke().ContinueWith(task =>
+			{
+				Dispatcher?.InvokeAsync(() => { RevokeButton.IsEnabled = true; });
 			});
 		}
 

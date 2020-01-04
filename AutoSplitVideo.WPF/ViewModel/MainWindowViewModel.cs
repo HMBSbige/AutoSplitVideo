@@ -386,6 +386,7 @@ namespace AutoSplitVideo.ViewModel
 				{
 					Token = token.AccessToken;
 					UpdateStatus($@"获取 Access Token 成功，Token 有效期至 {token.Expires.AddHours(8)}");
+					Account = Password = string.Empty;
 				}
 			}
 			catch (Exception ex)
@@ -410,7 +411,7 @@ namespace AutoSplitVideo.ViewModel
 					CurrentConfig.Token = Token;
 					UpdateStatus(@"Cookie 应用成功");
 				}
-				else
+				else if (BilibiliApi.Utils.IsToken(Token))
 				{
 					try
 					{
@@ -431,10 +432,30 @@ namespace AutoSplitVideo.ViewModel
 						UpdateStatus($@"登录失败，{ex.Message}");
 					}
 				}
+				else
+				{
+					UpdateStatus(@"登录失败，Access Token 格式错误");
+				}
 			}
 			else
 			{
 				UpdateStatus($@"登录失败，SESSDATA/Access Token 的长度为 {Token.Length} ≠ 32");
+			}
+		}
+
+		public async Task Revoke()
+		{
+			if (BilibiliApi.Utils.IsToken(Token))
+			{
+				//TODO
+				await BilibiliApi.BililiveApi.RevokeToken(Token);
+				UpdateStatus(@"注销请求发送完成");
+				Token = string.Empty;
+				BilibiliApi.BililiveApi.Reload(null);
+			}
+			else
+			{
+				UpdateStatus(@"Access Token 格式错误");
 			}
 		}
 

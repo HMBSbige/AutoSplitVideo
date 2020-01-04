@@ -1,4 +1,4 @@
-using BilibiliApi.Model;
+﻿using BilibiliApi.Model;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -147,11 +147,20 @@ namespace BilibiliApi
 		public static async Task<BilibiliToken> GetTokenInfo(string accessToken)
 		{
 			var token = new BilibiliToken(await Passport.Passport.GetTokenInfo(accessToken));
-			if (token.Code == 0)
+			return token.Code == 0 ? token : null;
+		}
+
+		public static async Task RevokeToken(string accessToken)
+		{
+			//TODO
+			try
 			{
-				return token;
+				await Passport.Passport.Revoke(accessToken);
 			}
-			return null;
+			catch
+			{
+				// ignored
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BilibiliApi.Passport
@@ -27,6 +27,18 @@ namespace BilibiliApi.Passport
 					{@"platform", @"android"},
 					{@"username", username},
 					{@"password", password}
+			};
+			using var body = await GetBody(pair, true);
+			return await PostAsync(BaseUri, requestUri, body);
+		}
+
+		public static async Task<string> Revoke(string accessToken)
+		{
+			const string requestUri = @"api/oauth2/revoke";
+			var pair = new Dictionary<string, string>
+			{
+					{@"platform", @"android"},
+					{@"access_token", accessToken}
 			};
 			using var body = await GetBody(pair, true);
 			return await PostAsync(BaseUri, requestUri, body);

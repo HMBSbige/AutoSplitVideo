@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BilibiliApi
 {
@@ -83,6 +84,11 @@ namespace BilibiliApi
 			var lTime = long.Parse($@"{timeStamp}0000000");
 			var toNow = new TimeSpan(lTime);
 			return dtStart.Add(toNow);
+		}
+
+		public static bool IsToken(string token)
+		{
+			return token.Length == 32 && Regex.IsMatch(token, @"^[a-f0-9]+$");
 		}
 	}
 }
