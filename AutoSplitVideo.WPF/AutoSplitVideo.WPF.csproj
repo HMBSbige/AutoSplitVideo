@@ -10,6 +10,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <StartupObject>AutoSplitVideo.App</StartupObject>
+    <Authors>HMBSbige</Authors>
   </PropertyGroup>
 
   <ItemGroup>

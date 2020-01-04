@@ -6,9 +6,9 @@ using System.Reflection;
 // associated with an assembly.
 
 [assembly: AssemblyTitle(UpdateChecker.Name)]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Bilibili 直播录制")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Wayne Enterprises")]
 [assembly: AssemblyProduct(UpdateChecker.Name)]
 [assembly: AssemblyCopyright(UpdateChecker.Copyright)]
 [assembly: AssemblyTrademark("")]
