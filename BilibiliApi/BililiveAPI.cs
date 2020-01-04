@@ -82,7 +82,7 @@ namespace BilibiliApi
 					return urls[Random.Next(urls.Length)];
 				}
 			}
-			throw new Exception(@"没有直播播放地址");
+			throw new Exception(@"获取直播间播放地址失败");
 		}
 
 		/// <summary>

@@ -53,8 +53,9 @@ namespace AutoSplitVideo.Service
 					url = await BililiveApi.GetPlayUrlAsync(_currentRoom.RoomId);
 					url = await GetRedirectUrl(url);
 				}
-				catch
+				catch(Exception ex)
 				{
+					LogEvent?.Invoke(this, new LogEventArgs {Log = $@"[{_currentRoom.RoomId}] {ex.Message}" });
 					await ReCheck();
 					continue;
 				}
