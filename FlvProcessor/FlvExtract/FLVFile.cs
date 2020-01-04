@@ -74,7 +74,7 @@ namespace FlvProcessor.FlvExtract
 				throw new Exception("This isn't a FLV file.");
 			}
 
-			if (Array.IndexOf(OutputExtensions, Path.GetExtension(_inputPath)?.ToLowerInvariant()) != -1)
+			if (Array.IndexOf(OutputExtensions, Path.GetExtension(_inputPath).ToLowerInvariant()) != -1)
 			{
 				// Can't have the same extension as files we output
 				throw new Exception("Please change the extension of this FLV file.");
