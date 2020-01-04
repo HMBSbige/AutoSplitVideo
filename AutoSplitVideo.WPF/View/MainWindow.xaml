@@ -5,6 +5,7 @@
 		xmlns:commands="clr-namespace:AutoSplitVideo.Commands"
 		xmlns:valueConverter="clr-namespace:AutoSplitVideo.View.ValueConverter"
 		xmlns:control="clr-namespace:AutoSplitVideo.View.Control"
+		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 		x:Name="Mw"
 		Title="AutoSplitVideo" Height="618" Width="1000"
 		WindowStartupLocation="CenterScreen"
@@ -269,11 +270,11 @@
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 							<CheckBox Grid.Row="0" Grid.Column="0" Margin="3,6,3,3" Content="记录日志到文件" IsChecked="{Binding CurrentConfig.LogToFile}" />
-							<Button Grid.Row="0" Grid.Column="1" Margin="3" Content="清空日志" Click="ClearLogButton_OnClick" />
-							<Button Grid.Row="0" Grid.Column="2" Margin="3" Content="打开日志文件" Click="OpenLogButton_OnClick" />
+							<Button Grid.Row="0" Grid.Column="1" Margin="3" Padding="2" Content="清空日志" Click="ClearLogButton_OnClick" />
+							<Button Grid.Row="0" Grid.Column="2" Margin="3" Padding="2" Content="打开日志文件" Click="OpenLogButton_OnClick" />
 
-							<Button Grid.Row="1" Grid.Column="1" Margin="3" Content="清空标题文件" Click="ClearTitleFileButton_OnClick" />
-							<Button Grid.Row="1" Grid.Column="2" Margin="3" Content="打开标题文件" Click="OpenTitleFileButton_OnClick" />
+							<Button Grid.Row="1" Grid.Column="1" Margin="3" Padding="2" Content="清空标题文件" Click="ClearTitleFileButton_OnClick" />
+							<Button Grid.Row="1" Grid.Column="2" Margin="3" Padding="2" Content="打开标题文件" Click="OpenTitleFileButton_OnClick" />
 
 							<CheckBox x:Name="AutoStartupCheckBox" Grid.Row="2" Grid.Column="0" Margin="3,6,3,3" Content="开机自启动"
 							Checked="AutoStartupCheckBox_CheckedChanged"
@@ -308,7 +309,23 @@
 								IsChecked="{Binding CurrentConfig.FixTimestamp}" />
 							</Grid>
 						</StackPanel>
-						
+					</GroupBox>
+					<GroupBox Header="登录">
+						<StackPanel>
+							<xctk:WatermarkTextBox Margin="3" Watermark="你的手机号/邮箱"
+							Text="{Binding Account,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+							<xctk:WatermarkTextBox Margin="3" Watermark="密码"
+							Text="{Binding Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+							<Button x:Name="LoginButton" Margin="3,3,3,6" Padding="2" Content="获取 Access Token" HorizontalAlignment="Left" Click="LoginButton_OnClick"/>
+
+							<xctk:WatermarkTextBox Margin="3,0" Watermark="SESSDATA/Access Token"
+							Text="{Binding Token,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+							<Button x:Name="ApplyToApiButton" Margin="3,3,3,6" Padding="2" Content="应用" HorizontalAlignment="Left" Click="ApplyToApiButton_OnClick"/>
+							<TextBlock Margin="3,0,0,0" Text="{Binding Status,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+						</StackPanel>
 					</GroupBox>
 				</StackPanel>
 			</TabItem>

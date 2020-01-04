@@ -17,6 +17,7 @@ namespace AutoSplitVideo.Model
 		private bool _deleteAfterConvert;
 		private bool _deleteToRecycle;
 		private bool _fixTimestamp;
+		private string _token;
 
 		#endregion
 
@@ -62,6 +63,12 @@ namespace AutoSplitVideo.Model
 		{
 			get => _fixTimestamp;
 			set => SetField(ref _fixTimestamp, value);
+		}
+
+		public string Token
+		{
+			get => string.IsNullOrEmpty(_token) || _token.Length != 32 ? string.Empty : _token;
+			set => SetField(ref _token, value);
 		}
 
 		#endregion

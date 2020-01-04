@@ -530,5 +530,33 @@ namespace AutoSplitVideo.View
 		}
 
 		#endregion
+
+		#region 登录
+
+		private void LoginButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			LoginButton.IsEnabled = false;
+			MainWindowViewModel.Login().ContinueWith(task =>
+			{
+				Dispatcher?.InvokeAsync(() =>
+				{
+					LoginButton.IsEnabled = true;
+				});
+			});
+		}
+
+		private void ApplyToApiButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			ApplyToApiButton.IsEnabled = false;
+			MainWindowViewModel.ApplyToApi().ContinueWith(task =>
+			{
+				Dispatcher?.InvokeAsync(() =>
+				{
+					ApplyToApiButton.IsEnabled = true;
+				});
+			});
+		}
+
+		#endregion
 	}
 }

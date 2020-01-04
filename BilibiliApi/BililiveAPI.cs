@@ -1,4 +1,4 @@
-﻿using BilibiliApi.Model;
+using BilibiliApi.Model;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -128,6 +128,30 @@ namespace BilibiliApi
 				Debug.WriteLine($@"获取直播间 {roomId} 的信息时出错");
 				throw;
 			}
+		}
+
+		public static async Task<BilibiliToken> LoginAsync(string userName, string password)
+		{
+			var logKey = new LogInKey(await Passport.Passport.GetHash());
+			if (logKey.Code == 0)
+			{
+				var token = new BilibiliToken(await Passport.Passport.Login(logKey.Hash, logKey.Key, userName, password));
+				if (token.Code == 0)
+				{
+					return token;
+				}
+			}
+			return null;
+		}
+
+		public static async Task<BilibiliToken> GetTokenInfo(string accessToken)
+		{
+			var token = new BilibiliToken(await Passport.Passport.GetTokenInfo(accessToken));
+			if (token.Code == 0)
+			{
+				return token;
+			}
+			return null;
 		}
 	}
 }

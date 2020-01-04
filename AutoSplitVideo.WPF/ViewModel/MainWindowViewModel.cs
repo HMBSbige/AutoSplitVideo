@@ -32,7 +32,12 @@ namespace AutoSplitVideo.ViewModel
 			_progressBarValue = 0;
 			_ctsGetDisk = new CancellationTokenSource();
 			StartGetDiskUsage(_ctsGetDisk.Token);
-			InitRooms(CurrentConfig.Rooms);
+
+			Token = CurrentConfig.Token;
+			ApplyToApi().ContinueWith(task =>
+			{
+				InitRooms(CurrentConfig.Rooms);
+			});
 		}
 
 		#region Window
@@ -326,6 +331,110 @@ namespace AutoSplitVideo.ViewModel
 			foreach (var videoConvert in VideoConverter)
 			{
 				videoConvert.Stop();
+			}
+		}
+
+		#endregion
+
+		#region 登录
+
+		private string _account;
+		private string _password;
+		private string _token;
+		private string _status;
+
+		public string Account
+		{
+			get => _account;
+			set => SetField(ref _account, value);
+		}
+
+		public string Password
+		{
+			get => _password;
+			set => SetField(ref _password, value);
+		}
+
+		public string Token
+		{
+			get => _token;
+			set => SetField(ref _token, value);
+		}
+
+		public string Status
+		{
+			get => string.IsNullOrWhiteSpace(_status) ? @"未知" : _status;
+			set => SetField(ref _status, value);
+		}
+
+		private void UpdateStatus(string str)
+		{
+			Status = str;
+			AddLog(str);
+		}
+
+		public async Task Login()
+		{
+			try
+			{
+				var token = await BilibiliApi.BililiveApi.LoginAsync(Account, Password);
+				if (token == null)
+				{
+					UpdateStatus(@"获取 Access Token 失败");
+				}
+				else
+				{
+					Token = token.AccessToken;
+					UpdateStatus($@"获取 Access Token 成功，Token 有效期至 {token.Expires.AddHours(8)}");
+				}
+			}
+			catch (Exception ex)
+			{
+				UpdateStatus($@"获取 Access Token 失败，{ex.Message}");
+			}
+		}
+
+		public async Task ApplyToApi()
+		{
+			if (string.IsNullOrEmpty(Token))
+			{
+				BilibiliApi.BililiveApi.Reload(null);
+				CurrentConfig.Token = string.Empty;
+				UpdateStatus(@"未登录/注销成功");
+			}
+			else if (Token.Length == 32)
+			{
+				if (Token.Contains(@"%2C"))
+				{
+					BilibiliApi.BililiveApi.Reload(Token);
+					CurrentConfig.Token = Token;
+					UpdateStatus(@"Cookie 应用成功");
+				}
+				else
+				{
+					try
+					{
+						var tokenInfo = await BilibiliApi.BililiveApi.GetTokenInfo(Token);
+						if (tokenInfo == null)
+						{
+							UpdateStatus(@"登录失败，Token 错误");
+						}
+						else
+						{
+							BilibiliApi.BililiveApi.Reload(tokenInfo.AccessToken);
+							CurrentConfig.Token = tokenInfo.AccessToken;
+							UpdateStatus($@"登录成功，Token 有效期至 {tokenInfo.Expires.AddHours(8)}");
+						}
+					}
+					catch (Exception ex)
+					{
+						UpdateStatus($@"登录失败，{ex.Message}");
+					}
+				}
+			}
+			else
+			{
+				UpdateStatus($@"登录失败，SESSDATA/Access Token 的长度为 {Token.Length} ≠ 32");
 			}
 		}
 
