@@ -8,8 +8,11 @@ namespace BilibiliApi.Passport
 {
 	public abstract class HttpRequest
 	{
-		private const string DefaultUserAgent = @"Mozilla/5.0 BiliComic/2.11.0";
+		private const string DefaultUserAgent = @"Mozilla/5.0 BiliComic/2.14.0";
 		private const int DefaultTimeout = 10000;
+
+		private const string AppSecret = @"59b43e04ad6965f34319062b478f83dd";
+		private const string Appkey = @"4409e2ce8ffd12b8";
 
 		protected static async Task<string> GetAsync(string url)
 		{
@@ -44,12 +47,11 @@ namespace BilibiliApi.Passport
 		{
 			if (isSign)
 			{
-				const string appSecret = @"560c52ccd288fed045859ed18bffd973";
-				pair[@"appkey"] = @"1d8b6e7d45233436";
+				pair[@"appkey"] = Appkey;
 				pair = pair.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
 				using var temp = new FormUrlEncodedContent(pair);
 				var str = await temp.ReadAsStringAsync();
-				var md5 = Utils.Md5($@"{str}{appSecret}");
+				var md5 = Utils.Md5($@"{str}{AppSecret}");
 				pair.Add(@"sign", md5);
 			}
 
