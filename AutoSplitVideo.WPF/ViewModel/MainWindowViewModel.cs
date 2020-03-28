@@ -312,18 +312,32 @@ namespace AutoSplitVideo.ViewModel
 			set => SetField(ref _videoConverter, value);
 		}
 
-		public void AddConvertTask(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle, bool fixTimestamp)
+		public async void AddConvertTask(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle, bool fixTimestamp)
 		{
-			var videoConvert = new VideoConvert();
-			VideoConverter.Add(videoConvert);
-			videoConvert.Convert(inputPath, outputPath, isDelete, deleteToRecycle, fixTimestamp);
+			try
+			{
+				var videoConvert = new VideoConvert();
+				VideoConverter.Add(videoConvert);
+				await videoConvert.Convert(inputPath, outputPath, isDelete, deleteToRecycle, fixTimestamp);
+			}
+			catch (Exception ex)
+			{
+				AddLog($@"[Error] {ex}");
+			}
 		}
 
 		public void AddSplitTask(string inputPath, string outputPath, string startTime, string duration)
 		{
-			var videoConvert = new VideoConvert();
-			VideoConverter.Add(videoConvert);
-			videoConvert.Split(inputPath, outputPath, startTime, duration);
+			try
+			{
+				var videoConvert = new VideoConvert();
+				VideoConverter.Add(videoConvert);
+				videoConvert.Split(inputPath, outputPath, startTime, duration);
+			}
+			catch (Exception ex)
+			{
+				AddLog($@"[Error] {ex}");
+			}
 		}
 
 		public void StopAllVideoConvert()

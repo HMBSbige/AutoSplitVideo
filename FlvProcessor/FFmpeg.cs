@@ -1,4 +1,4 @@
-﻿using FlvProcessor.Event;
+using FlvProcessor.Event;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -75,7 +75,7 @@ namespace FlvProcessor
 			throw new FileNotFoundException(@"未找到 FFmpeg！", FFmpegExePath);
 		}
 
-		public async void StartAsync(string parameters)
+		public async Task StartAsync(string parameters)
 		{
 			await Task.Yield();
 

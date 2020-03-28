@@ -50,12 +50,12 @@ namespace AutoSplitVideo.Model
 			_flvFile = null;
 		}
 
-		public void Convert(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle, bool fixTimestamp)
+		public async Task Convert(string inputPath, string outputPath, bool isDelete, bool deleteToRecycle, bool fixTimestamp)
 		{
 			Stop();
 			if (fixTimestamp)
 			{
-				Task.Run(() =>
+				await Task.Run(async () =>
 				{
 					Description = $@"时间戳修复：""{inputPath}""";
 					CurrentStatus = @"正在抽取";
@@ -96,7 +96,7 @@ namespace AutoSplitVideo.Model
 						File.Delete(audio);
 					};
 					Description = $@"封装：""{video}"" + ""{audio}"" => ""{outputPath}""";
-					_ffmpeg.StartAsync(parameters);
+					await _ffmpeg.StartAsync(parameters);
 				});
 			}
 			else
@@ -119,7 +119,7 @@ namespace AutoSplitVideo.Model
 					}
 				};
 				Description = $@"转封装：""{inputPath}"" => ""{outputPath}""";
-				_ffmpeg.StartAsync(parameters);
+				await _ffmpeg.StartAsync(parameters);
 			}
 		}
 
