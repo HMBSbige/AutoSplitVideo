@@ -2,11 +2,12 @@
 using BilibiliApi.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
+using System.IO.Compression;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -116,72 +117,91 @@ namespace BilibiliApi
 		{
 			try
 			{
-				var stableBuffer = new byte[_client.ReceiveBufferSize];
+				var headerBuff = new byte[16];
 				while (DmTcpConnected)
 				{
-					_dmNetStream.ReadB(stableBuffer, 0, 4);
-					var packetLength = BitConverter.ToInt32(stableBuffer, 0);
-					packetLength = IPAddress.NetworkToHostOrder(packetLength);
+					_dmNetStream.ReadB(headerBuff, 0, 16);
+					var protocol = new DanmuProtocol(headerBuff);
 
-					if (packetLength < 16)
+					if (protocol.PacketLength < 16)
 					{
-						throw new NotSupportedException($@"协议失败: (L:{packetLength})");
+						throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
 					}
-
-					_dmNetStream.ReadB(stableBuffer, 0, 2);//magic
-					_dmNetStream.ReadB(stableBuffer, 0, 2);//protocol_version 
-					_dmNetStream.ReadB(stableBuffer, 0, 4);
-					var typeId = BitConverter.ToInt32(stableBuffer, 0);
-					typeId = IPAddress.NetworkToHostOrder(typeId);
-
-					_dmNetStream.ReadB(stableBuffer, 0, 4);//magic, params?
-					var playLoadLength = packetLength - 16;
-					if (playLoadLength == 0)
+					var bodyLength = protocol.PacketLength - 16;
+					if (bodyLength == 0)
 					{
-						continue;//没有内容了
+						continue; //没有内容了
 					}
-
-					typeId -= 1;//和反编译的代码对应 
-					var buffer = new byte[playLoadLength];
-					_dmNetStream.ReadB(buffer, 0, playLoadLength);
-					switch (typeId)
+					var buffer = new byte[bodyLength];
+					_dmNetStream.ReadB(buffer, 0, bodyLength);
+					switch (protocol.Version)
 					{
-						case 0:
 						case 1:
-						case 2:
 						{
-							var unused = BitConverter.ToUInt32(buffer.Take(4).Reverse().ToArray(), 0); //观众人数
+							ProcessDanmu(protocol.Operation, buffer, bodyLength);
 							break;
 						}
-						case 3:
-						case 4://playerCommand
+						case 2:
 						{
-							var json = Encoding.UTF8.GetString(buffer, 0, playLoadLength);
-							try
+							using var ms = new MemoryStream(buffer, 2, bodyLength - 2);
+							using var deflate = new DeflateStream(ms, CompressionMode.Decompress);
+							while (deflate.Read(headerBuff, 0, 16) > 0)
 							{
-								ReceivedDanmaku?.Invoke(this, new ReceivedDanmakuArgs { Danmaku = new Danmaku(json) });
-							}
-							catch (KeyNotFoundException)
-							{
-								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕识别错误 {json}" });
-							}
-							catch (Exception ex)
-							{
-								LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
+								protocol = new DanmuProtocol(headerBuff);
+								bodyLength = protocol.PacketLength - 16;
+								if (bodyLength == 0)
+								{
+									continue; // 没有内容了
+								}
+								if (buffer.Length < bodyLength) // 不够长再申请
+								{
+									buffer = new byte[bodyLength];
+								}
+								deflate.Read(buffer, 0, bodyLength);
+								ProcessDanmu(protocol.Operation, buffer, bodyLength);
 							}
 							break;
 						}
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
+				Debug.WriteLine(ex);
 				_client?.Close();
 				_dmNetStream = null;
 				if (!(_cts?.IsCancellationRequested ?? true))
 				{
 					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕连接被断开，将尝试重连" });
 					ConnectWithRetry();
+				}
+			}
+		}
+
+		private void ProcessDanmu(int opt, byte[] buffer, int length)
+		{
+			switch (opt)
+			{
+				case 5:
+				{
+					var json = string.Empty;
+					try
+					{
+						json = Encoding.UTF8.GetString(buffer, 0, length);
+						ReceivedDanmaku?.Invoke(this, new ReceivedDanmakuArgs { Danmaku = new Danmaku(json) });
+					}
+					catch (Exception ex)
+					{
+						if (ex is JsonException || ex is KeyNotFoundException)
+						{
+							LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕识别错误 {json}" });
+						}
+						else
+						{
+							LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
+						}
+					}
+					break;
 				}
 			}
 		}

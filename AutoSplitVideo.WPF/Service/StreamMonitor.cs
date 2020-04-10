@@ -105,7 +105,7 @@ namespace AutoSplitVideo.Service
 			try
 			{
 				await Task.Delay(millisecondsDelay);
-				StreamStarted?.Invoke(this, new StreamStartedArgs { Type = type, IsLive = (await FetchRoomInfoAsync()).IsStreaming });
+				StreamStarted?.Invoke(this, new StreamStartedArgs { Type = type, IsLive = (await FetchRoomInfoAsync())?.IsStreaming ?? false });
 			}
 			catch (Exception ex)
 			{
