@@ -136,6 +136,7 @@ namespace BilibiliApi
 					_dmNetStream.ReadB(buffer, 0, bodyLength);
 					switch (protocol.Version)
 					{
+						case 0:
 						case 1:
 						{
 							ProcessDanmu(protocol.Operation, buffer, bodyLength);
@@ -160,6 +161,11 @@ namespace BilibiliApi
 								deflate.Read(buffer, 0, bodyLength);
 								ProcessDanmu(protocol.Operation, buffer, bodyLength);
 							}
+							break;
+						}
+						default:
+						{
+							LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕协议不支持" });
 							break;
 						}
 					}
