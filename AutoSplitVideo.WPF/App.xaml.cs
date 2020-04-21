@@ -89,7 +89,7 @@ namespace AutoSplitVideo
 			{
 				Debug.WriteLine($@"已是最新版本：{UpdateChecker.Version} ≥ {updater.LatestVersionNumber}");
 			};
-			await updater.Check(true, true);
+			await updater.Check(true, false);
 		}
 
 		private void SingleInstance_ArgumentsReceived(object sender, ArgumentsReceivedEventArgs e)
