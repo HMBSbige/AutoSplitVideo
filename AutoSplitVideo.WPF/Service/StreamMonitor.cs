@@ -133,28 +133,24 @@ namespace AutoSplitVideo.Service
 
 		#region IDisposable Support
 		private bool _disposedValue; // 要检测冗余调用
-		private readonly object _lock = new object();
 
 		private void Dispose(bool disposing)
 		{
-			lock (_lock)
+			if (!_disposedValue)
 			{
-				if (_disposedValue)
+				if (disposing)
 				{
-					return;
+					_httpTimer?.Dispose();
+					_danMuClient?.Dispose();
+					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] 弹幕连接已断开" });
 				}
+
+				RoomInfoUpdated = null;
+				StreamStarted = null;
+				LogEvent = null;
+
 				_disposedValue = true;
 			}
-			if (disposing)
-			{
-				_httpTimer?.Dispose();
-				_danMuClient?.Dispose();
-				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{RoomId}] 弹幕连接已断开" });
-			}
-
-			RoomInfoUpdated = null;
-			StreamStarted = null;
-			LogEvent = null;
 		}
 
 		public void Dispose()

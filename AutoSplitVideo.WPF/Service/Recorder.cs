@@ -53,9 +53,9 @@ namespace AutoSplitVideo.Service
 					url = await BililiveApi.GetPlayUrlAsync(_currentRoom.RoomId);
 					url = await GetRedirectUrl(url);
 				}
-				catch (Exception ex)
+				catch(Exception ex)
 				{
-					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] {ex.Message}" });
+					LogEvent?.Invoke(this, new LogEventArgs {Log = $@"[{_currentRoom.RoomId}] {ex.Message}" });
 					await ReCheck();
 					continue;
 				}
@@ -169,25 +169,22 @@ namespace AutoSplitVideo.Service
 
 		#region IDisposable Support
 		private bool _disposedValue; // 要检测冗余调用
-		private readonly object _lock = new object();
+
 		private void Dispose(bool disposing)
 		{
-			lock (_lock)
+			if (!_disposedValue)
 			{
-				if (_disposedValue)
+				if (disposing)
 				{
-					return;
+					Stop();
+					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 不再录制" });
 				}
+
+				_response = null;
+				_downLoadTask = null;
+
 				_disposedValue = true;
 			}
-			if (disposing)
-			{
-				Stop();
-				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_currentRoom.RoomId}] 不再录制" });
-			}
-
-			_response = null;
-			_downLoadTask = null;
 			_currentRoom.IsRecording = RecordingStatus.Stopped;
 		}
 

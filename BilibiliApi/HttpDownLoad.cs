@@ -67,29 +67,25 @@ namespace BilibiliApi
 		}
 
 		#region IDisposable Support
-		private bool _disposedValue = false; // 要检测冗余调用
-		private readonly object _lock = new object();
+		private bool disposedValue = false; // 要检测冗余调用
 
 		private void Dispose(bool disposing)
 		{
-			lock (_lock)
+			if (!disposedValue)
 			{
-				if (_disposedValue)
+				if (disposing)
 				{
-					return;
+					_tokenSource?.Cancel();
+					_tokenSource?.Dispose();
+					_responseStream?.Dispose();
+					_fileStream?.Dispose();
 				}
-				_disposedValue = true;
-			}
-			if (disposing)
-			{
-				_tokenSource?.Cancel();
-				_tokenSource?.Dispose();
-				_responseStream?.Dispose();
-				_fileStream?.Dispose();
-			}
 
-			_fileStream = null;
-			_responseStream = null;
+				_fileStream = null;
+				_responseStream = null;
+
+				disposedValue = true;
+			}
 		}
 
 		public void Dispose()
