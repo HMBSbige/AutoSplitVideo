@@ -242,23 +242,27 @@ namespace BilibiliApi
 
 		#region IDisposable Support
 		private bool _disposedValue; // 要检测冗余调用
+		private readonly object _lock = new object();
 
 		private void Dispose(bool disposing)
 		{
-			if (!_disposedValue)
+			lock (_lock)
 			{
-				if (disposing)
+				if (_disposedValue)
 				{
-					_cts?.Cancel();
-					_cts?.Dispose();
-					_client?.Close();
-					_client?.Dispose();
-					_dmNetStream?.Dispose();
+					return;
 				}
-				_dmNetStream = null;
-
 				_disposedValue = true;
 			}
+			if (disposing)
+			{
+				_cts?.Cancel();
+				_cts?.Dispose();
+				_client?.Close();
+				_client?.Dispose();
+				_dmNetStream?.Dispose();
+			}
+			_dmNetStream = null;
 		}
 
 		public void Dispose()
