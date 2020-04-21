@@ -41,14 +41,14 @@ namespace BilibiliApi
 			_timingDanmakuRetry = timingDanmakuRetry;
 		}
 
-		public void Start()
+		public async void Start()
 		{
-			ConnectWithRetry();
+			await ConnectWithRetry(_cts.Token);
 		}
 
 		private void HeartBeatTask(CancellationToken token)
 		{
-			Task.Factory.StartNew(() =>
+			Task.Factory.StartNew(async () =>
 			{
 				while (true)
 				{
@@ -56,14 +56,19 @@ namespace BilibiliApi
 					{
 						try
 						{
-							SendSocketData(2);
+							await SendSocketData(2, token: token);
 						}
 						catch
 						{
 							// ignored
 						}
 					}
-					if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
+
+					try
+					{
+						await Task.Delay(TimeSpan.FromSeconds(30), token);
+					}
+					catch (TaskCanceledException)
 					{
 						break;
 					}
@@ -71,14 +76,21 @@ namespace BilibiliApi
 			}, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
 
-		private async void ConnectWithRetry()
+		private async Task ConnectWithRetry(CancellationToken token)
 		{
 			var connectResult = false;
-			while (!DmTcpConnected && !_cts.Token.IsCancellationRequested)
+			while (!DmTcpConnected && !token.IsCancellationRequested)
 			{
-				await Task.Delay(_timingDanmakuRetry);
+				try
+				{
+					await Task.Delay(_timingDanmakuRetry, token);
+				}
+				catch (TaskCanceledException)
+				{
+					break;
+				}
 				LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 正在连接弹幕服务器..." });
-				connectResult = Connect();
+				connectResult = await ConnectAsync(token);
 			}
 
 			if (connectResult)
@@ -87,7 +99,7 @@ namespace BilibiliApi
 			}
 		}
 
-		private bool Connect()
+		private async Task<bool> ConnectAsync(CancellationToken token)
 		{
 			if (DmTcpConnected)
 			{
@@ -97,13 +109,11 @@ namespace BilibiliApi
 			try
 			{
 				_client = new TcpClient();
-				_client.Connect(DmServerHost, DmServerPort);
+				await _client.ConnectAsync(DmServerHost, DmServerPort);
 				_dmNetStream = _client.GetStream();
-				Task.Run(ReceiveMessageLoop);
-
-				SendSocketData(7, $@"{{""roomid"":{_roomId},""uid"":0}}");
-				SendSocketData(2);
-
+				Task.Run(async () => { await ReceiveMessageLoop(token); }, token).NoWarning();
+				await SendSocketData(7, $@"{{""roomid"":{_roomId},""uid"":0}}", token);
+				await SendSocketData(2, token: token);
 				return true;
 			}
 			catch
@@ -113,14 +123,14 @@ namespace BilibiliApi
 			}
 		}
 
-		private void ReceiveMessageLoop()
+		private async Task ReceiveMessageLoop(CancellationToken token)
 		{
 			try
 			{
 				var headerBuff = new byte[16];
 				while (DmTcpConnected)
 				{
-					_dmNetStream.ReadB(headerBuff, 0, 16);
+					await _dmNetStream.ReadByteAsync(headerBuff, 0, 16, token);
 					var protocol = new DanmuProtocol(headerBuff);
 
 					if (protocol.PacketLength < 16)
@@ -133,7 +143,7 @@ namespace BilibiliApi
 						continue; //没有内容了
 					}
 					var buffer = new byte[bodyLength];
-					_dmNetStream.ReadB(buffer, 0, bodyLength);
+					await _dmNetStream.ReadByteAsync(buffer, 0, bodyLength, token);
 					switch (protocol.Version)
 					{
 						case 0:
@@ -144,9 +154,9 @@ namespace BilibiliApi
 						}
 						case 2:
 						{
-							using var ms = new MemoryStream(buffer, 2, bodyLength - 2);
-							using var deflate = new DeflateStream(ms, CompressionMode.Decompress);
-							while (deflate.Read(headerBuff, 0, 16) > 0)
+							await using var ms = new MemoryStream(buffer, 2, bodyLength - 2);
+							await using var deflate = new DeflateStream(ms, CompressionMode.Decompress);
+							while (await deflate.ReadAsync(headerBuff, 0, 16, token) > 0)
 							{
 								protocol = new DanmuProtocol(headerBuff);
 								bodyLength = protocol.PacketLength - 16;
@@ -158,7 +168,7 @@ namespace BilibiliApi
 								{
 									buffer = new byte[bodyLength];
 								}
-								deflate.Read(buffer, 0, bodyLength);
+								await deflate.ReadAsync(buffer, 0, bodyLength, token);
 								ProcessDanmu(protocol.Operation, buffer, bodyLength);
 							}
 							break;
@@ -176,12 +186,40 @@ namespace BilibiliApi
 				Debug.WriteLine(ex);
 				_client?.Close();
 				_dmNetStream = null;
-				if (!(_cts?.IsCancellationRequested ?? true))
+				if (!token.IsCancellationRequested)
 				{
 					LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕连接被断开，将尝试重连" });
-					ConnectWithRetry();
+					await ConnectWithRetry(token);
 				}
 			}
+		}
+
+		private async Task SendSocketData(int action, string body = @"", CancellationToken token = default)
+		{
+			const int param = 1;
+			const short magic = 16;
+			const short ver = 1;
+
+			var playLoad = Encoding.UTF8.GetBytes(body);
+			var buffer = new byte[playLoad.Length + 16];
+
+			await using var ms = new MemoryStream(buffer);
+			var b = BitConverter.GetBytes(buffer.Length).ToBE();
+			await ms.WriteAsync(b, 0, 4, token);
+			b = BitConverter.GetBytes(magic).ToBE();
+			await ms.WriteAsync(b, 0, 2, token);
+			b = BitConverter.GetBytes(ver).ToBE();
+			await ms.WriteAsync(b, 0, 2, token);
+			b = BitConverter.GetBytes(action).ToBE();
+			await ms.WriteAsync(b, 0, 4, token);
+			b = BitConverter.GetBytes(param).ToBE();
+			await ms.WriteAsync(b, 0, 4, token);
+			if (playLoad.Length > 0)
+			{
+				await ms.WriteAsync(playLoad, 0, playLoad.Length, token);
+			}
+			await _dmNetStream.WriteAsync(buffer, 0, buffer.Length, token);
+			_dmNetStream.Flush();
 		}
 
 		private void ProcessDanmu(int opt, byte[] buffer, int length)
@@ -207,37 +245,10 @@ namespace BilibiliApi
 							LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
 						}
 					}
+
 					break;
 				}
 			}
-		}
-
-		private void SendSocketData(int action, string body = @"")
-		{
-			const int param = 1;
-			const short magic = 16;
-			const short ver = 1;
-
-			var playLoad = Encoding.UTF8.GetBytes(body);
-			var buffer = new byte[playLoad.Length + 16];
-
-			using var ms = new MemoryStream(buffer);
-			var b = BitConverter.GetBytes(buffer.Length).ToBE();
-			ms.Write(b, 0, 4);
-			b = BitConverter.GetBytes(magic).ToBE();
-			ms.Write(b, 0, 2);
-			b = BitConverter.GetBytes(ver).ToBE();
-			ms.Write(b, 0, 2);
-			b = BitConverter.GetBytes(action).ToBE();
-			ms.Write(b, 0, 4);
-			b = BitConverter.GetBytes(param).ToBE();
-			ms.Write(b, 0, 4);
-			if (playLoad.Length > 0)
-			{
-				ms.Write(playLoad, 0, playLoad.Length);
-			}
-			_dmNetStream.Write(buffer, 0, buffer.Length);
-			_dmNetStream.Flush();
 		}
 
 		#region IDisposable Support

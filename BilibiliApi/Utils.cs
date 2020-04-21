@@ -1,20 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BilibiliApi
 {
 	public static class Utils
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void NoWarning(this Task t)
+		{ }
+
 		internal static byte[] ToBE(this byte[] b)
 		{
 			return BitConverter.IsLittleEndian ? b.Reverse().ToArray() : b;
 		}
 
-		internal static void ReadB(this NetworkStream stream, byte[] buffer, int offset, int count)
+		internal static async Task ReadByteAsync(this NetworkStream stream, byte[] buffer, int offset, int count, CancellationToken token = default)
 		{
 			if (offset + count > buffer.Length)
 			{
@@ -24,7 +31,7 @@ namespace BilibiliApi
 			var read = 0;
 			while (read < count)
 			{
-				var available = stream.Read(buffer, offset, count - read);
+				var available = await stream.ReadAsync(buffer, offset, count - read, token);
 				if (available == 0)
 				{
 					throw new ObjectDisposedException(null);
