@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BilibiliApi", "BilibiliApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlvProcessor", "FlvProcessor\FlvProcessor.csproj", "{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppHostPatcher", "AppHostPatcher\AppHostPatcher.csproj", "{C8EA2CA2-A905-4A98-8992-655A071D5A31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2E136BD-16EE-4B80-A67E-BBA92EF5CAF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8EA2CA2-A905-4A98-8992-655A071D5A31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8EA2CA2-A905-4A98-8992-655A071D5A31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8EA2CA2-A905-4A98-8992-655A071D5A31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8EA2CA2-A905-4A98-8992-655A071D5A31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
