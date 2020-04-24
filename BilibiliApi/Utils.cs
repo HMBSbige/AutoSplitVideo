@@ -13,12 +13,27 @@ namespace BilibiliApi
 	public static class Utils
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void NoWarning(this Task t)
-		{ }
+		public static void NoWarning(this Task t) { }
 
 		internal static byte[] ToBE(this byte[] b)
 		{
 			return BitConverter.IsLittleEndian ? b.Reverse().ToArray() : b;
+		}
+
+		internal static short ToInt16(this byte[] bytes, int startIndex)
+		{
+			var a = new byte[2];
+			Buffer.BlockCopy(bytes, startIndex, a, 0, a.Length);
+			var buff = BitConverter.IsLittleEndian ? a.Reverse().ToArray() : a;
+			return BitConverter.ToInt16(buff, 0);
+		}
+
+		internal static int ToInt32(this byte[] bytes, int startIndex)
+		{
+			var a = new byte[4];
+			Buffer.BlockCopy(bytes, startIndex, a, 0, a.Length);
+			var buff = BitConverter.IsLittleEndian ? a.Reverse().ToArray() : a;
+			return BitConverter.ToInt32(buff, 0);
 		}
 
 		internal static async Task ReadByteAsync(this NetworkStream stream, byte[] buffer, int offset, int count, CancellationToken token = default)

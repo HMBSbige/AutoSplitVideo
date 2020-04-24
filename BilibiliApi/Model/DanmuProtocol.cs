@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-
-namespace BilibiliApi.Model
+﻿namespace BilibiliApi.Model
 {
 	public class DanmuProtocol
 	{
@@ -13,11 +10,11 @@ namespace BilibiliApi.Model
 
 		public DanmuProtocol(byte[] buff)
 		{
-			PacketLength = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buff, 0));
-			HeaderLength = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(buff, 4));
-			Version = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(buff, 6));
-			Operation = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buff, 8));
-			SeqId = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buff, 12));
+			PacketLength = buff.ToInt32(0);
+			HeaderLength = buff.ToInt16(4);
+			Version = buff.ToInt16(6);
+			Operation = buff.ToInt32(8);
+			SeqId = buff.ToInt32(12);
 		}
 	}
 }
