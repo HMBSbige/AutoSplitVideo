@@ -299,7 +299,7 @@ namespace AutoSplitVideo.View
 		private void TextBox_OnPreviewDrop(object sender, DragEventArgs e)
 		{
 			if (!(sender is TextBox textBox)) return;
-			var path = ((Array)e.Data.GetData(DataFormats.FileDrop))?.GetValue(0).ToString();
+			var path = ((Array)e.Data.GetData(DataFormats.FileDrop))?.GetValue(0)?.ToString();
 			if (path != null && File.Exists(path))
 			{
 				path = Path.GetFullPath(path);
@@ -312,7 +312,7 @@ namespace AutoSplitVideo.View
 		private void TextBox2_OnPreviewDrop(object sender, DragEventArgs e)
 		{
 			if (!(sender is TextBox textBox)) return;
-			var path = ((Array)e.Data.GetData(DataFormats.FileDrop))?.GetValue(0).ToString();
+			var path = ((Array)e.Data.GetData(DataFormats.FileDrop))?.GetValue(0)?.ToString();
 			if (path != null && (File.Exists(path) || Directory.Exists(path)))
 			{
 				path = Path.GetFullPath(path);

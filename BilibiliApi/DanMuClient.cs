@@ -261,7 +261,7 @@ namespace BilibiliApi
 				if (disposing)
 				{
 					_cts?.Cancel();
-					_cts?.Dispose();
+					//_cts?.Dispose();
 					_client?.Close();
 					_client?.Dispose();
 					_dmNetStream?.Dispose();

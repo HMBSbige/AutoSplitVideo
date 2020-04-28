@@ -61,7 +61,7 @@ namespace BilibiliApi
 		{
 			get
 			{
-				var version = typeof(Utils).Assembly.GetName().Version.ToString();
+				var version = typeof(Utils).Assembly.GetName().Version?.ToString();
 				return $@"Mozilla/5.0 AutoSplitVideo/{version} (+https://github.com/HMBSbige/AutoSplitVideo)";
 			}
 		}

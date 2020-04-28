@@ -76,7 +76,7 @@ namespace BilibiliApi
 				if (disposing)
 				{
 					_tokenSource?.Cancel();
-					_tokenSource?.Dispose();
+					//_tokenSource?.Dispose();
 					_responseStream?.Dispose();
 					_fileStream?.Dispose();
 				}
