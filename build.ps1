@@ -67,7 +67,7 @@ function Build-NetCoreSelfContained
 
 	Remove-Item $publishDir -Recurse -Force -Confirm:$false -ErrorAction Ignore
 
-	dotnet publish -c $configuration -f $netcore_tfm -r $rid --self-contained
+	msbuild -v:m -m -r -t:Publish -p:Configuration=$configuration -p:RuntimeIdentifier=$rid -p:SelfContained=True -p:Platform=$arch
 
 	if ($LASTEXITCODE) { cd $mainDir ; exit $LASTEXITCODE }
 	
