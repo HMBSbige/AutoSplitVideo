@@ -20,7 +20,7 @@ namespace BilibiliApi.Passport
 
 		public static async Task<string> Login(string hash, string publicKey, string username, string password)
 		{
-			const string requestUri = @"api/oauth2/login";
+			const string requestUri = @"api/v3/oauth2/login";
 			password = Utils.RsaEncrypt(publicKey, $@"{hash}{password}");
 			var pair = new Dictionary<string, string>
 			{

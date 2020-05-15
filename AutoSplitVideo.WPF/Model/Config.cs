@@ -18,6 +18,8 @@ namespace AutoSplitVideo.Model
 		private bool _deleteToRecycle;
 		private bool _fixTimestamp;
 		private string _token;
+		private string _refreshToken;
+		private string _cookie;
 
 		#endregion
 
@@ -69,6 +71,18 @@ namespace AutoSplitVideo.Model
 		{
 			get => BilibiliApi.Utils.IsToken(_token) ? _token : string.Empty;
 			set => SetField(ref _token, value);
+		}
+
+		public string RefreshToken
+		{
+			get => _refreshToken;
+			set => SetField(ref _refreshToken, value);
+		}
+
+		public string Cookie
+		{
+			get => _cookie;
+			set => SetField(ref _cookie, value);
 		}
 
 		#endregion

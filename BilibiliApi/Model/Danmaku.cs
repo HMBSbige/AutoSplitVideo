@@ -69,7 +69,6 @@ namespace BilibiliApi.Model
 
 		public Danmaku(string json)
 		{
-			// TODO: 检查验证
 			RawData = json;
 			JsonVersion = 2;
 

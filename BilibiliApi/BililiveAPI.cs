@@ -21,16 +21,23 @@ namespace BilibiliApi
 			Reload(null);
 		}
 
-		public static void Reload(string token)
+		public static void Reload(string cookie)
 		{
-			_httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+			if (string.IsNullOrEmpty(cookie))
+			{
+				_httpClient = new HttpClient();
+			}
+			else
+			{
+				_httpClient = new HttpClient(new HttpClientHandler { UseCookies = false, UseDefaultCredentials = false }, true);
+				_httpClient.DefaultRequestHeaders.Add(@"Cookie", cookie);
+			}
+
+			_httpClient.DefaultRequestVersion = new Version(2, 0);
+			_httpClient.Timeout = TimeSpan.FromSeconds(10);
 			_httpClient.DefaultRequestHeaders.Add(@"Accept", @"application/json, text/javascript, */*; q=0.01");
 			_httpClient.DefaultRequestHeaders.Add(@"Referer", @"https://live.bilibili.com/");
 			_httpClient.DefaultRequestHeaders.Add(@"User-Agent", Utils.UserAgent);
-			if (!string.IsNullOrEmpty(token))
-			{
-				_httpClient.DefaultRequestHeaders.Add(@"Cookie", $@"SESSDATA={token}");
-			}
 		}
 
 		public static async Task<string> GetAsync(string url)
@@ -125,12 +132,12 @@ namespace BilibiliApi
 			}
 		}
 
-		public static async Task<BilibiliToken> LoginAsync(string userName, string password)
+		public static async Task<BilibiliTokenv3> LoginAsync(string userName, string password)
 		{
 			var logKey = new LogInKey(await Passport.Passport.GetHash());
 			if (logKey.Code == 0)
 			{
-				var token = new BilibiliToken(await Passport.Passport.Login(logKey.Hash, logKey.Key, userName, password));
+				var token = new BilibiliTokenv3(await Passport.Passport.Login(logKey.Hash, logKey.Key, userName, password));
 				if (token.Code == 0)
 				{
 					return token;
@@ -145,16 +152,46 @@ namespace BilibiliApi
 			return token.Code == 0 ? token : null;
 		}
 
-		public static async Task RevokeToken(string accessToken)
+		public static async Task<bool> RevokeToken(string accessToken)
 		{
-			//TODO
 			try
 			{
-				await Passport.Passport.Revoke(accessToken);
+				var json = await Passport.Passport.Revoke(accessToken);
+				using var document = JsonDocument.Parse(json);
+				var root = document.RootElement;
+				return root.TryGetProperty(@"code", out var code) && code.GetInt32() == 0;
 			}
 			catch
 			{
-				// ignored
+				return false;
+			}
+		}
+
+		public static async Task<bool> CheckLoginStatus()
+		{
+			try
+			{
+				var json = await GetAsync(@"https://api.bilibili.com/x/space/myinfo");
+				using var document = JsonDocument.Parse(json);
+				var root = document.RootElement;
+				return root.TryGetProperty(@"code", out var code) && code.GetInt32() == 0;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public static async Task<bool> Logout()
+		{
+			try
+			{
+				var res = await _httpClient.GetAsync(@"https://passport.bilibili.com/login?act=exit");
+				return res.StatusCode == HttpStatusCode.OK;
+			}
+			catch
+			{
+				return false;
 			}
 		}
 	}

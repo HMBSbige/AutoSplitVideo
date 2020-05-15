@@ -30,8 +30,18 @@
 				<valueConverter:ProgressValueToBrushConverter x:Key="ProgressValueToBrushConverter" />
 				<valueConverter:LiveStatusConverter x:Key="LiveStatusConverter" />
 				<valueConverter:RecordingStatusConverter x:Key="RecordingStatusConverter" />
+
 				<SolidColorBrush Color="LightGray" x:Key="GridLinesBrush" />
-			</ResourceDictionary>
+				<SolidColorBrush x:Key="DisabledBackgroundBrush" Color="LightGray" />
+
+				<Style TargetType="{x:Type xctk:WatermarkTextBox}">
+					<Style.Triggers>
+						<Trigger Property="IsReadOnly" Value="True">
+							<Setter Property="Background" Value="{StaticResource DisabledBackgroundBrush}" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+		</ResourceDictionary>
 		</Window.Resources>
 	<Grid>
 		<tb:TaskbarIcon x:Name="NotifyIcon"
@@ -318,10 +328,27 @@
 							<xctk:WatermarkTextBox Margin="3" Watermark="密码"
 							Text="{Binding Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
-							<Button x:Name="LoginButton" Margin="3,3,3,6" Padding="2" Content="获取 Token" HorizontalAlignment="Left" Click="LoginButton_OnClick"/>
+							<Button x:Name="LoginButton" Margin="3,3,3,6" Padding="2" Content="获取 Token" HorizontalAlignment="Left" Click="LoginButton_OnClick" />
 
-							<xctk:WatermarkTextBox Margin="3" Watermark="SESSDATA/Access Token"
-							Text="{Binding Token,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+							<WrapPanel>
+								<TextBlock Text="或" Margin="3" VerticalAlignment="Center"/>
+								<Button x:Name="CookieButton" Margin="3,3,3,6" Padding="2" Content="获取 Cookie" HorizontalAlignment="Left" Click="CookieButton_OnClick" />
+							</WrapPanel>
+
+							<xctk:WatermarkTextBox Margin="3" Watermark="Cookie"
+							Text="{Binding Cookie,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+
+							<xctk:WatermarkTextBox Margin="3" Watermark="Access Token (可选)"
+							Text="{Binding Token,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+							<xctk:WatermarkTextBox Margin="3" Watermark="Refresh Token" IsReadOnly="True"
+							Text="{Binding RefreshToken,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+							<xctk:WatermarkTextBox Margin="3" Watermark="csrf" IsReadOnly="True"
+							Text="{Binding Csrf,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+							<xctk:WatermarkTextBox Margin="3" Watermark="uid" IsReadOnly="True"
+							Text="{Binding Uid,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
 							<WrapPanel>
 								<Button x:Name="ApplyToApiButton"

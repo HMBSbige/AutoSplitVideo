@@ -6,6 +6,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -533,10 +534,20 @@ namespace AutoSplitVideo.View
 
 		#region 登录
 
+		private void CookieButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			var cookie = new Dictionary<string, string>();
+			var window = new ChromeWindow(cookie) { Owner = this };
+			if (window.ShowDialog() == true)
+			{
+				MainWindowViewModel.ParseCookie(cookie);
+			}
+		}
+
 		private void LoginButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			LoginButton.IsEnabled = false;
-			MainWindowViewModel.Login().ContinueWith(task =>
+			MainWindowViewModel.GetToken().ContinueWith(task =>
 			{
 				Dispatcher?.InvokeAsync(() => { LoginButton.IsEnabled = true; });
 			});

@@ -4,6 +4,7 @@ using AutoSplitVideo.Service;
 using AutoSplitVideo.Utils;
 using AutoSplitVideo.View;
 using BilibiliApi.Event;
+using BilibiliApi.Model;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
@@ -356,6 +357,10 @@ namespace AutoSplitVideo.ViewModel
 		private string _password;
 		private string _token;
 		private string _status;
+		private string _refreshToken;
+		private string _cookie;
+		private string _csrf;
+		private string _uid;
 
 		public string Account
 		{
@@ -381,13 +386,49 @@ namespace AutoSplitVideo.ViewModel
 			set => SetField(ref _status, value);
 		}
 
+		public string RefreshToken
+		{
+			get => _refreshToken;
+			set => SetField(ref _refreshToken, value);
+		}
+
+		public string Cookie
+		{
+			get => _cookie;
+			set
+			{
+				SetField(ref _cookie, value);
+				var b = new BilibiliCookie(_cookie);
+				Csrf = b.bili_jct;
+				Uid = b.DedeUserID;
+			}
+		}
+
+		public string Csrf
+		{
+			get => _csrf;
+			set => SetField(ref _csrf, value);
+		}
+
+		public string Uid
+		{
+			get => _uid;
+			set => SetField(ref _uid, value);
+		}
+
 		private void UpdateStatus(string str)
 		{
 			Status = str;
 			AddLog(str);
 		}
 
-		public async Task Login()
+		public void ParseCookie(Dictionary<string, string> cookies)
+		{
+			var b = new BilibiliCookie(cookies);
+			Cookie = b.ToString();
+		}
+
+		public async Task GetToken()
 		{
 			try
 			{
@@ -399,6 +440,8 @@ namespace AutoSplitVideo.ViewModel
 				else
 				{
 					Token = token.AccessToken;
+					RefreshToken = token.RefreshToken;
+					Cookie = token.Cookie.ToString();
 					UpdateStatus($@"获取 Access Token 成功，Token 有效期至 {token.Expires.AddHours(8)}");
 					Account = Password = string.Empty;
 				}
@@ -411,66 +454,95 @@ namespace AutoSplitVideo.ViewModel
 
 		public async Task ApplyToApi()
 		{
-			if (string.IsNullOrEmpty(Token))
+			try
 			{
-				BilibiliApi.BililiveApi.Reload(null);
-				CurrentConfig.Token = string.Empty;
-				UpdateStatus(@"未登录/注销成功");
-			}
-			else if (Token.Length == 32)
-			{
-				if (Token.Contains(@"%2C"))
+				if (string.IsNullOrEmpty(Cookie) && string.IsNullOrEmpty(Token))
 				{
-					BilibiliApi.BililiveApi.Reload(Token);
-					CurrentConfig.Token = Token;
-					UpdateStatus(@"Cookie 应用成功");
+					BilibiliApi.BililiveApi.Reload(null);
+					UpdateStatus(@"未登录/注销成功");
+					return;
 				}
-				else if (BilibiliApi.Utils.IsToken(Token))
+
+				if (!string.IsNullOrEmpty(Cookie))
+				{
+					BilibiliApi.BililiveApi.Reload(Cookie);
+					if (await BilibiliApi.BililiveApi.CheckLoginStatus())
+					{
+						UpdateStatus(@"Cookie 登录成功");
+						return;
+					}
+
+					UpdateStatus(@"Cookie 登录失败");
+					BilibiliApi.BililiveApi.Reload(null);
+				}
+
+				if (BilibiliApi.Utils.IsToken(Token))
 				{
 					try
 					{
 						var tokenInfo = await BilibiliApi.BililiveApi.GetTokenInfo(Token);
 						if (tokenInfo == null)
 						{
-							UpdateStatus(@"登录失败，Token 错误");
+							UpdateStatus(@"Token 登录失败，Token 错误");
 						}
 						else
 						{
-							BilibiliApi.BililiveApi.Reload(tokenInfo.AccessToken);
-							CurrentConfig.Token = tokenInfo.AccessToken;
-							UpdateStatus($@"登录成功，Token 有效期至 {tokenInfo.Expires.AddHours(8)}");
+							BilibiliApi.BililiveApi.Reload($@"SESSDATA={tokenInfo.AccessToken}");
+							UpdateStatus($@"Token 登录成功，Token 有效期至 {tokenInfo.Expires.AddHours(8)}");
 						}
 					}
 					catch (Exception ex)
 					{
-						UpdateStatus($@"登录失败，{ex.Message}");
+						UpdateStatus($@"Token 登录失败，{ex.Message}");
 					}
 				}
 				else
 				{
-					UpdateStatus(@"登录失败，Access Token 格式错误");
+					UpdateStatus(@"Token 登录失败，Access Token 格式错误");
 				}
 			}
-			else
+			finally
 			{
-				UpdateStatus($@"登录失败，SESSDATA/Access Token 的长度为 {Token.Length} ≠ 32");
+				CurrentConfig.Token = Token;
+				CurrentConfig.RefreshToken = RefreshToken;
+				CurrentConfig.Cookie = Cookie;
 			}
 		}
 
 		public async Task Revoke()
 		{
+			if (!string.IsNullOrEmpty(Cookie))
+			{
+				if (await BilibiliApi.BililiveApi.Logout())
+				{
+					LogoutSucceed();
+					return;
+				}
+				UpdateStatus(@"Cookie 注销失败");
+			}
+
 			if (BilibiliApi.Utils.IsToken(Token))
 			{
-				//TODO
-				await BilibiliApi.BililiveApi.RevokeToken(Token);
-				UpdateStatus(@"注销请求发送完成");
-				Token = string.Empty;
-				BilibiliApi.BililiveApi.Reload(null);
+				if (await BilibiliApi.BililiveApi.RevokeToken(Token))
+				{
+					LogoutSucceed();
+					return;
+				}
+				UpdateStatus(@"Token 注销失败");
 			}
 			else
 			{
-				UpdateStatus(@"Access Token 格式错误");
+				UpdateStatus(@"注销失败，Access Token 格式错误");
 			}
+		}
+
+		private void LogoutSucceed()
+		{
+			Token = string.Empty;
+			RefreshToken = string.Empty;
+			Cookie = string.Empty;
+			UpdateStatus(@"注销成功");
+			BilibiliApi.BililiveApi.Reload(null);
 		}
 
 		#endregion
