@@ -332,7 +332,7 @@
 
 							<WrapPanel>
 								<TextBlock Text="或" Margin="3" VerticalAlignment="Center"/>
-								<Button x:Name="CookieButton" Margin="3,3,3,6" Padding="2" Content="获取 Cookie" HorizontalAlignment="Left" Click="CookieButton_OnClick" />
+								<Button x:Name="CookieButton" Margin="3,3,3,6" Padding="2" Content="网页登录" HorizontalAlignment="Left" Click="CookieButton_OnClick" />
 							</WrapPanel>
 
 							<xctk:WatermarkTextBox Margin="3" Watermark="Cookie"
@@ -341,7 +341,7 @@
 							<xctk:WatermarkTextBox Margin="3" Watermark="Access Token (可选)"
 							Text="{Binding Token,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
-							<xctk:WatermarkTextBox Margin="3" Watermark="Refresh Token" IsReadOnly="True"
+							<xctk:WatermarkTextBox Margin="3" Watermark="Refresh Token (暂时无用)"
 							Text="{Binding RefreshToken,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
 							<xctk:WatermarkTextBox Margin="3" Watermark="csrf" IsReadOnly="True"

@@ -426,6 +426,7 @@ namespace AutoSplitVideo.ViewModel
 		{
 			var b = new BilibiliCookie(cookies);
 			Cookie = b.ToString();
+			UpdateStatus(@"获取 Cookie 成功");
 		}
 
 		public async Task GetToken()
@@ -476,29 +477,32 @@ namespace AutoSplitVideo.ViewModel
 					BilibiliApi.BililiveApi.Reload(null);
 				}
 
-				if (BilibiliApi.Utils.IsToken(Token))
+				if (!string.IsNullOrEmpty(Cookie))
 				{
-					try
+					if (BilibiliApi.Utils.IsToken(Token))
 					{
-						var tokenInfo = await BilibiliApi.BililiveApi.GetTokenInfo(Token);
-						if (tokenInfo == null)
+						try
 						{
-							UpdateStatus(@"Token 登录失败，Token 错误");
+							var tokenInfo = await BilibiliApi.BililiveApi.GetTokenInfo(Token);
+							if (tokenInfo == null)
+							{
+								UpdateStatus(@"Token 登录失败，Token 错误");
+							}
+							else
+							{
+								BilibiliApi.BililiveApi.Reload($@"SESSDATA={tokenInfo.AccessToken}");
+								UpdateStatus($@"Token 登录成功，Token 有效期至 {tokenInfo.Expires.AddHours(8)}");
+							}
 						}
-						else
+						catch (Exception ex)
 						{
-							BilibiliApi.BililiveApi.Reload($@"SESSDATA={tokenInfo.AccessToken}");
-							UpdateStatus($@"Token 登录成功，Token 有效期至 {tokenInfo.Expires.AddHours(8)}");
+							UpdateStatus($@"Token 登录失败，{ex.Message}");
 						}
 					}
-					catch (Exception ex)
+					else
 					{
-						UpdateStatus($@"Token 登录失败，{ex.Message}");
+						UpdateStatus(@"Token 登录失败，Access Token 格式错误");
 					}
-				}
-				else
-				{
-					UpdateStatus(@"Token 登录失败，Access Token 格式错误");
 				}
 			}
 			finally

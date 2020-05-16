@@ -5,7 +5,7 @@
 		Height="450" Width="1080" WindowStartupLocation="CenterOwner">
 	<Grid>
 		<DockPanel>
-			<Grid DockPanel.Dock="Top" Visibility="Collapsed">
+			<Grid DockPanel.Dock="Top" Visibility="Visible">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
