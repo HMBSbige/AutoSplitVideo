@@ -20,7 +20,7 @@ namespace AutoSplitVideo.Service
 
 		public const string Name = @"AutoSplitVideo";
 		public const string Copyright = @"Copyright © HMBSbige 2018 - 2020";
-		public const string Version = @"2.3.1";
+		public const string Version = @"2.3.2";
 
 		public async Task Check(bool notifyNoFound, bool isPreRelease)
 		{
