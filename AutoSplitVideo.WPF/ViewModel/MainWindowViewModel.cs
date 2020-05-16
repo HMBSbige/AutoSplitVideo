@@ -35,6 +35,9 @@ namespace AutoSplitVideo.ViewModel
 			StartGetDiskUsage(_ctsGetDisk.Token);
 
 			Token = CurrentConfig.Token;
+			RefreshToken = CurrentConfig.RefreshToken;
+			Cookie = CurrentConfig.Cookie;
+
 			ApplyToApi().ContinueWith(task =>
 			{
 				InitRooms(CurrentConfig.Rooms);
@@ -542,9 +545,9 @@ namespace AutoSplitVideo.ViewModel
 
 		private void LogoutSucceed()
 		{
-			Token = string.Empty;
-			RefreshToken = string.Empty;
-			Cookie = string.Empty;
+			CurrentConfig.Token = Token = string.Empty;
+			CurrentConfig.RefreshToken = RefreshToken = string.Empty;
+			CurrentConfig.Cookie = Cookie = string.Empty;
 			UpdateStatus(@"注销成功");
 			BilibiliApi.BililiveApi.Reload(null);
 		}
