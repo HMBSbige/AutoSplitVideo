@@ -1,5 +1,5 @@
 # REM The reason we don't use dotnet build is that dotnet build doesn't support COM references yet https://github.com/microsoft/msbuild/issues/3986
-param([string]$buildtfm = 'core-x64')
+param([string]$buildtfm = 'core-x86')
 
 Write-Host 'dotnet SDK version'
 dotnet --version

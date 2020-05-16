@@ -1,46 +1,62 @@
-﻿using CefSharp;
+using Kyozy.MiniblinkNet;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace AutoSplitVideo.View
 {
 	public partial class ChromeWindow
 	{
+		private readonly WebView _mWke;
+
 		public ChromeWindow(Dictionary<string, string> cookies)
 		{
 			InitializeComponent();
-			Title = $@"Chrome {Cef.ChromiumVersion}";
-			ClearCookie().Wait();
-			_cookies = cookies;
+			try
+			{
+				_mWke = new WebView();
+				_mWke.Bind(PictureBox);
+				_mWke.OnLoadingFinish += M_wke_OnLoadingFinish;
+
+				Title = $@"{_mWke.Name} {_mWke.GetUserAgent()}";
+
+				ClearCookie();
+				_cookies = cookies;
+
+				_mWke.LoadURL(@"https://passport.bilibili.com/login");
+			}
+			catch
+			{
+				_mWke = null;
+				MessageBox.Show(@"加载失败");
+				Loaded += (o, e) => { DialogResult = false; };
+			}
 		}
 
-		private const string Url = @"https://live.bilibili.com/";
 		private const string Domain = @".bilibili.com";
 
 		private readonly Dictionary<string, string> _cookies;
 
-		private static async Task ClearCookie()
+		private void ClearCookie()
 		{
-			var cookieManager = Cef.GetGlobalCookieManager();
-			await cookieManager.DeleteCookiesAsync().ConfigureAwait(false);
+			_mWke.PerformCookieCommand(wkeCookieCommand.ClearAllCookies);
 		}
 
-		private async Task GetCookie()
+		private void GetCookie()
 		{
-			var cookieManager = Cef.GetGlobalCookieManager();
-
-			var l = await cookieManager.VisitUrlCookiesAsync(Url, true).ConfigureAwait(false);
-			if (l != null)
+			_cookies.Clear();
+			var visitor = new wkeCookieVisitor(
+			(IntPtr userData, string name, string value, string domain, string path, int secure, int httpOnly, ref int expires) =>
 			{
-				_cookies.Clear();
-				foreach (var cookie in l.Where(cookie => cookie.Domain == Domain))
+				if (domain == Domain)
 				{
-					_cookies[cookie.Name] = cookie.Value;
+					_cookies[name] = value;
 				}
-				CheckCookie();
-			}
+
+				return false;
+			});
+			_mWke.VisitAllCookie(visitor, IntPtr.Zero);
+			CheckCookie();
 		}
 
 		private void CheckCookie()
@@ -55,14 +71,19 @@ namespace AutoSplitVideo.View
 			}
 		}
 
-		private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
 		{
-			await GetCookie();
+			GetCookie();
 		}
 
-		private async void Browser_OnFrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+		private void M_wke_OnLoadingFinish(object sender, LoadingFinishEventArgs e)
 		{
-			await GetCookie();
+			GetCookie();
+		}
+
+		private void ChromeWindow_OnClosed(object sender, EventArgs e)
+		{
+			_mWke?.Dispose();
 		}
 	}
 }
